@@ -1,190 +1,69 @@
-# AWS Network Terraform module
+# AWS EKS Terraform module
+![squareops_avatar]
 
-Terraform module to create EKS cluster resources for workload deployment on AWS Cloud.
+[squareops_avatar]: https://squareops.com/wp-content/uploads/2022/12/squareops-logo.png
+
+### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
+<br>
+We publish several terraform modules.
+<br>
+This terraform module is used to create EKS cluster and related resources for container workload deployment on AWS Cloud.
+
 
 ## Usage Example
 
 ```hcl
 module "eks" {
-  source = "gitlab.com/squareops/sal/terraform/aws/eks?ref=v1.0.0"
-
-  region                               = local.region
-  environment                          = local.environment
-  name                                 = local.name
-  cluster_enabled_log_types            = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  cluster_version                      = "1.21"
-  cluster_endpoint_public_access       = true
-  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  public_key_eks             = var.key_pair_name
-  vpc_id                     = module.vpc.vpc_id
-  private_subnet_ids         = module.vpc.private_subnets
-  cert_manager_enabled       = true
-  cert_manager_version       = "1.0.3"
-  cert_manager_email         = "support@example.com"
-  cluster_autoscaler_version = "1.1.0"
-  metrics_server_version     = "6.0.5"
-  ingress_nginx_enabled      = true
-  ingress_nginx_version      = "3.10.1"
-  aws_load_balancer_version  = "1.0.0"
-
+  source = "gitlab.com/sq-ia/aws/eks.git"
+    name = "SKAF"
+    environment = "production"  
+    cluster_enabled_log_types = ["api","scheduler"]
+    cluster_version = "1.23"
+    cluster_log_retention_in_days = 30
+    cluster_endpoint_public_access = true
+    cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+    vpc_id = "vpc-06e37f0786b7eskaf"
+    private_subnet_ids = ["subnet-00exyzd5df967d21w","subnet-0c4abcd5aedxyzaea"]
+    kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+    kms_policy_arn        = "arn:aws:iam::222222222222:policy/kms_policy_arn"
 }
 
-module "managed_node_group_app" {
-    source = "gitlab.com/squareops/sal/terraform/aws/eks//node-groups/managed-nodegroup?ref=v1.0.0"
-
-    name                   = "app-ng"
-    instance_types         = ["t3a.medium"]
-    cluster_id             = module.eks.cluster_name
-    public_key_eks         = var.key_pair_name
-    desired_capacity_infra = 1
-    subnet_ids             = module.vpc.private_subnets
-    worker_iam_role_arn    = module.eks.worker_iam_role_arn
-    kms_key_id             = var.key_arn
+module "managed_node_group_production" {
+    source = "gitlab.com/sq-ia/aws/eks.git//node-groups/managed-nodegroup"
+    name                  = "SKAF"
+    environment           = "production"
+    eks_cluster_id        = "production-cluster"
+    eks_nodes_keypair     = "prod-key"
+    subnet_ids            = ["subnet-00exyzd5df967d21w"]
+    worker_iam_role_arn   = "arn:aws:iam::222222222222:role/worker_iam_role_arn"
+    worker_iam_role_name  = "worker_iam_role_name"
+    kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+    kms_policy_arn        = "arn:aws:iam::222222222222:policy/kms_policy_arn"
+    desired_size          = 1
+    max_size              = 3
+    instance_types        = ["t3a.xlarge"]
+    capacity_type         = "ON_DEMAND"
     k8s_labels = {
-      "App-On-Demand" = "true"
+      "Infra-Services" = "true"
     }
 }
 
 ```
 
-## IAM permissions
+## IAM Permissions
+The required IAM permissions to create resources from this module can be found [here](https://gitlab.com/sq-ia/aws/eks/-/blob/v1.0.0/IAM.md)
 
-<!-- BEGINNING OF PRE-COMMIT-PIKE DOCS HOOK -->
-The Policy required is:
+## CIS COMPLIANCE [<img src="	https://prowler.pro/wp-content/themes/prowler-pro/assets/img/logo.svg" width="250" align="right" />](https://prowler.pro/)
 
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "ec2:AuthorizeSecurityGroupEgress",
-                "ec2:AuthorizeSecurityGroupIngress",
-                "ec2:CreateSecurityGroup",
-                "ec2:CreateTags",
-                "ec2:DeleteSecurityGroup",
-                "ec2:DeleteTags",
-                "ec2:DescribeAccountAttributes",
-                "ec2:DescribeNetworkInterfaces",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeTags",
-                "ec2:RevokeSecurityGroupEgress",
-                "ec2:RevokeSecurityGroupIngress"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": [
-                "eks:CreateAddon",
-                "eks:CreateCluster",
-                "eks:DeleteAddon",
-                "eks:DeleteCluster",
-                "eks:DescribeAddon",
-                "eks:DescribeAddonVersions",
-                "eks:DescribeCluster",
-                "eks:ListTagsForResource",
-                "eks:TagResource",
-                "eks:UntagResource",
-                "eks:UpdateAddon",
-                "eks:UpdateClusterConfig"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor2",
-            "Effect": "Allow",
-            "Action": [
-                "iam:AttachRolePolicy",
-                "iam:CreateOpenIDConnectProvider",
-                "iam:CreatePolicy",
-                "iam:CreateRole",
-                "iam:DeleteOpenIDConnectProvider",
-                "iam:DeletePolicy",
-                "iam:DeleteRole",
-                "iam:DeleteRolePermissionsBoundary",
-                "iam:DetachRolePolicy",
-                "iam:GetOpenIDConnectProvider",
-                "iam:GetPolicy",
-                "iam:GetPolicyVersion",
-                "iam:GetRole",
-                "iam:ListAttachedRolePolicies",
-                "iam:ListInstanceProfilesForRole",
-                "iam:ListPolicyVersions",
-                "iam:ListRolePolicies",
-                "iam:PassRole",
-                "iam:PutRolePermissionsBoundary",
-                "iam:TagOpenIDConnectProvider",
-                "iam:TagPolicy",
-                "iam:TagRole",
-                "iam:UntagOpenIDConnectProvider",
-                "iam:UntagPolicy",
-                "iam:UpdateOpenIDConnectProviderThumbprint",
-                "iam:UpdateRoleDescription"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor3",
-            "Effect": "Allow",
-            "Action": [
-                "kms:CreateAlias",
-                "kms:CreateGrant",
-                "kms:CreateKey",
-                "kms:DeleteAlias",
-                "kms:DescribeKey",
-                "kms:DisableKey",
-                "kms:EnableKey",
-                "kms:EnableKeyRotation",
-                "kms:GetKeyPolicy",
-                "kms:GetKeyRotationStatus",
-                "kms:ListAliases",
-                "kms:ListGrants",
-                "kms:ListResourceTags",
-                "kms:PutKeyPolicy",
-                "kms:RevokeGrant",
-                "kms:ScheduleKeyDeletion",
-                "kms:TagResource",
-                "kms:UntagResource"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor4",
-            "Effect": "Allow",
-            "Action": [
-                "logs:AssociateKmsKey",
-                "logs:CreateLogGroup",
-                "logs:DeleteLogGroup",
-                "logs:DeleteRetentionPolicy",
-                "logs:DescribeLogGroups",
-                "logs:DisassociateKmsKey",
-                "logs:ListTagsLogGroup",
-                "logs:PutRetentionPolicy",
-                "logs:TagLogGroup",
-                "logs:UntagLogGroup"
-            ],
-            "Resource": [
-                "*"
-            ]
-        }
-    ]
-}
+Security scanning is graciously provided by Prowler. Prowler is the leading fully hosted, cloud-native solution providing continuous cluster security and compliance.
 
+| Benchmark | Description |
+|--------|---------------|
+| Ensure EKS Control Plane Audit Logging is enabled for all log types | Control plane logging enabled and correctly configured for EKS cluster |
+| Ensure Kubernetes Secrets are encrypted using Customer Master Keys (CMKs) | Encryption for Kubernetes secrets is configured for EKS cluster |
+| Ensure EKS Clusters are created with Private Endpoint Enabled and Public Access Disabled | Cluster endpoint access is private for EKS cluster  |
+| Restrict Access to the EKS Control Plane Endpoint | Cluster control plane access is restricted for EKS cluster |
 
-```
-<!-- END OF PRE-COMMIT-PIKE DOCS HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -244,3 +123,70 @@ The Policy required is:
 | <a name="output_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#output\_worker\_iam\_role\_arn) | ARN of the EKS Worker Role |
 | <a name="output_worker_iam_role_name"></a> [worker\_iam\_role\_name](#output\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+## Contribution & Issue Reporting
+
+To contribute to a project, you can typically:
+
+  1. Find the repository on a platform like GitHub
+  2. Fork the repository to your own account
+  3. Make changes to the code
+  4. Submit a pull request to the original repository
+
+To report an issue with a project:
+
+  1. Check the repository's [issue tracker](https://github.com/squareops/terraform-aws-vpc/issues) on GitHub
+  2. Search to see if the issue has already been reported
+  3. If you can't find an answer to your question in the documentation or issue tracker, you can ask a question by creating a new issue. Be sure to provide enough context and details so others can understand your problem.
+  4. Contributing to the project can be a great way to get involved and get help. The maintainers and other contributors may be more likely to help you if you're already making contributions to the project.
+
+## Our Other Projects
+
+We have a number of other projects that you might be interested in:
+
+  1. [terraform-aws-vpc](https://github.com/squareops/terraform-aws-vpc): Terraform module to create Networking resources for workload deployment on AWS Cloud.
+
+  2. [terraform-aws-keypair](https://github.com/squareops/terraform-aws-keypair): Terraform module which creates EC2 key pair on AWS. The private key will be stored on SSM.
+
+     Follow Us:
+
+     To stay updated on our projects and future release, follow us on
+     [GitHub](https://github.com/squareops/),
+     [LinkedIn](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/)
+
+     By joining our both the [email](https://github.com/squareops) and [Slack community](https://github.com/squareops), you can benefit from the different ways in which we provide support. You can receive timely notifications and updates through email and engage in real-time conversations and discussions with other members through Slack. This combination of resources can help you stay informed, get help when you need it, and contribute to the project in a meaningful way.  
+
+## Security, Validation and pull-requests
+we have offered here high standard, quality code. Hence we are using several [pre-commit hooks](.pre-commit-config.yaml) and [GitHub Actions](https://gitlab.com/sq-ia/aws/eks/-/tree/v1.0.0#security-validation-and-pull-requests) as a workflow. So here we will create pull-requests to any branch and validate the request automatically using pre-commit tool.
+
+## License
+
+Apache License, Version 2.0, January 2004 (http://www.apache.org/licenses/).
+
+## Support Us
+
+To support a GitHub project by liking it, you can follow these steps:
+
+  1. Visit the repository: Navigate to the GitHub repository.
+
+  2. Click the "Star" [button](https://github.com/squareops/terraform-aws-vpc): On the repository page, you'll see a "Star" button in the upper right corner. Clicking on it will star the repository, indicating your support for the project.
+
+  3. Optionally, you can also leave a comment on the repository or open an issue to give feedback or suggest changes.
+
+Starring a repository on GitHub is a simple way to show your support and appreciation for the project. It also helps to increase the visibility of the project and make it more discoverable to others.
+
+## Who we are
+
+We believe that the key to success in the digital age is the ability to deliver value quickly and reliably. That’s why we offer a comprehensive range of DevOps & Cloud services designed to help your organization optimize its systems & Processes for speed and agility.
+
+  1. We are an AWS Advanced consulting partner which reflects our deep expertise in AWS Cloud and helping 100+ clients over the last 4 years.
+  2. Expertise in Kubernetes and overall container solution helps companies expedite their journey by 10X.
+  3. Infrastructure Automation is a key component to the success of our Clients and our Expertise helps deliver the same in the shortest time.
+  4. DevSecOps as a service to implement security within the overall DevOps process and helping companies deploy securely and at speed.
+  5. Platform engineering which supports scalable,Cost efficient infrastructure that supports rapid development, testing, and deployment.
+  6. 24*7 SRE service to help you Monitor the state of your infrastructure and eradicate any issue within the SLA.
+
+We provide [support](https://squareops.com/contact-us/) on all of our projects, no matter how small or large they may be.
+
+You can find more information about our company on this [squareops.com](https://squareops.com/), follow us on [linkdin](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/), or fill out a [job application](https://squareops.com/careers/). If you have any questions or would like assistance with your cloud strategy and implementation, please don't hesitate to [contact us](https://squareops.com/contact-us/).
+

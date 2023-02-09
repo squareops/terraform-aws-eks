@@ -1,8 +1,3 @@
-output "region" {
-  description = "AWS Region for the EKS cluster"
-  value       = var.region
-}
-
 output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = module.eks.cluster_id
@@ -28,7 +23,6 @@ output "cluster_oidc_issuer_url" {
   value       = module.eks.cluster_oidc_issuer_url
 }
 
-# node group name and arn
 output "worker_iam_role_arn" {
   description = "ARN of the EKS Worker Role"
   value       = aws_iam_role.node_role.arn

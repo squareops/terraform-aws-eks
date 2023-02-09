@@ -1,72 +1,3 @@
-## IAM permissions
-
-<!-- BEGINNING OF PRE-COMMIT-PIKE DOCS HOOK -->
-The Policy required is:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": [
-                "ec2:CreateLaunchTemplate",
-                "ec2:CreateLaunchTemplateVersion",
-                "ec2:DeleteLaunchTemplate",
-                "ec2:DescribeAccountAttributes",
-                "ec2:DescribeImages",
-                "ec2:DescribeInstanceTypes",
-                "ec2:DescribeLaunchTemplateVersions",
-                "ec2:DescribeLaunchTemplates",
-                "ec2:DescribeSubnets"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": [
-                "eks:CreateNodegroup",
-                "eks:DeleteNodegroup",
-                "eks:DescribeCluster",
-                "eks:DescribeNodegroup",
-                "eks:TagResource",
-                "eks:UntagResource",
-                "eks:UpdateNodegroupConfig"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor2",
-            "Effect": "Allow",
-            "Action": [
-                "iam:AttachRolePolicy",
-                "iam:CreatePolicy",
-                "iam:CreateServiceLinkedRole",
-                "iam:DeletePolicy",
-                "iam:DetachRolePolicy",
-                "iam:GetPolicy",
-                "iam:GetPolicyVersion",
-                "iam:GetRole",
-                "iam:ListAttachedRolePolicies",
-                "iam:ListPolicies",
-                "iam:ListPolicyVersions"
-            ],
-            "Resource": [
-                "*"
-            ]
-        }
-    ]
-}
-
-
-```
-<!-- END OF PRE-COMMIT-PIKE DOCS HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
@@ -122,7 +53,6 @@ No modules.
 | <a name="input_k8s_labels"></a> [k8s\_labels](#input\_k8s\_labels) | K8s label for the nodegroups | `map(any)` | `{}` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | KMS key ID for Encrypting Node groups. | `string` | `""` | no |
 | <a name="input_kms_policy_arn"></a> [kms\_policy\_arn](#input\_kms\_policy\_arn) | KMS key ARN for Encrypting Node groups. | `string` | `""` | no |
-| <a name="input_kubelet_extra_args"></a> [kubelet\_extra\_args](#input\_kubelet\_extra\_args) | Additional arguments passed to the kubelet | `string` | `"--max-pods=58"` | no |
 | <a name="input_max_size"></a> [max\_size](#input\_max\_size) | Specify maximum no. of nodes can be added in nodegroup. | `string` | `"3"` | no |
 | <a name="input_min_size"></a> [min\_size](#input\_min\_size) | Specify minimum no. of nodes for nodegroup | `string` | `"1"` | no |
 | <a name="input_name"></a> [name](#input\_name) | Specify the name of the EKS Nodegroup | `string` | `"EKS-nodegroup"` | no |

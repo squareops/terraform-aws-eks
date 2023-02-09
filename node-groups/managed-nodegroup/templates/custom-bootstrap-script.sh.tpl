@@ -24,6 +24,8 @@ fi
 
 yum update -y && yum install vim wget curl -y
 
-/etc/eks/bootstrap.sh '${cluster_name}' --kubelet-extra-args '${kubelet_extra_args}' --apiserver-endpoint '${endpoint}' --b64-cluster-ca '${cluster_auth_base64}'
+
+/etc/eks/bootstrap.sh '${cluster_name}'  --apiserver-endpoint '${endpoint}' --b64-cluster-ca '${cluster_auth_base64}'
+
 
 --==MYBOUNDARY==--

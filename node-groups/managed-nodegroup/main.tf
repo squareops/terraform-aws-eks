@@ -3,7 +3,7 @@ data "aws_eks_cluster" "eks" {
 }
 
 data "aws_ami" "launch_template_ami" {
-  owners      = ["602401143452"] ## Amazon Account Id
+  owners      = ["602401143452"] 
   most_recent = true
 
   filter {
@@ -82,7 +82,6 @@ data "template_file" "launch_template_userdata" {
     image_high_threshold_percent = var.image_high_threshold_percent
     image_low_threshold_percent  = var.image_low_threshold_percent
     eventRecordQPS               = var.eventRecordQPS
-    kubelet_extra_args           = var.kubelet_extra_args
   }
 }
 
@@ -92,7 +91,6 @@ resource "aws_launch_template" "eks_template" {
   key_name               = var.eks_nodes_keypair
   user_data              = base64encode(data.template_file.launch_template_userdata.rendered)
   image_id               = data.aws_ami.launch_template_ami.image_id
-
   block_device_mappings {
     device_name = "/dev/xvda"
 
@@ -101,7 +99,7 @@ resource "aws_launch_template" "eks_template" {
       volume_type           = var.ebs_volume_type
       delete_on_termination = true
       encrypted             = var.ebs_encrypted
-      kms_key_id            = var.kms_key_id
+      kms_key_id            = var.kms_key_arn
     }
   }
 

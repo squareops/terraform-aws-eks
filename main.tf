@@ -20,7 +20,7 @@ module "eks" {
 
   cluster_encryption_config = [
     {
-      provider_key_arn = var.kms_key_id
+      provider_key_arn = var.kms_key_arn
       resources        = ["secrets"]
     }
   ]
@@ -31,16 +31,6 @@ resource "aws_iam_role_policy_attachment" "eks_kms_cluster_policy_attachment" {
   policy_arn = var.kms_policy_arn
 }
 
-
-# resource "null_resource" "get_kubeconfig" {
-#   depends_on = [module.eks]
-
-#   provisioner "local-exec" {
-#     command = "aws eks update-kubeconfig --name ${module.eks.cluster_id} --region ${var.region}"
-#   }
-# }
-
-# role for node group
 resource "aws_iam_role" "node_role" {
   name               = format("%s-%s-node-role", var.environment, var.name)
   assume_role_policy = <<EOF
@@ -64,32 +54,3 @@ EOF
     }
   )
 }
-# node role policy
-
-# resource "aws_iam_role_policy" "node_role_policy" {
-#  name = format("%s-%s-node-role-policy", var.environment, var.name)
-#  role = "${aws_iam_role.node_role.id}"
-#  policy = <<-EOF
-#  {
-#    "Version": "2012-10-17",
-#    "Statement": [
-#      {
-#        "Sid": "AccessObject",
-#        "Effect": "Allow",
-#        "Action": [
-#           "s3:ListBucket",
-#           "s3:GetObject",
-#           "s3:DeleteObject",
-#           "s3:PutObject",
-#           "s3:AbortMultipartUpload",
-#           "s3:ListMultipartUploadParts"
-#        ],
-#       "Resource": [
-#          "${var.bucket_arn}",
-#          "${var.bucket_arn}/*"
-#       ]
-#      }
-#    ]
-#  }
-# EOF
-# }
