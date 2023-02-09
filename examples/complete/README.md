@@ -18,9 +18,10 @@
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_eks"></a> [eks](#module\_eks) | ../../ | n/a |
-| <a name="module_managed_node_group_app"></a> [managed\_node\_group\_app](#module\_managed\_node\_group\_app) | ../../node-groups/managed-nodegroup | qa |
-| <a name="module_managed_node_group_infra"></a> [managed\_node\_group\_infra](#module\_managed\_node\_group\_infra) | ../../node-groups/managed-nodegroup | qa |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | git@gitlab.com:squareops/sal/terraform/aws/network.git | qa |
+| <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | n/a |
+| <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | n/a |
+| <a name="module_managed_node_group_production"></a> [managed\_node\_group\_production](#module\_managed\_node\_group\_production) | ../../node-groups/managed-nodegroup | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
 
 ## Resources
 
@@ -38,7 +39,6 @@ No inputs.
 |------|-------------|
 | <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint for EKS control plane |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Kubernetes Cluster Name |
-| <a name="output_nginx_ingress_controller_dns_hostname"></a> [nginx\_ingress\_controller\_dns\_hostname](#output\_nginx\_ingress\_controller\_dns\_hostname) | NGINX Ingress Controller DNS Hostname |
 | <a name="output_region"></a> [region](#output\_region) | AWS Region |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## IAM permissions

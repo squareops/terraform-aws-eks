@@ -23,7 +23,7 @@ variable "instance_types" {
 }
 
 variable "capacity_type" {
-  default     = "ON_DEMAND"
+  default     = "SPOT"
   type        = string
   description = "Capacity type ON_DEMAND/SPOT"
 }
@@ -127,12 +127,6 @@ variable "k8s_labels" {
   type        = map(any)
   default     = {}
   description = "K8s label for the nodegroups"
-}
-
-variable "kubelet_extra_args" {
-  description = "Additional arguments passed to the kubelet"
-  type        = string
-  default     = "--max-pods=58" # we are setting the hard limit of maximum pods per node i.e 256
 }
 
 #node group role

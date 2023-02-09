@@ -46,7 +46,7 @@ variable "private_subnet_ids" {
   type        = list(string)
 }
 
-variable "kms_key_id" {
+variable "kms_key_arn" {
   type        = string
   default     = ""
   description = "KMS key to Encrypt EKS resources."
@@ -55,6 +55,7 @@ variable "kms_key_id" {
 variable "kms_policy_arn" {
   type        = string
   description = "KMS policy to Encrypt/Decrypt EKS resources."
+  default = ""
 }
 
 variable "cluster_enabled_log_types" {

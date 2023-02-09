@@ -1,80 +1,84 @@
-provider "aws" {
-  region = local.region
-}
-
 locals {
-  region      = "us-east-1"
-  environment = "dev"
+  region      = "us-east-2"
+  environment = "prod"
   name        = "skaf"
+  additional_aws_tags = {
+    Owner      = "SquareOps"
+    Expires    = "Never"
+    Department = "Engineering"
+  }
+  vpc_cidr = "172.10.0.0/16"
 }
 
 data "aws_availability_zones" "available" {}
 
-module "vpc" {
-  source = "git@gitlab.com:squareops/sal/terraform/aws/network.git?ref=qa"
-
-  environment           = local.environment
-  name                  = local.name
-  region                = local.region
-  azs                   = [for n in range(0, 3) : data.aws_availability_zones.available.names[n]]
-  vpc_cidr              = "10.0.0.0/16"
-  enable_public_subnet  = true
-  enable_private_subnet = true
+module "key_pair_vpn" {
+  source             = "squareops/keypair/aws"
+  environment        = local.environment
+  key_name           = format("%s-%s-vpn", local.environment, local.name)
+  ssm_parameter_path = format("%s-%s-vpn", local.environment, local.name)
 }
 
+module "key_pair_eks" {
+  source             = "squareops/keypair/aws"
+  environment        = local.environment
+  key_name           = format("%s-%s-eks", local.environment, local.name)
+  ssm_parameter_path = format("%s-%s-eks", local.environment, local.name)
+}
+
+module "vpc" {
+  source = "squareops/vpc/aws"
+  environment                                     = local.environment
+  name                                            = local.name
+  vpc_cidr                                        = local.vpc_cidr
+  azs                                             = [for n in range(0, 2) : data.aws_availability_zones.available.names[n]]
+  enable_public_subnet                            = true
+  enable_private_subnet                           = true
+  enable_database_subnet                          = true
+  enable_intra_subnet                             = true
+  one_nat_gateway_per_az                          = true
+  vpn_server_enabled                              = true
+  vpn_server_instance_type                        = "t3a.small"
+  vpn_key_pair                                    = module.key_pair_vpn.key_pair_name
+  enable_flow_log                                 = true
+  flow_log_max_aggregation_interval               = 60
+  flow_log_cloudwatch_log_group_retention_in_days = 90
+}
 
 module "eks" {
-  source = "../../"
-
-  region                               = local.region
+  source                               = "../../"
   environment                          = local.environment
   name                                 = local.name
-  cluster_enabled_log_types            = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  cluster_version                      = "1.21"
+  cluster_enabled_log_types            = ["api", "scheduler"]
+  cluster_version                      = "1.23"
+  cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  public_key_eks                       = var.key_pair_name
   vpc_id                               = module.vpc.vpc_id
   private_subnet_ids                   = module.vpc.private_subnets
-  cert_manager_enabled                 = true
-  cert_manager_version                 = "1.0.3"
-  cert_manager_email                   = "support@example.com"
-  cluster_autoscaler_version           = "1.1.0"
-  metrics_server_version               = "6.0.5"
-  ingress_nginx_enabled                = true
-  ingress_nginx_version                = "3.10.1"
-  aws_load_balancer_version            = "1.0.0"
-
+  kms_key_arn                           = ""
+  kms_policy_arn                       = ""
 }
 
-module "managed_node_group_infra" {
-  source = "../../node-groups/managed-nodegroup?ref=qa"
-
-  name                   = "infra-ng"
-  instance_types         = ["t3a.medium"]
-  cluster_id             = module.eks.cluster_name
-  public_key_eks         = var.key_pair_name
-  desired_capacity_infra = 1
-  subnet_ids             = module.vpc.private_subnets
-  worker_iam_role_arn    = module.eks.worker_iam_role_arn
-  kms_key_id             = var.key_arn
+module "managed_node_group_production" {
+  source               = "../../node-groups/managed-nodegroup"
+  name                 = "Infra"
+  environment          = local.environment
+  eks_cluster_id       = module.eks.cluster_name
+  eks_nodes_keypair    = module.key_pair_eks.key_pair_name
+  subnet_ids           = [module.vpc.private_subnets[0]]
+  worker_iam_role_arn  = module.eks.worker_iam_role_arn
+  worker_iam_role_name = module.eks.worker_iam_role_name
+  kms_key_arn           = ""
+  kms_policy_arn       = ""
+  desired_size         = 1
+  max_size             = 3
+  instance_types       = ["t3a.xlarge"]
+  capacity_type        = "ON_DEMAND"
   k8s_labels = {
     "Infra-Services" = "true"
   }
-}
 
-module "managed_node_group_app" {
-  source = "../../node-groups/managed-nodegroup?ref=qa"
+  tags = local.additional_aws_tags
 
-  name                   = "app-ng"
-  instance_types         = ["t3a.medium"]
-  cluster_id             = module.eks.cluster_name
-  public_key_eks         = var.key_pair_name
-  desired_capacity_infra = 1
-  subnet_ids             = module.vpc.private_subnets
-  worker_iam_role_arn    = module.eks.worker_iam_role_arn
-  kms_key_id             = var.key_arn
-  k8s_labels = {
-    "App-On-Demand" = "true"
-  }
 }
