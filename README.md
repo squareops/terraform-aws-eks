@@ -5,8 +5,6 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-We publish several terraform modules.
-<br>
 This terraform module is used to create EKS cluster and related resources for container workload deployment on AWS Cloud.
 
 
@@ -14,7 +12,7 @@ This terraform module is used to create EKS cluster and related resources for co
 
 ```hcl
 module "eks" {
-  source = "gitlab.com/sq-ia/aws/eks.git"
+  source = "squareops/eks/aws"
     name = "SKAF"
     environment = "production"  
     cluster_enabled_log_types = ["api","scheduler"]
@@ -23,13 +21,13 @@ module "eks" {
     cluster_endpoint_public_access = true
     cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
     vpc_id = "vpc-06e37f0786b7eskaf"
-    private_subnet_ids = ["subnet-00exyzd5df967d21w","subnet-0c4abcd5aedxyzaea"]
-    kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+    private_subnet_ids    = ["subnet-00exyzd5df967d21w","subnet-0c4abcd5aedxyzaea"]
+    kms_key_arn           = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
     kms_policy_arn        = "arn:aws:iam::222222222222:policy/kms_policy_arn"
 }
 
 module "managed_node_group_production" {
-    source = "gitlab.com/sq-ia/aws/eks.git//node-groups/managed-nodegroup"
+    source = "squareops/eks/aws//node-groups/managed-nodegroup"
     name                  = "SKAF"
     environment           = "production"
     eks_cluster_id        = "production-cluster"
@@ -37,7 +35,7 @@ module "managed_node_group_production" {
     subnet_ids            = ["subnet-00exyzd5df967d21w"]
     worker_iam_role_arn   = "arn:aws:iam::222222222222:role/worker_iam_role_arn"
     worker_iam_role_name  = "worker_iam_role_name"
-    kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+    kms_key_arn           = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
     kms_policy_arn        = "arn:aws:iam::222222222222:policy/kms_policy_arn"
     desired_size          = 1
     max_size              = 3
@@ -49,9 +47,9 @@ module "managed_node_group_production" {
 }
 
 ```
-
+Refer [examples](https://github.com/squareops/terraform-aws-eks/tree/main/examples/complete) for more details.
 ## IAM Permissions
-The required IAM permissions to create resources from this module can be found [here](https://gitlab.com/sq-ia/aws/eks/-/blob/v1.0.0/IAM.md)
+The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-eks/blob/main/IAM.md)
 
 ## CIS COMPLIANCE [<img src="	https://prowler.pro/wp-content/themes/prowler-pro/assets/img/logo.svg" width="250" align="right" />](https://prowler.pro/)
 
@@ -126,38 +124,11 @@ Security scanning is graciously provided by Prowler. Prowler is the leading full
 
 ## Contribution & Issue Reporting
 
-To contribute to a project, you can typically:
-
-  1. Find the repository on a platform like GitHub
-  2. Fork the repository to your own account
-  3. Make changes to the code
-  4. Submit a pull request to the original repository
-
 To report an issue with a project:
 
-  1. Check the repository's [issue tracker](https://github.com/squareops/terraform-aws-vpc/issues) on GitHub
+  1. Check the repository's [issue tracker](https://github.com/squareops/terraform-aws-eks/issues) on GitHub
   2. Search to see if the issue has already been reported
   3. If you can't find an answer to your question in the documentation or issue tracker, you can ask a question by creating a new issue. Be sure to provide enough context and details so others can understand your problem.
-  4. Contributing to the project can be a great way to get involved and get help. The maintainers and other contributors may be more likely to help you if you're already making contributions to the project.
-
-## Our Other Projects
-
-We have a number of other projects that you might be interested in:
-
-  1. [terraform-aws-vpc](https://github.com/squareops/terraform-aws-vpc): Terraform module to create Networking resources for workload deployment on AWS Cloud.
-
-  2. [terraform-aws-keypair](https://github.com/squareops/terraform-aws-keypair): Terraform module which creates EC2 key pair on AWS. The private key will be stored on SSM.
-
-     Follow Us:
-
-     To stay updated on our projects and future release, follow us on
-     [GitHub](https://github.com/squareops/),
-     [LinkedIn](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/)
-
-     By joining our both the [email](https://github.com/squareops) and [Slack community](https://github.com/squareops), you can benefit from the different ways in which we provide support. You can receive timely notifications and updates through email and engage in real-time conversations and discussions with other members through Slack. This combination of resources can help you stay informed, get help when you need it, and contribute to the project in a meaningful way.  
-
-## Security, Validation and pull-requests
-we have offered here high standard, quality code. Hence we are using several [pre-commit hooks](.pre-commit-config.yaml) and [GitHub Actions](https://gitlab.com/sq-ia/aws/eks/-/tree/v1.0.0#security-validation-and-pull-requests) as a workflow. So here we will create pull-requests to any branch and validate the request automatically using pre-commit tool.
 
 ## License
 
@@ -167,9 +138,9 @@ Apache License, Version 2.0, January 2004 (http://www.apache.org/licenses/).
 
 To support a GitHub project by liking it, you can follow these steps:
 
-  1. Visit the repository: Navigate to the GitHub repository.
+  1. Visit the repository: Navigate to the [GitHub repository](https://github.com/squareops/terraform-aws-eks).
 
-  2. Click the "Star" [button](https://github.com/squareops/terraform-aws-vpc): On the repository page, you'll see a "Star" button in the upper right corner. Clicking on it will star the repository, indicating your support for the project.
+  2. Click the "Star" button: On the repository page, you'll see a "Star" button in the upper right corner. Clicking on it will star the repository, indicating your support for the project.
 
   3. Optionally, you can also leave a comment on the repository or open an issue to give feedback or suggest changes.
 
@@ -188,5 +159,5 @@ We believe that the key to success in the digital age is the ability to deliver 
 
 We provide [support](https://squareops.com/contact-us/) on all of our projects, no matter how small or large they may be.
 
-You can find more information about our company on this [squareops.com](https://squareops.com/), follow us on [linkdin](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/), or fill out a [job application](https://squareops.com/careers/). If you have any questions or would like assistance with your cloud strategy and implementation, please don't hesitate to [contact us](https://squareops.com/contact-us/).
+You can find more information about our company on this [squareops.com](https://squareops.com/), follow us on [Linkdin](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/), or fill out a [job application](https://squareops.com/careers/). If you have any questions or would like assistance with your cloud strategy and implementation, please don't hesitate to [contact us](https://squareops.com/contact-us/).
 
