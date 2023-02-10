@@ -27,7 +27,7 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-    source = "squareops/eks/aws//node-groups/managed-nodegroup"
+    source = "squareops/eks/aws//modules/managed-nodegroup"
     name                  = "SKAF"
     environment           = "production"
     eks_cluster_id        = "production-cluster"

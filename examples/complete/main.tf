@@ -61,7 +61,7 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source               = "../../node-groups/managed-nodegroup"
+  source               = "../../modules/managed-nodegroup"
   name                 = "Infra"
   environment          = local.environment
   eks_cluster_id       = module.eks.cluster_name
