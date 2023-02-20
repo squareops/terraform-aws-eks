@@ -27,7 +27,7 @@ module "key_pair_eks" {
 }
 
 module "vpc" {
-  source = "squareops/vpc/aws"
+  source                                          = "squareops/vpc/aws"
   environment                                     = local.environment
   name                                            = local.name
   vpc_cidr                                        = local.vpc_cidr
@@ -46,7 +46,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                               = "../../"
+  source                               = "squareops/eks/aws"
   environment                          = local.environment
   name                                 = local.name
   cluster_enabled_log_types            = ["api", "scheduler"]
@@ -56,21 +56,20 @@ module "eks" {
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   vpc_id                               = module.vpc.vpc_id
   private_subnet_ids                   = module.vpc.private_subnets
-  kms_key_arn                           = ""
-  kms_policy_arn                       = ""
+  kms_key_arn                          = ""
 }
 
 module "managed_node_group_production" {
-  source               = "../../modules/managed-nodegroup"
+  source               = "squareops/eks/aws//modules/managed-nodegroup"
   name                 = "Infra"
   environment          = local.environment
-  eks_cluster_id       = module.eks.cluster_name
+  eks_cluster_name     = module.eks.cluster_name
   eks_nodes_keypair    = module.key_pair_eks.key_pair_name
   subnet_ids           = [module.vpc.private_subnets[0]]
   worker_iam_role_arn  = module.eks.worker_iam_role_arn
   worker_iam_role_name = module.eks.worker_iam_role_name
-  kms_key_arn           = ""
-  kms_policy_arn       = ""
+  kms_key_arn          = ""
+  kms_policy_arn       = module.eks.kms_policy_arn
   desired_size         = 1
   max_size             = 3
   instance_types       = ["t3a.xlarge"]
@@ -78,7 +77,5 @@ module "managed_node_group_production" {
   k8s_labels = {
     "Infra-Services" = "true"
   }
-
   tags = local.additional_aws_tags
-
 }

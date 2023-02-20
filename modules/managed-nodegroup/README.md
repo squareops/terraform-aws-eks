@@ -42,7 +42,7 @@ No modules.
 | <a name="input_ebs_encrypted"></a> [ebs\_encrypted](#input\_ebs\_encrypted) | Specify weather to encrypt EBS volume for nodes or not. | `bool` | `true` | no |
 | <a name="input_ebs_volume_size"></a> [ebs\_volume\_size](#input\_ebs\_volume\_size) | Specify the Size of the EBS volume for nodes. | `string` | `"50"` | no |
 | <a name="input_ebs_volume_type"></a> [ebs\_volume\_type](#input\_ebs\_volume\_type) | Specify the type of EBS volume for nodes. | `string` | `"gp3"` | no |
-| <a name="input_eks_cluster_id"></a> [eks\_cluster\_id](#input\_eks\_cluster\_id) | Cluster ID for EKS | `string` | `"stgg-msa-ref"` | no |
+| <a name="input_eks_cluster_name"></a> [eks\_cluster\_name](#input\_eks\_cluster\_name) | Cluster ID for EKS | `string` | `""` | no |
 | <a name="input_eks_nodes_keypair"></a> [eks\_nodes\_keypair](#input\_eks\_nodes\_keypair) | The public key for EkS cluster | `string` | `""` | no |
 | <a name="input_enable_monitoring"></a> [enable\_monitoring](#input\_enable\_monitoring) | Specify to enable monitoring for nodes. | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Enviornment for nodes/nodegroups. | `string` | `null` | no |
@@ -51,11 +51,11 @@ No modules.
 | <a name="input_image_low_threshold_percent"></a> [image\_low\_threshold\_percent](#input\_image\_low\_threshold\_percent) | Define the percentage of disk usage till the garbage collection took place. | `number` | `40` | no |
 | <a name="input_instance_types"></a> [instance\_types](#input\_instance\_types) | Specify the instance type eg. t2.medium etc. | `list(any)` | <pre>[<br>  "t3a.medium"<br>]</pre> | no |
 | <a name="input_k8s_labels"></a> [k8s\_labels](#input\_k8s\_labels) | K8s label for the nodegroups | `map(any)` | `{}` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | KMS key ID for Encrypting Node groups. | `string` | `""` | no |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | KMS key ID for Encrypting Node groups. | `string` | `""` | no |
 | <a name="input_kms_policy_arn"></a> [kms\_policy\_arn](#input\_kms\_policy\_arn) | KMS key ARN for Encrypting Node groups. | `string` | `""` | no |
 | <a name="input_max_size"></a> [max\_size](#input\_max\_size) | Specify maximum no. of nodes can be added in nodegroup. | `string` | `"3"` | no |
 | <a name="input_min_size"></a> [min\_size](#input\_min\_size) | Specify minimum no. of nodes for nodegroup | `string` | `"1"` | no |
-| <a name="input_name"></a> [name](#input\_name) | Specify the name of the EKS Nodegroup | `string` | `"EKS-nodegroup"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Specify the name of the EKS Nodegroup | `string` | `""` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | subnets of the VPC which can be used by EKS | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | tags for the nodegroup | `any` | `{}` | no |
 | <a name="input_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#input\_worker\_iam\_role\_arn) | ARN for worker role of EKS | `string` | `""` | no |

@@ -32,3 +32,8 @@ output "worker_iam_role_name" {
   description = "The name of the EKS Worker IAM role"
   value       = aws_iam_role.node_role.name
 }
+
+output "kms_policy_arn" {
+  value       = aws_iam_policy.kubernetes_pvc_kms_policy.arn
+  description = "ARN of KMS policy."
+}

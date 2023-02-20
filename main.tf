@@ -26,9 +26,32 @@ module "eks" {
   ]
 }
 
+resource "aws_iam_policy" "kubernetes_pvc_kms_policy" {
+  name        = format("%s-%s", var.name, "kubernetes-pvc-kms-policy")
+  description = "Allow kubernetes pvc to get access of KMS."
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+            "kms:CreateGrant",
+            "kms:Decrypt",
+            "kms:GenerateDataKeyWithoutPlaintext"
+        ],
+        "Resource": "${var.kms_key_arn}"
+      }
+  ]
+}
+EOF
+}
+
+
 resource "aws_iam_role_policy_attachment" "eks_kms_cluster_policy_attachment" {
   role       = module.eks.cluster_iam_role_name
-  policy_arn = var.kms_policy_arn
+  policy_arn = aws_iam_policy.kubernetes_pvc_kms_policy.arn
 }
 
 resource "aws_iam_role" "node_role" {

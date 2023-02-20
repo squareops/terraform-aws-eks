@@ -1,9 +1,9 @@
 data "aws_eks_cluster" "eks" {
-  name = var.eks_cluster_id
+  name = var.eks_cluster_name
 }
 
 data "aws_ami" "launch_template_ami" {
-  owners      = ["602401143452"] 
+  owners      = ["602401143452"]
   most_recent = true
 
   filter {
@@ -22,7 +22,7 @@ resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
 }
 
 resource "aws_iam_policy" "node_autoscaler_policy" {
-  name        = format("%s-%s-%s-node-autoscaler-policy", var.environment, var.name, var.eks_cluster_id)
+  name        = format("%s-%s-%s-node-autoscaler-policy", var.environment, var.name, var.eks_cluster_name)
   path        = "/"
   description = "Node auto scaler policy for node groups."
   policy      = <<EOF
@@ -76,7 +76,7 @@ data "template_file" "launch_template_userdata" {
   template = file("${path.module}/templates/custom-bootstrap-script.sh.tpl")
 
   vars = {
-    cluster_name                 = var.eks_cluster_id
+    cluster_name                 = var.eks_cluster_name
     endpoint                     = data.aws_eks_cluster.eks.endpoint
     cluster_auth_base64          = data.aws_eks_cluster.eks.certificate_authority[0].data
     image_high_threshold_percent = var.image_high_threshold_percent
@@ -131,7 +131,7 @@ resource "aws_launch_template" "eks_template" {
 resource "aws_eks_node_group" "managed_ng" {
 
   node_group_name = format("%s-%s-%s", var.environment, var.name, "ng")
-  cluster_name    = var.eks_cluster_id
+  cluster_name    = var.eks_cluster_name
   node_role_arn   = var.worker_iam_role_arn
   subnet_ids      = var.subnet_ids
 

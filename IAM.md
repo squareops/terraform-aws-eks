@@ -12,22 +12,26 @@ The Policy required is:
             "Effect": "Allow",
             "Action": [
                 "iam:AttachRolePolicy",
+                "iam:CreatePolicy",
                 "iam:CreateRole",
+                "iam:DeletePolicy",
                 "iam:DeleteRole",
                 "iam:DetachRolePolicy",
+                "iam:GetPolicy",
+                "iam:GetPolicyVersion",
                 "iam:GetRole",
                 "iam:ListAttachedRolePolicies",
                 "iam:ListInstanceProfilesForRole",
+                "iam:ListPolicyVersions",
                 "iam:ListRolePolicies",
                 "iam:TagRole"
             ],
             "Resource": [
                 "*"
             ]
-        }
+        }      
     ]
 }
-
 
 ```
 <!-- END OF PRE-COMMIT-PIKE DOCS HOOK -->
