@@ -17,10 +17,10 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks"></a> [eks](#module\_eks) | ../../ | n/a |
+| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | n/a |
 | <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | n/a |
 | <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | n/a |
-| <a name="module_managed_node_group_production"></a> [managed\_node\_group\_production](#module\_managed\_node\_group\_production) | ../../node-groups/managed-nodegroup | n/a |
+| <a name="module_managed_node_group_production"></a> [managed\_node\_group\_production](#module\_managed\_node\_group\_production) | squareops/eks/aws//modules/managed-nodegroup | n/a |
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
 
 ## Resources
@@ -37,9 +37,15 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_cluster_arn"></a> [cluster\_arn](#output\_cluster\_arn) | Name of the kubeconfig context |
 | <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint for EKS control plane |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Kubernetes Cluster Name |
+| <a name="output_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#output\_cluster\_oidc\_issuer\_url) | The URL on the EKS cluster for the OpenID Connect identity provider |
+| <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group ids attached to the cluster control plane |
+| <a name="output_kms_policy_arn"></a> [kms\_policy\_arn](#output\_kms\_policy\_arn) | ARN of KMS policy |
 | <a name="output_region"></a> [region](#output\_region) | AWS Region |
+| <a name="output_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#output\_worker\_iam\_role\_arn) | ARN of the EKS Worker Role |
+| <a name="output_worker_iam_role_name"></a> [worker\_iam\_role\_name](#output\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## IAM permissions
 

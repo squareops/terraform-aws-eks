@@ -10,12 +10,6 @@ variable "name" {
   type        = string
 }
 
-variable "region" {
-  description = "AWS region for the EKS cluster"
-  default     = ""
-  type        = string
-}
-
 variable "cluster_version" {
   description = "Kubernetes <major>.<minor> version to use for the EKS cluster"
   default     = ""
@@ -47,15 +41,9 @@ variable "private_subnet_ids" {
 }
 
 variable "kms_key_arn" {
-  type        = string
-  default     = ""
   description = "KMS key to Encrypt EKS resources."
-}
-
-variable "kms_policy_arn" {
+  default     = ""
   type        = string
-  description = "KMS policy to Encrypt/Decrypt EKS resources."
-  default = ""
 }
 
 variable "cluster_enabled_log_types" {

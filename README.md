@@ -23,20 +23,19 @@ module "eks" {
     vpc_id = "vpc-06e37f0786b7eskaf"
     private_subnet_ids    = ["subnet-00exyzd5df967d21w","subnet-0c4abcd5aedxyzaea"]
     kms_key_arn           = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-    kms_policy_arn        = "arn:aws:iam::222222222222:policy/kms_policy_arn"
 }
 
 module "managed_node_group_production" {
     source = "squareops/eks/aws//modules/managed-nodegroup"
     name                  = "SKAF"
     environment           = "production"
-    eks_cluster_id        = "production-cluster"
+    eks_cluster_name      = "production-cluster"
     eks_nodes_keypair     = "prod-key"
     subnet_ids            = ["subnet-00exyzd5df967d21w"]
     worker_iam_role_arn   = "arn:aws:iam::222222222222:role/worker_iam_role_arn"
     worker_iam_role_name  = "worker_iam_role_name"
     kms_key_arn           = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-    kms_policy_arn        = "arn:aws:iam::222222222222:policy/kms_policy_arn"
+    kms_policy_arn        = module.eks.kms_policy_arn
     desired_size          = 1
     max_size              = 3
     instance_types        = ["t3a.xlarge"]
@@ -50,6 +49,10 @@ module "managed_node_group_production" {
 Refer [examples](https://github.com/squareops/terraform-aws-eks/tree/main/examples/complete) for more details.
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-eks/blob/main/IAM.md)
+
+## EKS-BOOTSTRAP
+
+The EKS module is designed to be used as a standalone Terraform module. We recommend using [EKS-Bootstrap](https://registry.terraform.io/modules/squareops/eks-bootstrap/aws/latest) module  in conjunction to enhance functionality.
 
 ## CIS COMPLIANCE [<img src="	https://prowler.pro/wp-content/themes/prowler-pro/assets/img/logo.svg" width="250" align="right" />](https://prowler.pro/)
 
@@ -88,6 +91,7 @@ Security scanning is graciously provided by Prowler. Prowler is the leading full
 
 | Name | Type |
 |------|------|
+| [aws_iam_policy.kubernetes_pvc_kms_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.node_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.eks_kms_cluster_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 
@@ -101,11 +105,9 @@ Security scanning is graciously provided by Prowler. Prowler is the leading full
 | <a name="input_cluster_log_retention_in_days"></a> [cluster\_log\_retention\_in\_days](#input\_cluster\_log\_retention\_in\_days) | Retention period for EKS cluster logs | `number` | `90` | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes <major>.<minor> version to use for the EKS cluster | `string` | `""` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment identifier for the EKS cluster | `string` | `""` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | KMS key to Encrypt EKS resources. | `string` | `""` | no |
-| <a name="input_kms_policy_arn"></a> [kms\_policy\_arn](#input\_kms\_policy\_arn) | KMS policy to Encrypt/Decrypt EKS resources. | `string` | n/a | yes |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | KMS key to Encrypt EKS resources. | `string` | `""` | no |
 | <a name="input_name"></a> [name](#input\_name) | Specify the name of the EKS cluster | `string` | `""` | no |
 | <a name="input_private_subnet_ids"></a> [private\_subnet\_ids](#input\_private\_subnet\_ids) | Private subnets of the VPC which can be used by EKS | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
-| <a name="input_region"></a> [region](#input\_region) | AWS region for the EKS cluster | `string` | `""` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where the cluster and its nodes will be provisioned | `string` | `""` | no |
 
 ## Outputs
@@ -116,8 +118,8 @@ Security scanning is graciously provided by Prowler. Prowler is the leading full
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Kubernetes Cluster Name |
 | <a name="output_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#output\_cluster\_oidc\_issuer\_url) | The URL on the EKS cluster for the OpenID Connect identity provider |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group ids attached to the cluster control plane |
+| <a name="output_kms_policy_arn"></a> [kms\_policy\_arn](#output\_kms\_policy\_arn) | ARN of KMS policy. |
 | <a name="output_kubeconfig_context_name"></a> [kubeconfig\_context\_name](#output\_kubeconfig\_context\_name) | Name of the kubeconfig context |
-| <a name="output_region"></a> [region](#output\_region) | AWS Region for the EKS cluster |
 | <a name="output_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#output\_worker\_iam\_role\_arn) | ARN of the EKS Worker Role |
 | <a name="output_worker_iam_role_name"></a> [worker\_iam\_role\_name](#output\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -159,5 +161,4 @@ We believe that the key to success in the digital age is the ability to deliver 
 
 We provide [support](https://squareops.com/contact-us/) on all of our projects, no matter how small or large they may be.
 
-You can find more information about our company on this [squareops.com](https://squareops.com/), follow us on [Linkdin](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/), or fill out a [job application](https://squareops.com/careers/). If you have any questions or would like assistance with your cloud strategy and implementation, please don't hesitate to [contact us](https://squareops.com/contact-us/).
-
+To find more information about our company, visit [squareops.com](https://squareops.com/), follow us on [Linkedin](https://www.linkedin.com/company/squareops-technologies-pvt-ltd/), or fill out a [job application](https://squareops.com/careers/). If you have any questions or would like assistance with your cloud strategy and implementation, please don't hesitate to [contact us](https://squareops.com/contact-us/).
