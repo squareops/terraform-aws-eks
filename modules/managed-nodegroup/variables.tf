@@ -1,5 +1,5 @@
 variable "eks_cluster_name" {
-  description = "Cluster ID for EKS"
+  description = "Name of EKS cluster"
   type        = string
   default     = ""
 }
@@ -46,8 +46,8 @@ variable "eventRecordQPS" {
   default     = 5
 }
 
-variable "eks_nodes_keypair" {
-  description = "The public key for EkS cluster"
+variable "eks_nodes_keypair_name" {
+  description = "The public key for EKS cluster worker nodes"
   type        = string
   default     = ""
 }
@@ -59,7 +59,7 @@ variable "kms_key_arn" {
 }
 
 variable "kms_policy_arn" {
-  description = "KMS key ARN for Encrypting Node groups."
+  description = "KMS policy ARN which is used for encrypting Kubernetes PVC"
   type        = string
   default     = ""
 }
@@ -107,7 +107,7 @@ variable "ebs_volume_type" {
 }
 
 variable "ebs_encrypted" {
-  description = "Specify weather to encrypt EBS volume for nodes or not."
+  description = "Specify whether to encrypt EBS volume for nodes or not"
   type        = bool
   default     = true
 }

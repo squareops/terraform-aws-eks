@@ -17,7 +17,7 @@ variable "cluster_version" {
 }
 
 variable "cluster_endpoint_public_access" {
-  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled"
+  description = "Indicates whether the Amazon EKS public API server endpoint is enabled or not"
   default     = true
   type        = bool
 }
@@ -34,19 +34,13 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "private_subnet_ids" {
-  description = "Private subnets of the VPC which can be used by EKS"
-  default     = [""]
-  type        = list(string)
-}
-
 variable "kms_key_arn" {
   description = "KMS key to Encrypt EKS resources."
   default     = ""
   type        = string
 }
 
-variable "cluster_enabled_log_types" {
+variable "cluster_log_types" {
   description = "A list of the desired control plane logs to enable for EKS cluster. Valid values: api,audit,authenticator,controllerManager,scheduler"
   default     = [""]
   type        = list(string)

@@ -2,10 +2,13 @@ data "aws_eks_cluster" "eks" {
   name = var.eks_cluster_name
 }
 
+data "aws_iam_role" "worker_iam_role_name" {
+  name = var.worker_iam_role_name
+}
+
 data "aws_ami" "launch_template_ami" {
   owners      = ["602401143452"]
   most_recent = true
-
   filter {
     name   = "name"
     values = [format("%s-%s-%s", "amazon-eks-node", data.aws_eks_cluster.eks.version, "v*")]
@@ -32,13 +35,14 @@ resource "aws_iam_policy" "node_autoscaler_policy" {
         {
             "Effect": "Allow",
             "Action": [
+              "autoscaling:DescribeTags",
+              "autoscaling:SetDesiredCapacity",
+              "ec2:DescribeLaunchTemplateVersions",
                 "autoscaling:DescribeAutoScalingGroups",
                 "autoscaling:DescribeAutoScalingInstances",
                 "autoscaling:DescribeLaunchConfigurations",
-                "autoscaling:DescribeTags",
-                "autoscaling:SetDesiredCapacity",
-                "autoscaling:TerminateInstanceInAutoScalingGroup",
-                "ec2:DescribeLaunchTemplateVersions"
+                "autoscaling:TerminateInstanceInAutoScalingGroup"
+
             ],
             "Resource": "*"
         }
@@ -48,8 +52,8 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "node_autoscaler_policy" {
-  policy_arn = aws_iam_policy.node_autoscaler_policy.arn
   role       = var.worker_iam_role_name
+  policy_arn = aws_iam_policy.node_autoscaler_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kms_worker_policy_attachment" {
@@ -76,24 +80,24 @@ data "template_file" "launch_template_userdata" {
   template = file("${path.module}/templates/custom-bootstrap-script.sh.tpl")
 
   vars = {
-    cluster_name                 = var.eks_cluster_name
     endpoint                     = data.aws_eks_cluster.eks.endpoint
-    cluster_auth_base64          = data.aws_eks_cluster.eks.certificate_authority[0].data
-    image_high_threshold_percent = var.image_high_threshold_percent
-    image_low_threshold_percent  = var.image_low_threshold_percent
+    cluster_name                 = var.eks_cluster_name
     eventRecordQPS               = var.eventRecordQPS
+    cluster_auth_base64          = data.aws_eks_cluster.eks.certificate_authority[0].data
+    image_low_threshold_percent  = var.image_low_threshold_percent
+    image_high_threshold_percent = var.image_high_threshold_percent
+
   }
 }
 
 resource "aws_launch_template" "eks_template" {
   name                   = format("%s-%s-%s", var.environment, var.name, "launch-template")
-  update_default_version = true
-  key_name               = var.eks_nodes_keypair
-  user_data              = base64encode(data.template_file.launch_template_userdata.rendered)
+  key_name               = var.eks_nodes_keypair_name
   image_id               = data.aws_ami.launch_template_ami.image_id
+  user_data              = base64encode(data.template_file.launch_template_userdata.rendered)
+  update_default_version = true
   block_device_mappings {
     device_name = "/dev/xvda"
-
     ebs {
       volume_size           = var.ebs_volume_size
       volume_type           = var.ebs_volume_type
@@ -114,7 +118,6 @@ resource "aws_launch_template" "eks_template" {
 
   tag_specifications {
     resource_type = "instance"
-
     tags = {
       Name        = format("%s-%s-%s", var.environment, var.name, "eks-node")
       Environment = var.environment
@@ -129,36 +132,28 @@ resource "aws_launch_template" "eks_template" {
 
 
 resource "aws_eks_node_group" "managed_ng" {
-
-  node_group_name = format("%s-%s-%s", var.environment, var.name, "ng")
-  cluster_name    = var.eks_cluster_name
-  node_role_arn   = var.worker_iam_role_arn
   subnet_ids      = var.subnet_ids
-
+  cluster_name    = var.eks_cluster_name
+  node_role_arn   = data.aws_iam_role.worker_iam_role_name.arn
+  node_group_name = format("%s-%s-%s", var.environment, var.name, "ng")
   scaling_config {
     desired_size = var.desired_size
     max_size     = var.max_size
     min_size     = var.min_size
   }
-
-  labels = var.k8s_labels
-
-  instance_types = var.instance_types
+  labels         = var.k8s_labels
   capacity_type  = var.capacity_type
-
-
+  instance_types = var.instance_types
   launch_template {
     id      = aws_launch_template.eks_template.id
     version = aws_launch_template.eks_template.latest_version
   }
-
   lifecycle {
     create_before_destroy = true
     ignore_changes = [
       scaling_config[0].desired_size,
     ]
   }
-
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.name, "ng")
     Environment = var.environment

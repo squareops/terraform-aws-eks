@@ -13,8 +13,8 @@ output "cluster_security_group_id" {
   value       = module.eks.cluster_primary_security_group_id
 }
 
-output "kubeconfig_context_name" {
-  description = "Name of the kubeconfig context"
+output "cluster_arn" {
+  description = "ARN of EKS Cluster"
   value       = module.eks.cluster_arn
 }
 

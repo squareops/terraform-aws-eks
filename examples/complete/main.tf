@@ -7,22 +7,22 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  vpc_cidr = "172.10.0.0/16"
+  vpc_cidr = "10.10.0.0/16"
 }
 
 data "aws_availability_zones" "available" {}
 
 module "key_pair_vpn" {
   source             = "squareops/keypair/aws"
-  environment        = local.environment
   key_name           = format("%s-%s-vpn", local.environment, local.name)
+  environment        = local.environment
   ssm_parameter_path = format("%s-%s-vpn", local.environment, local.name)
 }
 
 module "key_pair_eks" {
   source             = "squareops/keypair/aws"
-  environment        = local.environment
   key_name           = format("%s-%s-eks", local.environment, local.name)
+  environment        = local.environment
   ssm_parameter_path = format("%s-%s-eks", local.environment, local.name)
 }
 
@@ -31,49 +31,49 @@ module "vpc" {
   environment                                     = local.environment
   name                                            = local.name
   vpc_cidr                                        = local.vpc_cidr
-  azs                                             = [for n in range(0, 2) : data.aws_availability_zones.available.names[n]]
-  enable_public_subnet                            = true
-  enable_private_subnet                           = true
-  enable_database_subnet                          = true
-  enable_intra_subnet                             = true
+  availability_zones                              = 2
+  public_subnet_enabled                           = true
+  private_subnet_enabled                          = true
+  database_subnet_enabled                         = true
+  intra_subnet_enabled                            = true
   one_nat_gateway_per_az                          = true
-  vpn_server_enabled                              = true
+  vpn_server_enabled                              = false
   vpn_server_instance_type                        = "t3a.small"
-  vpn_key_pair                                    = module.key_pair_vpn.key_pair_name
-  enable_flow_log                                 = true
+  vpn_key_pair_name                               = module.key_pair_vpn.key_pair_name
+  flow_log_enabled                                = true
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
 }
 
 module "eks" {
   source                               = "squareops/eks/aws"
-  environment                          = local.environment
   name                                 = local.name
-  cluster_enabled_log_types            = ["api", "scheduler"]
+  vpc_id                               = module.vpc.vpc_id
+  environment                          = local.environment
+  kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   cluster_version                      = "1.23"
+  cluster_log_types                    = ["api", "scheduler"]
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  vpc_id                               = module.vpc.vpc_id
-  private_subnet_ids                   = module.vpc.private_subnets
-  kms_key_arn                          = ""
 }
 
 module "managed_node_group_production" {
-  source               = "squareops/eks/aws//modules/managed-nodegroup"
-  name                 = "Infra"
-  environment          = local.environment
-  eks_cluster_name     = module.eks.cluster_name
-  eks_nodes_keypair    = module.key_pair_eks.key_pair_name
-  subnet_ids           = [module.vpc.private_subnets[0]]
-  worker_iam_role_arn  = module.eks.worker_iam_role_arn
-  worker_iam_role_name = module.eks.worker_iam_role_name
-  kms_key_arn          = ""
-  kms_policy_arn       = module.eks.kms_policy_arn
-  desired_size         = 1
-  max_size             = 3
-  instance_types       = ["t3a.xlarge"]
-  capacity_type        = "ON_DEMAND"
+  source                 = "squareops/eks/aws//modules/managed-nodegroup"
+  depends_on             = [module.vpc, module.eks]
+  name                   = "Infra"
+  min_size               = 1
+  max_size               = 3
+  desired_size           = 1
+  subnet_ids             = [module.vpc.private_subnets[0]]
+  environment            = local.environment
+  kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  capacity_type          = "ON_DEMAND"
+  instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  kms_policy_arn         = module.eks.kms_policy_arn
+  eks_cluster_name       = module.eks.cluster_name
+  worker_iam_role_name   = module.eks.worker_iam_role_name
+  eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {
     "Infra-Services" = "true"
   }
