@@ -12,37 +12,38 @@ This terraform module is used to create EKS cluster and related resources for co
 
 ```hcl
 module "eks" {
-  source = "squareops/eks/aws"
-    name = "SKAF"
-    environment = "production"  
-    cluster_enabled_log_types = ["api","scheduler"]
-    cluster_version = "1.23"
-    cluster_log_retention_in_days = 30
-    cluster_endpoint_public_access = true
-    cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-    vpc_id = "vpc-06e37f0786b7eskaf"
-    private_subnet_ids    = ["subnet-00exyzd5df967d21w","subnet-0c4abcd5aedxyzaea"]
-    kms_key_arn           = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  source                               = "squareops/eks/aws"
+  name                                 = "SKAF"
+  vpc_id                               = module.vpc.vpc_id
+  environment                          = "production"
+  kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  cluster_version                      = "1.23"
+  cluster_log_types                    = ["api", "scheduler"]
+  cluster_log_retention_in_days        = 30
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
 }
 
 module "managed_node_group_production" {
-    source = "squareops/eks/aws//modules/managed-nodegroup"
-    name                  = "SKAF"
-    environment           = "production"
-    eks_cluster_name      = "production-cluster"
-    eks_nodes_keypair     = "prod-key"
-    subnet_ids            = ["subnet-00exyzd5df967d21w"]
-    worker_iam_role_arn   = "arn:aws:iam::222222222222:role/worker_iam_role_arn"
-    worker_iam_role_name  = "worker_iam_role_name"
-    kms_key_arn           = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-    kms_policy_arn        = module.eks.kms_policy_arn
-    desired_size          = 1
-    max_size              = 3
-    instance_types        = ["t3a.xlarge"]
-    capacity_type         = "ON_DEMAND"
-    k8s_labels = {
-      "Infra-Services" = "true"
-    }
+  source                 = "squareops/eks/aws//modules/managed-nodegroup"
+  depends_on             = [module.eks]
+  name                   = "Infra"
+  min_size               = 1
+  max_size               = 3
+  desired_size           = 1
+  subnet_ids             = ["subnet-00exyzd5df967d21w"]
+  environment            = "production"
+  kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  capacity_type          = "ON_DEMAND"
+  instance_types         = ["t3a.large", "t2.large"]
+  kms_policy_arn         = "kms_policy_arn"
+  eks_cluster_name       = "production-cluster"
+  worker_iam_role_name   = "arn:aws:iam::222222222222:role/worker_iam_role_arn"
+  eks_nodes_keypair_name = "prod-key"
+  k8s_labels = {
+    "Infra-Services" = "true"
+  }
+  tags = local.additional_aws_tags
 }
 
 ```
@@ -94,32 +95,32 @@ Security scanning is graciously provided by Prowler. Prowler is the leading full
 | [aws_iam_policy.kubernetes_pvc_kms_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.node_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.eks_kms_cluster_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_subnet_ids.private_subnet_ids](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cluster_enabled_log_types"></a> [cluster\_enabled\_log\_types](#input\_cluster\_enabled\_log\_types) | A list of the desired control plane logs to enable for EKS cluster. Valid values: api,audit,authenticator,controllerManager,scheduler | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
-| <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Indicates whether or not the Amazon EKS public API server endpoint is enabled | `bool` | `true` | no |
+| <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Indicates whether the Amazon EKS public API server endpoint is enabled or not | `bool` | `true` | no |
 | <a name="input_cluster_endpoint_public_access_cidrs"></a> [cluster\_endpoint\_public\_access\_cidrs](#input\_cluster\_endpoint\_public\_access\_cidrs) | List of CIDR blocks which can access the Amazon EKS public API server endpoint | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_cluster_log_retention_in_days"></a> [cluster\_log\_retention\_in\_days](#input\_cluster\_log\_retention\_in\_days) | Retention period for EKS cluster logs | `number` | `90` | no |
+| <a name="input_cluster_log_types"></a> [cluster\_log\_types](#input\_cluster\_log\_types) | A list of the desired control plane logs to enable for EKS cluster. Valid values: api,audit,authenticator,controllerManager,scheduler | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes <major>.<minor> version to use for the EKS cluster | `string` | `""` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment identifier for the EKS cluster | `string` | `""` | no |
 | <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | KMS key to Encrypt EKS resources. | `string` | `""` | no |
 | <a name="input_name"></a> [name](#input\_name) | Specify the name of the EKS cluster | `string` | `""` | no |
-| <a name="input_private_subnet_ids"></a> [private\_subnet\_ids](#input\_private\_subnet\_ids) | Private subnets of the VPC which can be used by EKS | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where the cluster and its nodes will be provisioned | `string` | `""` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_cluster_arn"></a> [cluster\_arn](#output\_cluster\_arn) | ARN of EKS Cluster |
 | <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint for EKS control plane |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Kubernetes Cluster Name |
 | <a name="output_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#output\_cluster\_oidc\_issuer\_url) | The URL on the EKS cluster for the OpenID Connect identity provider |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group ids attached to the cluster control plane |
 | <a name="output_kms_policy_arn"></a> [kms\_policy\_arn](#output\_kms\_policy\_arn) | ARN of KMS policy. |
-| <a name="output_kubeconfig_context_name"></a> [kubeconfig\_context\_name](#output\_kubeconfig\_context\_name) | Name of the kubeconfig context |
 | <a name="output_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#output\_worker\_iam\_role\_arn) | ARN of the EKS Worker Role |
 | <a name="output_worker_iam_role_name"></a> [worker\_iam\_role\_name](#output\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

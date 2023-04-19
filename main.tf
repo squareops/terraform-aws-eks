@@ -1,23 +1,27 @@
+data "aws_subnet_ids" "private_subnet_ids" {
+  vpc_id = var.vpc_id
+  tags = {
+    Subnet-group = "private"
+  }
+}
+
 module "eks" {
   source                    = "terraform-aws-modules/eks/aws"
   version                   = "18.29.0"
-  cluster_name              = format("%s-%s", var.environment, var.name)
-  cluster_enabled_log_types = var.cluster_enabled_log_types
-  subnet_ids                = var.private_subnet_ids
-  cluster_version           = var.cluster_version
+  vpc_id                    = var.vpc_id
   enable_irsa               = true
-
+  cluster_name              = format("%s-%s", var.environment, var.name)
+  subnet_ids                = data.aws_subnet_ids.private_subnet_ids.ids
+  cluster_enabled_log_types = var.cluster_log_types
+  cluster_version           = var.cluster_version
   tags = {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-
-  vpc_id                                 = var.vpc_id
-  cloudwatch_log_group_retention_in_days = var.cluster_log_retention_in_days
   cluster_endpoint_private_access        = var.cluster_endpoint_public_access ? false : true
   cluster_endpoint_public_access         = var.cluster_endpoint_public_access
   cluster_endpoint_public_access_cidrs   = var.cluster_endpoint_public_access_cidrs
-
+  cloudwatch_log_group_retention_in_days = var.cluster_log_retention_in_days
   cluster_encryption_config = [
     {
       provider_key_arn = var.kms_key_arn
@@ -27,10 +31,9 @@ module "eks" {
 }
 
 resource "aws_iam_policy" "kubernetes_pvc_kms_policy" {
-  name        = format("%s-%s", var.name, "kubernetes-pvc-kms-policy")
+  name        = format("%s-%s-%s", var.environment, var.name, "kubernetes-pvc-kms-policy")
   description = "Allow kubernetes pvc to get access of KMS."
-
-  policy = <<EOF
+  policy      = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
