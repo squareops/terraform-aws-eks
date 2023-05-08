@@ -18,6 +18,7 @@ repos:
           - '--args=--lockfile=false'
           - --hook-config=--add-to-existing-file=true
           - --hook-config=--create-file-if-not-exist=true
+          - --sort=false
 
       - id: terraform_tflint
         args:
