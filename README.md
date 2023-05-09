@@ -67,6 +67,7 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | Ensure Kubernetes Secrets are encrypted using Customer Master Keys (CMKs) | Encryption for Kubernetes secrets is configured for EKS cluster | &#x2713; |
 | Ensure EKS Clusters are created with Private Endpoint Enabled and Public Access Disabled | Cluster endpoint access is private for EKS cluster | &#x2713; |
 | Restrict Access to the EKS Control Plane Endpoint | Cluster control plane access is restricted for EKS cluster | &#x2713; |
+| Ensure IAM instance roles are used for AWS resource access from instances | Nodes uses IAM roles Cluster control plane access is restricted for EKS cluster | &#x2713; |
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
