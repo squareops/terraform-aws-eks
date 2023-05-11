@@ -1,16 +1,15 @@
 locals {
   region      = "us-east-2"
   environment = "prod"
-  name        = "skaf"
+  name        = "eks"
   additional_aws_tags = {
-    Owner      = "SquareOps"
+    Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
   }
-  vpc_cidr = "10.10.0.0/16"
+  vpc_cidr           = "10.10.0.0/16"
+  vpn_server_enabled = false
 }
-
-data "aws_availability_zones" "available" {}
 
 module "key_pair_vpn" {
   source             = "squareops/keypair/aws"
@@ -37,9 +36,9 @@ module "vpc" {
   database_subnet_enabled                         = true
   intra_subnet_enabled                            = true
   one_nat_gateway_per_az                          = true
-  vpn_server_enabled                              = false
+  vpn_server_enabled                              = local.vpn_server_enabled
   vpn_server_instance_type                        = "t3a.small"
-  vpn_key_pair_name                               = module.key_pair_vpn.key_pair_name
+  vpn_key_pair_name                               = module.key_pair_vpn[0].key_pair_name
   flow_log_enabled                                = true
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
