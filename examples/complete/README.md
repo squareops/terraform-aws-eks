@@ -1,3 +1,6 @@
+## EKS Example
+
+This directory contains a complete example that demonstrates the usage of the Terraform AWS EKS module to provision an EKS cluster and associated resources in AWS. The example showcases a fully configured EKS environment with multiple node groups, custom tags, and Kubernetes labels.
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 

@@ -1,3 +1,16 @@
+## NodeGroup
+
+This directory contains a Terraform module that provisions a managed node group for an existing Amazon Elastic Kubernetes Service (EKS) cluster in AWS. The module simplifies the process of creating and managing worker nodes in the EKS cluster, providing a scalable and reliable infrastructure for running containerized applications.
+Features
+
+The managed-nodegroup module offers the following features:
+
+  1. Automatic provisioning and scaling of EC2 instances for the node group.
+  2. Integration with AWS Auto Scaling to maintain desired capacity and manage node group size.
+  3. Support for different instance types and sizes to meet your application requirements.
+  4. Configuration of node group parameters such as instance tags, labels, and IAM roles.
+  5. Flexible customization options for EBS volumes, encryption, and network settings.
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
