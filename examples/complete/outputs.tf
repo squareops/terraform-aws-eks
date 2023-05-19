@@ -1,44 +1,44 @@
 output "region" {
-  description = "AWS Region"
+  description = "AWS region in which the EKS cluster is created."
   value       = local.region
 }
 
 output "cluster_name" {
-  description = "Kubernetes Cluster Name"
+  description = "Name of the Kubernetes cluster."
   value       = module.eks.cluster_name
 }
 
 output "cluster_endpoint" {
-  description = "Endpoint for EKS control plane"
+  description = "Endpoint URL for the EKS control plane."
   value       = module.eks.cluster_endpoint
 }
 
 output "cluster_security_group_id" {
-  description = "Security group ids attached to the cluster control plane"
+  description = "Security group IDs that are attached to the control plane of the EKS cluster."
   value       = module.eks.cluster_security_group_id
 }
 
 output "cluster_arn" {
-  description = "ARN of EKS Cluster"
+  description = "ARN of the EKS Cluster."
   value       = module.eks.cluster_arn
 }
 
 output "cluster_oidc_issuer_url" {
-  description = "The URL on the EKS cluster for the OpenID Connect identity provider"
+  description = "URL of the OpenID Connect identity provider on the EKS cluster."
   value       = module.eks.cluster_oidc_issuer_url
 }
 
 output "worker_iam_role_arn" {
-  description = "ARN of the EKS Worker Role"
+  description = "ARN of the IAM role assigned to the EKS worker nodes."
   value       = module.eks.worker_iam_role_arn
 }
 
 output "worker_iam_role_name" {
-  description = "The name of the EKS Worker IAM role"
+  description = "Name of the IAM role assigned to the EKS worker nodes."
   value       = module.eks.worker_iam_role_name
 }
 
 output "kms_policy_arn" {
-  description = "ARN of KMS policy"
+  description = "ARN of the KMS policy that is used by the EKS cluster."
   value       = module.eks.kms_policy_arn
 }

@@ -1,19 +1,19 @@
 locals {
   region      = "us-east-2"
   environment = "prod"
-  name        = "skaf"
+  name        = "eks"
   additional_aws_tags = {
-    Owner      = "SquareOps"
+    Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
   }
-  vpc_cidr = "10.10.0.0/16"
+  vpc_cidr           = "10.10.0.0/16"
+  vpn_server_enabled = false
 }
-
-data "aws_availability_zones" "available" {}
 
 module "key_pair_vpn" {
   source             = "squareops/keypair/aws"
+  count              = local.vpn_server_enabled ? 1 : 0
   key_name           = format("%s-%s-vpn", local.environment, local.name)
   environment        = local.environment
   ssm_parameter_path = format("%s-%s-vpn", local.environment, local.name)
@@ -37,9 +37,9 @@ module "vpc" {
   database_subnet_enabled                         = true
   intra_subnet_enabled                            = true
   one_nat_gateway_per_az                          = true
-  vpn_server_enabled                              = false
+  vpn_server_enabled                              = local.vpn_server_enabled
   vpn_server_instance_type                        = "t3a.small"
-  vpn_key_pair_name                               = module.key_pair_vpn.key_pair_name
+  vpn_key_pair_name                               = module.key_pair_vpn[0].key_pair_name
   flow_log_enabled                                = true
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
@@ -51,8 +51,8 @@ module "eks" {
   vpc_id                               = module.vpc.vpc_id
   environment                          = local.environment
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  cluster_version                      = "1.23"
-  cluster_log_types                    = ["api", "scheduler"]
+  cluster_version                      = "1.25"
+  cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
