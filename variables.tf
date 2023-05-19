@@ -11,7 +11,7 @@ variable "name" {
 }
 
 variable "cluster_version" {
-  description = "Kubernetes <major>.<minor> version to use for the EKS cluster"
+  description = "Specifies the Kubernetes version (major.minor) to use for the EKS cluster."
   default     = ""
   type        = string
 }
@@ -29,7 +29,7 @@ variable "cluster_endpoint_public_access_cidrs" {
 }
 
 variable "vpc_id" {
-  description = "ID of the VPC where the EKS cluster and its nodes will be provisioned."
+  description = "ID of the VPC where the EKS cluster will be deployed."
   default     = ""
   type        = string
 }
@@ -41,7 +41,7 @@ variable "kms_key_arn" {
 }
 
 variable "cluster_log_types" {
-  description = "A list of the desired control plane logs to enable for EKS cluster. Valid values: api,audit,authenticator,controllerManager,scheduler"
+  description = "A list of desired control plane logs to enable for the EKS cluster. Valid values include: api, audit, authenticator, controllerManager, scheduler."
   default     = [""]
   type        = list(string)
 }

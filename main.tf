@@ -51,7 +51,6 @@ resource "aws_iam_policy" "kubernetes_pvc_kms_policy" {
 EOF
 }
 
-
 resource "aws_iam_role_policy_attachment" "eks_kms_cluster_policy_attachment" {
   role       = module.eks.cluster_iam_role_name
   policy_arn = aws_iam_policy.kubernetes_pvc_kms_policy.arn

@@ -129,8 +129,6 @@ resource "aws_launch_template" "eks_template" {
   }
 }
 
-
-
 resource "aws_eks_node_group" "managed_ng" {
   subnet_ids      = var.subnet_ids
   cluster_name    = var.eks_cluster_name

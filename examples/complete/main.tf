@@ -13,6 +13,7 @@ locals {
 
 module "key_pair_vpn" {
   source             = "squareops/keypair/aws"
+  count              = local.vpn_server_enabled ? 1 : 0
   key_name           = format("%s-%s-vpn", local.environment, local.name)
   environment        = local.environment
   ssm_parameter_path = format("%s-%s-vpn", local.environment, local.name)
@@ -50,8 +51,8 @@ module "eks" {
   vpc_id                               = module.vpc.vpc_id
   environment                          = local.environment
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  cluster_version                      = "1.23"
-  cluster_log_types                    = ["api", "scheduler"]
+  cluster_version                      = "1.25"
+  cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
