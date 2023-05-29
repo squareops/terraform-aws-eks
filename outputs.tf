@@ -1,6 +1,6 @@
 output "cluster_name" {
   description = "Name of the Kubernetes cluster."
-  value       = module.eks.cluster_id
+  value       = module.eks.cluster_name
 }
 
 output "cluster_endpoint" {

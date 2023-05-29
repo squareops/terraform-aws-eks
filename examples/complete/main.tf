@@ -39,7 +39,7 @@ module "vpc" {
   one_nat_gateway_per_az                          = true
   vpn_server_enabled                              = local.vpn_server_enabled
   vpn_server_instance_type                        = "t3a.small"
-  vpn_key_pair_name                               = module.key_pair_vpn[0].key_pair_name
+  vpn_key_pair_name                               = local.vpn_server_enabled ? module.key_pair_vpn[0].key_pair_name : null
   flow_log_enabled                                = true
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
@@ -47,12 +47,14 @@ module "vpc" {
 
 module "eks" {
   source                               = "squareops/eks/aws"
+  depends_on                           = [module.module.vpc]
   name                                 = local.name
   vpc_id                               = module.vpc.vpc_id
   environment                          = local.environment
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   cluster_version                      = "1.25"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]

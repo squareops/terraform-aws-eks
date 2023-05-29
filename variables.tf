@@ -51,3 +51,15 @@ variable "cluster_log_retention_in_days" {
   default     = 90
   type        = number
 }
+
+variable "private_subnet_ids" {
+  description = "Private subnets of the VPC which can be used by EKS"
+  default     = [""]
+  type        = list(string)
+}
+
+variable "create_kms_key" {
+  description = "Controls if a KMS key for cluster encryption should be created"
+  type        = bool
+  default     = false
+}
