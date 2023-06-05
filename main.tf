@@ -1,6 +1,6 @@
 module "eks" {
   source                    = "terraform-aws-modules/eks/aws"
-  version                   = "19.15.0"
+  version                   = "19.15.2"
   vpc_id                    = var.vpc_id
   subnet_ids                = var.private_subnet_ids
   enable_irsa               = true
