@@ -19,6 +19,9 @@ module "eks" {
   vpc_id                               = module.vpc.vpc_id
   environment                          = "production"
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  create_aws_auth_configmap            = true
+  aws_auth_users                       = []
+  additional_rules                     = {}
   cluster_version                      = "1.25"
   cluster_log_types                    = ["api", "scheduler"]
   private_subnet_ids                   = ["subnet-00exyzf967d21w","subnet-00exyzd967sqop"]
