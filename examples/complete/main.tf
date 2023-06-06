@@ -58,6 +58,24 @@ module "eks" {
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+  create_aws_auth_configmap            = true
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::222222222222:user/aws-user"
+      username = "aws-user"
+      groups   = ["system:masters"]
+    },
+  ]
+  additional_rules = {
+    ingress_port_mgmt_tcp = {
+      description = "mgmt vpc cidr"
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      cidr_blocks = ["172.10.0.0/16"]
+    }
+  }
 }
 
 module "managed_node_group_production" {
