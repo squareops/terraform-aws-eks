@@ -21,6 +21,7 @@ module "eks" {
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   create_aws_auth_configmap            = true
   aws_auth_users                       = []
+  aws_auth_roles                       = []
   additional_rules                     = {}
   cluster_version                      = "1.25"
   cluster_log_types                    = ["api", "scheduler"]
@@ -126,6 +127,7 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_additional_rules"></a> [additional\_rules](#input\_additional\_rules) | List of additional security group rules to add to the cluster security group created. | `any` | `{}` | no |
 | <a name="input_create_aws_auth_configmap"></a> [create\_aws\_auth\_configmap](#input\_create\_aws\_auth\_configmap) | Determines whether to manage the aws-auth configmap | `bool` | `false` | no |
 | <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | List of user maps to add to the aws-auth configmap | `any` | `[]` | no |
+| <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | List of role maps to add to the aws-auth configmap | `list(any)` | `[]` | no |
 
 ## Outputs
 

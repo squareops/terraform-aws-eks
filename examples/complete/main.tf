@@ -59,6 +59,13 @@ module "eks" {
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::222222222222:role/service-role"
+      username = "username"
+      groups   = ["system:masters"]
+    }
+  ]
   aws_auth_users = [
     {
       userarn  = "arn:aws:iam::222222222222:user/aws-user"

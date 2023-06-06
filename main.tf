@@ -12,6 +12,7 @@ module "eks" {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
+  aws_auth_roles                          = var.aws_auth_roles
   aws_auth_users                          = var.aws_auth_users
   create_aws_auth_configmap               = var.create_aws_auth_configmap
   manage_aws_auth_configmap               = var.create_aws_auth_configmap
