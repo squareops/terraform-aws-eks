@@ -63,3 +63,27 @@ variable "create_kms_key" {
   type        = bool
   default     = false
 }
+
+variable "additional_rules" {
+  description = "List of additional security group rules to add to the cluster security group created."
+  type        = any
+  default     = {}
+}
+
+variable "create_aws_auth_configmap" {
+  description = "Determines whether to manage the aws-auth configmap"
+  default     = false
+  type        = bool
+}
+
+variable "aws_auth_users" {
+  description = "List of user maps to add to the aws-auth configmap"
+  type        = any
+  default     = []
+}
+
+variable "aws_auth_roles" {
+  description = "List of role maps to add to the aws-auth configmap"
+  type        = list(any)
+  default     = []
+}

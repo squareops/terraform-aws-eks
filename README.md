@@ -19,6 +19,10 @@ module "eks" {
   vpc_id                               = module.vpc.vpc_id
   environment                          = "production"
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  create_aws_auth_configmap            = true
+  aws_auth_users                       = []
+  aws_auth_roles                       = []
+  additional_rules                     = {}
   cluster_version                      = "1.25"
   cluster_log_types                    = ["api", "scheduler"]
   private_subnet_ids                   = ["subnet-00exyzf967d21w","subnet-00exyzd967sqop"]
@@ -120,6 +124,10 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_cluster_log_retention_in_days"></a> [cluster\_log\_retention\_in\_days](#input\_cluster\_log\_retention\_in\_days) | Retention period for EKS cluster logs in days. Default is set to 90 days. | `number` | `90` | no |
 | <a name="input_private_subnet_ids"></a> [private\_subnet\_ids](#input\_private\_subnet\_ids) | Private subnets of the VPC which can be used by EKS | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_create_kms_key"></a> [create\_kms\_key](#input\_create\_kms\_key) | Controls if a KMS key for cluster encryption should be created | `bool` | `false` | no |
+| <a name="input_additional_rules"></a> [additional\_rules](#input\_additional\_rules) | List of additional security group rules to add to the cluster security group created. | `any` | `{}` | no |
+| <a name="input_create_aws_auth_configmap"></a> [create\_aws\_auth\_configmap](#input\_create\_aws\_auth\_configmap) | Determines whether to manage the aws-auth configmap | `bool` | `false` | no |
+| <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | List of user maps to add to the aws-auth configmap | `any` | `[]` | no |
+| <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | List of role maps to add to the aws-auth configmap | `list(any)` | `[]` | no |
 
 ## Outputs
 
@@ -133,6 +141,7 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="output_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#output\_worker\_iam\_role\_arn) | ARN of the IAM role assigned to the EKS worker nodes. |
 | <a name="output_worker_iam_role_name"></a> [worker\_iam\_role\_name](#output\_worker\_iam\_role\_name) | Name of the IAM role assigned to the EKS worker nodes. |
 | <a name="output_kms_policy_arn"></a> [kms\_policy\_arn](#output\_kms\_policy\_arn) | ARN of the KMS policy that is used by the EKS cluster. |
+| <a name="output_cluster_certificate_authority_data"></a> [cluster\_certificate\_authority\_data](#output\_cluster\_certificate\_authority\_data) | Base64 encoded certificate data required to communicate with the cluster |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Contribution & Issue Reporting

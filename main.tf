@@ -12,10 +12,15 @@ module "eks" {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-  cluster_endpoint_public_access         = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access        = var.cluster_endpoint_public_access ? false : true
-  cluster_endpoint_public_access_cidrs   = var.cluster_endpoint_public_access_cidrs
-  cloudwatch_log_group_retention_in_days = var.cluster_log_retention_in_days
+  aws_auth_roles                          = var.aws_auth_roles
+  aws_auth_users                          = var.aws_auth_users
+  create_aws_auth_configmap               = var.create_aws_auth_configmap
+  manage_aws_auth_configmap               = var.create_aws_auth_configmap
+  cluster_security_group_additional_rules = var.additional_rules
+  cluster_endpoint_public_access          = var.cluster_endpoint_public_access
+  cluster_endpoint_private_access         = var.cluster_endpoint_public_access ? false : true
+  cluster_endpoint_public_access_cidrs    = var.cluster_endpoint_public_access_cidrs
+  cloudwatch_log_group_retention_in_days  = var.cluster_log_retention_in_days
   cluster_encryption_config = {
     provider_key_arn = var.kms_key_arn
     resources        = ["secrets"]
