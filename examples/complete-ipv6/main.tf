@@ -1,9 +1,9 @@
 locals {
-  region      = "ap-south-1"
-  environment = "stage"
+  region      = "us-east-2"
+  environment = "prod"
   name        = "eks"
   additional_aws_tags = {
-    Owner      = "SquareOps"
+    Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
   }
@@ -28,7 +28,7 @@ module "key_pair_eks" {
 }
 
 module "vpc" {
-  source                                          = "git::https://github.com/yuvraj-squareops1/terraform-aws-vpc.git"
+  source                                          = "squareops/vpc/aws"
   environment                                     = local.environment
   name                                            = local.name
   vpc_cidr                                        = local.vpc_cidr
@@ -52,12 +52,12 @@ module "vpc" {
 }
 
 module "eks" {
-  source                               = "git::https://github.com/yuvraj-squareops1/terraform-aws-eks.git"
+  source                               = "squareops/eks/aws"
   depends_on                           = [module.vpc]
   name                                 = local.name
   vpc_id                               = module.vpc.vpc_id
   environment                          = local.environment
-  kms_key_arn                          = "arn:aws:kms:ap-south-1:271251951598:key/3ca4d107-9545-427e-9305-3fdf15f6a97d"
+  kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   cluster_version                      = "1.25"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
@@ -65,17 +65,17 @@ module "eks" {
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
-  # aws_auth_roles = [
-  #   {
-  #     rolearn  = "arn:aws:iam::222222222222:role/service-role"
-  #     username = "username"
-  #     groups   = ["system:masters"]
-  #   }
-  # ]
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::222222222222:role/service-role"
+      username = "username"
+      groups   = ["system:masters"]
+    }
+  ]
   aws_auth_users = [
     {
-      userarn  = "arn:aws:iam::271251951598:user/yuvraj-aws-skaf"
-      username = "yuvraj-aws-skaf"
+      userarn  = "arn:aws:iam::222222222222:user/aws-user"
+      username = "aws-user"
       groups   = ["system:masters"]
     },
   ]
@@ -93,7 +93,7 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                 = "git::https://github.com/yuvraj-squareops1/terraform-aws-eks.git//modules/managed-nodegroup"
+  source                 = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on             = [module.vpc, module.eks]
   name                   = "Infra"
   min_size               = 1
@@ -101,7 +101,7 @@ module "managed_node_group_production" {
   desired_size           = 1
   subnet_ids             = [module.vpc.private_subnets[0]]
   environment            = local.environment
-  kms_key_arn            = "arn:aws:kms:ap-south-1:271251951598:key/3ca4d107-9545-427e-9305-3fdf15f6a97d"
+  kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   capacity_type          = "ON_DEMAND"
   instance_types         = ["t3a.large", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
