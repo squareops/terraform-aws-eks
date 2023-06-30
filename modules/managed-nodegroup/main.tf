@@ -6,10 +6,6 @@ data "aws_iam_role" "worker_iam_role_name" {
   name = var.worker_iam_role_name
 }
 
-variable "cluster_ip_family" {
-  default = data.aws_eks_cluster.eks.kubernetes_network_config.ip_family
-}
-
 data "aws_caller_identity" "current" {}
 data "aws_ami" "launch_template_ami" {
   owners      = ["602401143452"]
@@ -73,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "eks_worker_policy" {
 
 resource "aws_iam_role_policy_attachment" "cni_policy" {
   role       = var.worker_iam_role_name
-  policy_arn = "${var.cluster_ip_family}" == "ipv4" ?  "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AmazonEKS_CNI_IPv6_Policy"
+    policy_arn = "${data.aws_eks_cluster.eks.kubernetes_network_config[0].ip_family}" == "ipv4" ?  "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AmazonEKS_CNI_IPv6_Policy"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {
@@ -82,7 +78,7 @@ resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {
 }
 
 data "template_file" "launch_template_userdata" {
-  template = file("${path.module}/templates/${var.cluster_ip_family == "ipv4" ? "custom-bootstrap-script.sh.tpl" : "custom-bootstrap-scriptipv6.sh.tpl"}")
+  template = file("${path.module}/templates/${data.aws_eks_cluster.eks.kubernetes_network_config[0].ip_family == "ipv4" ? "custom-bootstrap-script.sh.tpl" : "custom-bootstrap-scriptipv6.sh.tpl"}")
 
   vars = {
     endpoint                     = data.aws_eks_cluster.eks.endpoint
