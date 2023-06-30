@@ -108,7 +108,6 @@ module "managed_node_group_production" {
   eks_cluster_name       = module.eks.cluster_name
   worker_iam_role_name   = module.eks.worker_iam_role_name
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
-  ipv6_enabled = local.ipv6_enabled
   k8s_labels = {
     "Infra-Services" = "true"
   }
