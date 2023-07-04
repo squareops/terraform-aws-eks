@@ -1,3 +1,9 @@
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy" "existing_cni_ipv6_policy" {
+  arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AmazonEKS_CNI_IPv6_Policy"
+}
+
 module "eks" {
   source                    = "terraform-aws-modules/eks/aws"
   version                   = "19.15.2"
@@ -25,7 +31,7 @@ module "eks" {
     provider_key_arn = var.kms_key_arn
     resources        = ["secrets"]
   }
-  create_cni_ipv6_iam_policy = var.ipv6_enabled ? true : false
+  create_cni_ipv6_iam_policy =  var.ipv6_enabled && length(data.aws_iam_policy.existing_cni_ipv6_policy) == 0 ? true : false
   cluster_ip_family = var.ipv6_enabled ? "ipv6" : null
 }
 
