@@ -142,3 +142,9 @@ variable "worker_iam_role_name" {
   type        = string
   default     = ""
 }
+
+variable "ipv6_enabled" {
+  description = "Whether IPv6 enabled or not"
+  type        = bool
+  default     = false 
+}

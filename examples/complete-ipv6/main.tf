@@ -112,4 +112,5 @@ module "managed_node_group_production" {
     "Infra-Services" = "true"
   }
   tags = local.additional_aws_tags
+  ipv6_enabled = local.ipv6_enabled
 }

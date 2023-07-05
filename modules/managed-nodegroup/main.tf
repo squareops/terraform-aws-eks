@@ -57,6 +57,40 @@ resource "aws_iam_role_policy_attachment" "node_autoscaler_policy" {
   policy_arn = aws_iam_policy.node_autoscaler_policy.arn
 }
 
+resource "aws_iam_policy" "eks_cni_ipv6_policy" {
+  count = var.ipv6_enabled == true ? 1 : 0
+  name        = format("%s-%s-%s-eks-cni-ipv6-policy", var.environment, var.name, var.eks_cluster_name)
+  path        = "/"
+  description = "Node auto scaler policy for node groups."
+  policy      = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AssignIpv6Addresses",
+                "ec2:DescribeInstances",
+                "ec2:DescribeTags",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DescribeInstanceTypes"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateTags"
+            ],
+            "Resource": [
+                "arn:aws:ec2:*:*:network-interface/*"
+            ]
+        }
+    ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "eks_kms_worker_policy_attachment" {
   role       = var.worker_iam_role_name
   policy_arn = var.kms_policy_arn
@@ -69,7 +103,7 @@ resource "aws_iam_role_policy_attachment" "eks_worker_policy" {
 
 resource "aws_iam_role_policy_attachment" "cni_policy" {
   role       = var.worker_iam_role_name
-  policy_arn = "${data.aws_eks_cluster.eks.kubernetes_network_config[0].ip_family}" == "ipv4" ?  "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AmazonEKS_CNI_IPv6_Policy"
+  policy_arn = var.ipv6_enabled == false ?  "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : "${aws_iam_policy.eks_cni_ipv6_policy[0].arn}"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {
