@@ -69,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "eks_worker_policy" {
 
 resource "aws_iam_role_policy_attachment" "cni_policy" {
   role       = var.worker_iam_role_name
-    policy_arn = "${data.aws_eks_cluster.eks.kubernetes_network_config[0].ip_family}" == "ipv4" ?  "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AmazonEKS_CNI_IPv6_Policy"
+  policy_arn = "${data.aws_eks_cluster.eks.kubernetes_network_config[0].ip_family}" == "ipv4" ?  "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AmazonEKS_CNI_IPv6_Policy"
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {
