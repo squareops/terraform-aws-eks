@@ -5,9 +5,9 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-This module simplifies the deployment of EKS clusters, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, and number of worker nodes. Additionally, the module provides a set of outputs that can be used to configure other resources, such as the Kubernetes config file and the AWS CLI.
-
-This module is ideal for users who want to quickly deploy an EKS cluster on AWS without the need for manual setup and configuration. It is also suitable for users who want to adopt best practices for security and scalability in their EKS deployments.
+This module simplifies the deployment of EKS clusters, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.26.
+<br>
+With this module, users can take advantage of the latest features and improvements offered by EKS 1.26 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
 
 
 ## Usage Example
@@ -23,7 +23,7 @@ module "eks" {
   aws_auth_users                       = []
   aws_auth_roles                       = []
   additional_rules                     = {}
-  cluster_version                      = "1.25"
+  cluster_version                      = "1.26"
   cluster_log_types                    = ["api", "scheduler"]
   private_subnet_ids                   = ["subnet-00exyzf967d21w","subnet-00exyzd967sqop"]
   cluster_log_retention_in_days        = 30
