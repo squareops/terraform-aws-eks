@@ -6,7 +6,6 @@ data "aws_iam_role" "worker_iam_role_name" {
   name = var.worker_iam_role_name
 }
 
-data "aws_caller_identity" "current" {}
 data "aws_ami" "launch_template_ami" {
   owners      = ["602401143452"]
   most_recent = true
@@ -58,7 +57,7 @@ resource "aws_iam_role_policy_attachment" "node_autoscaler_policy" {
 }
 
 resource "aws_iam_policy" "eks_cni_ipv6_policy" {
-  count = var.ipv6_enabled == true ? 1 : 0
+  count       = var.ipv6_enabled == true ? 1 : 0
   name        = format("%s-%s-%s-eks-cni-ipv6-policy", var.environment, var.name, var.eks_cluster_name)
   path        = "/"
   description = "Node auto scaler policy for node groups."
@@ -103,7 +102,7 @@ resource "aws_iam_role_policy_attachment" "eks_worker_policy" {
 
 resource "aws_iam_role_policy_attachment" "cni_policy" {
   role       = var.worker_iam_role_name
-  policy_arn = var.ipv6_enabled == false ?  "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : "${aws_iam_policy.eks_cni_ipv6_policy[0].arn}"
+  policy_arn = var.ipv6_enabled == false ? "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : aws_iam_policy.eks_cni_ipv6_policy[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {

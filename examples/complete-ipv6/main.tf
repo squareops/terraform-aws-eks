@@ -9,7 +9,7 @@ locals {
   }
   vpc_cidr           = "10.10.0.0/16"
   vpn_server_enabled = false
-  ipv6_enabled = true
+  ipv6_enabled       = true
 }
 
 module "key_pair_vpn" {
@@ -44,11 +44,11 @@ module "vpc" {
   flow_log_enabled                                = true
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
-  ipv6_enabled = local.ipv6_enabled
-  public_subnet_assign_ipv6_address_on_creation = true
-  private_subnet_assign_ipv6_address_on_creation = true
+  ipv6_enabled                                    = local.ipv6_enabled
+  public_subnet_assign_ipv6_address_on_creation   = true
+  private_subnet_assign_ipv6_address_on_creation  = true
   database_subnet_assign_ipv6_address_on_creation = true
-  intra_subnet_assign_ipv6_address_on_creation = true 
+  intra_subnet_assign_ipv6_address_on_creation    = true
 }
 
 module "eks" {
@@ -111,6 +111,6 @@ module "managed_node_group_production" {
   k8s_labels = {
     "Infra-Services" = "true"
   }
-  tags = local.additional_aws_tags
+  tags         = local.additional_aws_tags
   ipv6_enabled = local.ipv6_enabled
 }

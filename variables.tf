@@ -90,6 +90,6 @@ variable "aws_auth_roles" {
 
 variable "ipv6_enabled" {
   description = "Enable cluster IP family as Ipv6"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }

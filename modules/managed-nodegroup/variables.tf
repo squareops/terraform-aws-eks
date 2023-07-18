@@ -146,5 +146,5 @@ variable "worker_iam_role_name" {
 variable "ipv6_enabled" {
   description = "Whether IPv6 enabled or not"
   type        = bool
-  default     = false 
+  default     = false
 }
