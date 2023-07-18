@@ -52,7 +52,7 @@ module "eks" {
   vpc_id                               = module.vpc.vpc_id
   environment                          = local.environment
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  cluster_version                      = "1.25"
+  cluster_version                      = "1.26"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
