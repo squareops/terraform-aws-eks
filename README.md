@@ -16,7 +16,7 @@ With this module, users can take advantage of the latest features and improvemen
 module "eks" {
   source                               = "squareops/eks/aws"
   name                                 = "SKAF"
-  vpc_id                               = module.vpc.vpc_id
+  vpc_id                               = "vpc-xyzc8ed708f68skaf"
   environment                          = "production"
   ipv6_enabled                         = true
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
@@ -30,7 +30,7 @@ module "eks" {
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  
+
 }
 
 module "managed_node_group_production" {
