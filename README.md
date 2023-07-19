@@ -5,7 +5,7 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-This module simplifies the deployment of EKS clusters, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.26.
+This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.26.
 <br>
 With this module, users can take advantage of the latest features and improvements offered by EKS 1.26 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
 
@@ -16,8 +16,9 @@ With this module, users can take advantage of the latest features and improvemen
 module "eks" {
   source                               = "squareops/eks/aws"
   name                                 = "SKAF"
-  vpc_id                               = module.vpc.vpc_id
+  vpc_id                               = "vpc-xyzc8ed708f68skaf"
   environment                          = "production"
+  ipv6_enabled                         = true
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   create_aws_auth_configmap            = true
   aws_auth_users                       = []
@@ -29,6 +30,7 @@ module "eks" {
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+
 }
 
 module "managed_node_group_production" {
@@ -40,6 +42,7 @@ module "managed_node_group_production" {
   desired_size           = 1
   subnet_ids             = ["subnet-00exyzd5df967d21w"]
   environment            = "production"
+  ipv6_enabled           = true
   kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   capacity_type          = "ON_DEMAND"
   instance_types         = ["t3a.large", "t2.large"]
@@ -128,6 +131,7 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_create_aws_auth_configmap"></a> [create\_aws\_auth\_configmap](#input\_create\_aws\_auth\_configmap) | Determines whether to manage the aws-auth configmap | `bool` | `false` | no |
 | <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | List of user maps to add to the aws-auth configmap | `any` | `[]` | no |
 | <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | List of role maps to add to the aws-auth configmap | `list(any)` | `[]` | no |
+| <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Enable cluster IP family as Ipv6 | `bool` | `false` | no |
 
 ## Outputs
 

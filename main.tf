@@ -25,6 +25,7 @@ module "eks" {
     provider_key_arn = var.kms_key_arn
     resources        = ["secrets"]
   }
+  cluster_ip_family = var.ipv6_enabled ? "ipv6" : null
 }
 
 resource "aws_iam_policy" "kubernetes_pvc_kms_policy" {
