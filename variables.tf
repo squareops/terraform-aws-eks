@@ -93,3 +93,9 @@ variable "ipv6_enabled" {
   type        = bool
   default     = false
 }
+
+variable "cluster_log_group_kms_key_arn" {
+  description = "kms key arn for encrypting log cluster log group"
+  default     = ""
+  type        = string
+}

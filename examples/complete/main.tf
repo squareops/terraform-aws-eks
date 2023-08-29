@@ -1,7 +1,7 @@
 locals {
   region      = "us-east-2"
   environment = "prod"
-  name        = "eks"
+  name        = "eks-ak"
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
@@ -56,6 +56,7 @@ module "eks" {
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
+  cluster_log_group_kms_key_arn        = "" #Enter kms key arn for log group encryption
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true

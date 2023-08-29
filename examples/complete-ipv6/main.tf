@@ -62,6 +62,7 @@ module "eks" {
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
+  cluster_log_group_kms_key_arn        = "" #Enter your kms key arn for encrypting cloudwatch log
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true

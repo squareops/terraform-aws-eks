@@ -21,6 +21,7 @@ module "eks" {
   cluster_endpoint_private_access         = var.cluster_endpoint_public_access ? false : true
   cluster_endpoint_public_access_cidrs    = var.cluster_endpoint_public_access_cidrs
   cloudwatch_log_group_retention_in_days  = var.cluster_log_retention_in_days
+  cloudwatch_log_group_kms_key_id         = var.cluster_log_group_kms_key_arn
   cluster_encryption_config = {
     provider_key_arn = var.kms_key_arn
     resources        = ["secrets"]
