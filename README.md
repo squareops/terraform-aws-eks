@@ -24,7 +24,7 @@ module "eks" {
   aws_auth_users                       = []
   aws_auth_roles                       = []
   additional_rules                     = {}
-  cluster_version                      = "1.26"
+  cluster_version                      = "1.27"
   cluster_log_types                    = ["api", "scheduler"]
   private_subnet_ids                   = ["subnet-00exyzf967d21w","subnet-00exyzd967sqop"]
   cluster_log_retention_in_days        = 30
@@ -62,6 +62,42 @@ Refer [examples](https://github.com/squareops/terraform-aws-eks/tree/main/exampl
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-eks/blob/main/IAM.md)
 
+## Important Note:
+
+Please use this KMS key policy for encrypting cloudwatch log group. Change the account id and region.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Id": "allow-cloudwatch-logs-encryption",
+    "Statement": [
+        {
+            "Sid": "AllowRootFullPermissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::12345678:root"
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowCloudWatchLogsEncryption",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "logs.us-east-2.amazonaws.com"
+            },
+            "Action": [
+                "kms:Encrypt*",
+                "kms:Decrypt*",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Describe*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
 ## EKS-BOOTSTRAP
 
 The EKS module is designed to be used as a standalone Terraform module. We recommend using [EKS-Bootstrap](https://registry.terraform.io/modules/squareops/eks-bootstrap/aws/latest) module  in conjunction to enhance functionality.

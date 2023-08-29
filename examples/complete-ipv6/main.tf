@@ -44,6 +44,7 @@ module "vpc" {
   flow_log_enabled                                = true
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
+  flow_log_cloudwatch_log_group_kms_key_arn       = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   ipv6_enabled                                    = local.ipv6_enabled
   public_subnet_assign_ipv6_address_on_creation   = true
   private_subnet_assign_ipv6_address_on_creation  = true
@@ -58,11 +59,10 @@ module "eks" {
   vpc_id                               = module.vpc.vpc_id
   environment                          = local.environment
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  cluster_version                      = "1.26"
+  cluster_version                      = "1.27"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
-  cluster_log_group_kms_key_arn        = "" #Enter your kms key arn for encrypting cloudwatch log
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
@@ -87,7 +87,7 @@ module "eks" {
       from_port   = 443
       to_port     = 443
       type        = "ingress"
-      cidr_blocks = ["172.10.0.0/16"]
+      cidr_blocks = ["10.10.0.0/16"]
     }
   }
   ipv6_enabled = local.ipv6_enabled
