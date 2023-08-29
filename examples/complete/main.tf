@@ -1,7 +1,7 @@
 locals {
   region      = "us-east-2"
   environment = "prod"
-  name        = "eks-ak"
+  name        = "eks"
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
