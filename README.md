@@ -118,9 +118,9 @@ Please use this KMS key policy for encrypting cloudwatch log group. Change the a
     ]
 }
 ```
-## EKS-BOOTSTRAP
+## EKS-Addons
 
-The EKS module is designed to be used as a standalone Terraform module. We recommend using [EKS-Bootstrap](https://registry.terraform.io/modules/squareops/eks-bootstrap/aws/latest) module  in conjunction to enhance functionality.
+The EKS module is designed to be used as a standalone Terraform module. We recommend using [EKS-Addons](https://registry.terraform.io/modules/squareops/eks-addons/aws/latest) module  in conjunction to enhance functionality.
 
 ## CIS COMPLIANCE [<img src="	https://prowler.pro/wp-content/themes/prowler-pro/assets/img/logo.svg" width="250" align="right" />](https://prowler.pro/)
 
