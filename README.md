@@ -15,22 +15,41 @@ With this module, users can take advantage of the latest features and improvemen
 ```hcl
 module "eks" {
   source                               = "squareops/eks/aws"
-  name                                 = "SKAF"
-  vpc_id                               = "vpc-xyzc8ed708f68skaf"
-  environment                          = "production"
-  ipv6_enabled                         = true
+  name                                 = "skaf"
+  vpc_id                               = "vpc-xyz425342176"
+  environment                          = "prod"
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  create_aws_auth_configmap            = true
-  aws_auth_users                       = []
-  aws_auth_roles                       = []
-  additional_rules                     = {}
-  cluster_version                      = "1.26"
-  cluster_log_types                    = ["api", "scheduler"]
-  private_subnet_ids                   = ["subnet-00exyzf967d21w","subnet-00exyzd967sqop"]
+  cluster_version                      = "1.27"
+  cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-
+  create_aws_auth_configmap            = true
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::222222222222:role/service-role"
+      username = "username"
+      groups   = ["system:masters"]
+    }
+  ]
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::222222222222:user/aws-user"
+      username = "aws-user"
+      groups   = ["system:masters"]
+    },
+  ]
+  additional_rules = {
+    ingress_port_mgmt_tcp = {
+      description = "mgmt vpc cidr"
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      cidr_blocks = ["10.10.0.0/16"]
+    }
+  }
 }
 
 module "managed_node_group_production" {
@@ -40,20 +59,21 @@ module "managed_node_group_production" {
   min_size               = 1
   max_size               = 3
   desired_size           = 1
-  subnet_ids             = ["subnet-00exyzd5df967d21w"]
-  environment            = "production"
-  ipv6_enabled           = true
+  subnet_ids             = ["subnet-abc123"]
+  environment            = "prod"
   kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   capacity_type          = "ON_DEMAND"
-  instance_types         = ["t3a.large", "t2.large"]
-  kms_policy_arn         = "kms_policy_arn"
-  eks_cluster_name       = "production-cluster"
-  worker_iam_role_name   = "arn:aws:iam::222222222222:role/worker_iam_role_arn"
-  eks_nodes_keypair_name = "prod-key"
+  instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  kms_policy_arn         = module.eks.kms_policy_arn
+  eks_cluster_name       = module.eks.cluster_name
+  worker_iam_role_name   = module.eks.worker_iam_role_name
+  eks_nodes_keypair_name = "key-pair-name"
   k8s_labels = {
     "Infra-Services" = "true"
   }
-  tags = local.additional_aws_tags
+  tags = {
+    Name = "skaf-prod-cluster"
+  }
 }
 
 ```
@@ -62,9 +82,45 @@ Refer [examples](https://github.com/squareops/terraform-aws-eks/tree/main/exampl
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-eks/blob/main/IAM.md)
 
-## EKS-BOOTSTRAP
+## Important Note:
 
-The EKS module is designed to be used as a standalone Terraform module. We recommend using [EKS-Bootstrap](https://registry.terraform.io/modules/squareops/eks-bootstrap/aws/latest) module  in conjunction to enhance functionality.
+Please use this KMS key policy for encrypting cloudwatch log group. Change the account id and region.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Id": "allow-cloudwatch-logs-encryption",
+    "Statement": [
+        {
+            "Sid": "AllowRootFullPermissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::12345678:root"
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowCloudWatchLogsEncryption",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "logs.us-east-2.amazonaws.com"
+            },
+            "Action": [
+                "kms:Encrypt*",
+                "kms:Decrypt*",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:Describe*"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+## EKS-Addons
+
+The EKS module is designed to be used as a standalone Terraform module. We recommend using [EKS-Addons](https://registry.terraform.io/modules/squareops/eks-addons/aws/latest) module  in conjunction to enhance functionality.
 
 ## CIS COMPLIANCE [<img src="	https://prowler.pro/wp-content/themes/prowler-pro/assets/img/logo.svg" width="250" align="right" />](https://prowler.pro/)
 
