@@ -28,6 +28,12 @@ variable "cluster_endpoint_public_access_cidrs" {
   type        = list(string)
 }
 
+variable "cluster_endpoint_private_access" {
+  description = "Whether the Amazon EKS public API server endpoint is enabled or not."
+  default     = false
+  type        = bool
+}
+
 variable "vpc_id" {
   description = "ID of the VPC where the EKS cluster will be deployed."
   default     = ""
@@ -93,3 +99,16 @@ variable "ipv6_enabled" {
   type        = bool
   default     = false
 }
+
+variable "fargate_profile_namespace" {
+  description = "Namespace where fargate profile to be created"
+  type        = string
+  default     = "default"
+}
+
+variable "app_fargate_label" {
+  description = "Application label for fargate profile"
+  type        = string
+  default     = "app"
+}
+

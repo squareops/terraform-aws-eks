@@ -18,7 +18,7 @@ module "eks" {
   name                                 = "skaf"
   vpc_id                               = "vpc-xyz425342176"
   environment                          = "prod"
-  kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  kms_key_arn                          = "module.kms.key_arn"
   cluster_version                      = "1.27"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
@@ -61,7 +61,7 @@ module "managed_node_group_production" {
   desired_size           = 1
   subnet_ids             = ["subnet-abc123"]
   environment            = "prod"
-  kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  kms_key_arn            = "module.kms.key_arn"
   capacity_type          = "ON_DEMAND"
   instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn

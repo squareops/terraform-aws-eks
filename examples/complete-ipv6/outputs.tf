@@ -42,3 +42,17 @@ output "kms_policy_arn" {
   description = "ARN of the KMS policy that is used by the EKS cluster."
   value       = module.eks.kms_policy_arn
 }
+output "key_arn" {
+  description = "The Amazon Resource Name (ARN) of the key"
+  value       = module.kms.key_arn
+}
+
+output "key_id" {
+  description = "The globally unique identifier for the key"
+  value       = module.kms.key_id
+}
+
+output "key_policy" {
+  description = "The IAM resource policy set on the key"
+  value       = module.kms.key_policy
+}
