@@ -20,11 +20,13 @@ data "aws_iam_policy" "SSMManagedInstanceCore" {
 }
 
 resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
+  count = var.defaut_addon_enabled ? 0 : 1
   role       = var.worker_iam_role_name
   policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
 }
 
 resource "aws_iam_policy" "node_autoscaler_policy" {
+  count = var.defaut_addon_enabled ? 0 : 1
   name        = format("%s-%s-%s-node-autoscaler-policy", var.environment, var.name, var.eks_cluster_name)
   path        = "/"
   description = "Node auto scaler policy for node groups."
@@ -52,12 +54,13 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "node_autoscaler_policy" {
+  count = var.defaut_addon_enabled ? 0 : 1
   role       = var.worker_iam_role_name
-  policy_arn = aws_iam_policy.node_autoscaler_policy.arn
+  policy_arn = aws_iam_policy.node_autoscaler_policy[0].arn
 }
 
 resource "aws_iam_policy" "eks_cni_ipv6_policy" {
-  count       = var.ipv6_enabled == true ? 1 : 0
+  count       = var.ipv6_enabled && !var.defaut_addon_enabled ? 1 : 0
   name        = format("%s-%s-%s-eks-cni-ipv6-policy", var.environment, var.name, var.eks_cluster_name)
   path        = "/"
   description = "Node auto scaler policy for node groups."
@@ -91,21 +94,25 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kms_worker_policy_attachment" {
+  count = var.defaut_addon_enabled ? 0 : 1
   role       = var.worker_iam_role_name
   policy_arn = var.kms_policy_arn
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_policy" {
+  count = var.defaut_addon_enabled ? 0 : 1
   role       = var.worker_iam_role_name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "cni_policy" {
+  count = var.defaut_addon_enabled ? 0 : 1  
   role       = var.worker_iam_role_name
   policy_arn = var.ipv6_enabled == false ? "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : aws_iam_policy.eks_cni_ipv6_policy[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {
+  count = var.defaut_addon_enabled ? 0 : 1
   role       = var.worker_iam_role_name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }

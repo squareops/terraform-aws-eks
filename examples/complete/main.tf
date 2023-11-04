@@ -9,6 +9,7 @@ locals {
   }
   vpc_cidr           = "10.10.0.0/16"
   vpn_server_enabled = false
+  defaut_addon_enabled =  false
 }
 
 module "key_pair_vpn" {
@@ -25,6 +26,7 @@ module "key_pair_eks" {
   environment        = local.environment
   ssm_parameter_path = format("%s-%s-eks", local.environment, local.name)
 }
+
 
 module "vpc" {
   source                                          = "squareops/vpc/aws"
@@ -60,6 +62,9 @@ module "eks" {
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
+  defaut_addon_enabled = local.defaut_addon_enabled
+  eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
+  kms_policy_arn = module.eks.kms_policy_arn
   aws_auth_roles = [
     {
       rolearn  = "arn:aws:iam::222222222222:role/service-role"
@@ -100,6 +105,7 @@ module "managed_node_group_production" {
   instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
+  defaut_addon_enabled   = local.defaut_addon_enabled
   worker_iam_role_name   = module.eks.worker_iam_role_name
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {
