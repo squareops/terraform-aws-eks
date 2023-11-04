@@ -7,9 +7,9 @@ locals {
     Expires    = "Never"
     Department = "Engineering"
   }
-  vpc_cidr           = "10.10.0.0/16"
-  vpn_server_enabled = false
-  defaut_addon_enabled =  false
+  vpc_cidr              = "10.10.0.0/16"
+  vpn_server_enabled    = false
+  defaut_addon_enabled  =  false
 }
 
 module "key_pair_vpn" {
@@ -62,9 +62,9 @@ module "eks" {
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
-  defaut_addon_enabled = local.defaut_addon_enabled
-  eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
-  kms_policy_arn = module.eks.kms_policy_arn
+  defaut_addon_enabled                 = local.defaut_addon_enabled
+  eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
+  kms_policy_arn                       = module.eks.kms_policy_arn
   aws_auth_roles = [
     {
       rolearn  = "arn:aws:iam::222222222222:role/service-role"
