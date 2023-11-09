@@ -93,10 +93,10 @@ variable "ipv6_enabled" {
   type        = bool
   default     = false
 }
-variable "defaut_addon_enabled" {
+variable "default_addon_enabled" {
   description = "Enable deafult addons(vpc-cni, ebs-csi) at the time of cluster creation"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "eks_nodes_keypair_name" {
@@ -248,7 +248,7 @@ variable "cluster_addon_default_config" {
     }
   }
   description = "addon config"
-  type = any
+  type        = any
 }
 
 variable "cluster_addon_config" {
@@ -267,11 +267,11 @@ variable "cluster_addon_config" {
     }
   }
   description = "addon config"
-  type = any
+  type        = any
 }
 
 
 variable "default_ng_enable" {
-  type = bool
+  type    = bool
   default = true
 }

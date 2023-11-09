@@ -10,7 +10,7 @@ locals {
   vpc_cidr              = "10.10.0.0/16"
   vpn_server_enabled    = false
   ipv6_enabled          = true
-  defaut_addon_enabled  =  false
+  default_addon_enabled = false
 }
 
 module "key_pair_vpn" {
@@ -62,7 +62,7 @@ module "eks" {
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   cluster_version                      = "1.27"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  defaut_addon_enabled                 = local.defaut_addon_enabled
+  default_addon_enabled                = local.default_addon_enabled
   eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
   kms_policy_arn                       = module.eks.kms_policy_arn
   private_subnet_ids                   = module.vpc.private_subnets
@@ -111,7 +111,7 @@ module "managed_node_group_production" {
   instance_types         = ["t3a.large", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
-  defaut_addon_enabled   = local.defaut_addon_enabled
+  default_addon_enabled  = local.default_addon_enabled
   worker_iam_role_name   = module.eks.worker_iam_role_name
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {

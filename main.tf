@@ -1,5 +1,5 @@
 module "eks_addon" {
-  count = var.defaut_addon_enabled ? 1 : 0
+  count                     = var.default_addon_enabled ? 1 : 0
   source                    = "terraform-aws-modules/eks/aws"
   version                   = "19.15.2"
   vpc_id                    = var.vpc_id
@@ -51,7 +51,7 @@ module "eks_addon" {
 }
 
 module "eks" {
-  count = var.defaut_addon_enabled ? 0 : 1
+  count                     = var.default_addon_enabled ? 0 : 1
   source                    = "terraform-aws-modules/eks/aws"
   version                   = "19.15.2"
   vpc_id                    = var.vpc_id
@@ -104,7 +104,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "eks_kms_cluster_policy_attachment" {
-  role       = var.defaut_addon_enabled ?  module.eks_addon[0].cluster_iam_role_name : module.eks[0].cluster_iam_role_name
+  role       = var.default_addon_enabled ? module.eks_addon[0].cluster_iam_role_name : module.eks[0].cluster_iam_role_name
   policy_arn = aws_iam_policy.kubernetes_pvc_kms_policy.arn
 }
 
@@ -132,7 +132,7 @@ EOF
   )
 }
 data "aws_ami" "launch_template_ami" {
-  count = var.defaut_addon_enabled ? 1 : 0
+  count       = var.default_addon_enabled ? 1 : 0
   owners      = ["602401143452"]
   most_recent = true
   filter {
@@ -237,7 +237,7 @@ resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {
 }
 
 data "template_file" "launch_template_userdata" {
-  count = var.defaut_addon_enabled ? 1 : 0
+  count    = var.default_addon_enabled ? 1 : 0
   template = file("${path.module}/modules/managed-nodegroup/templates/${var.ipv6_enabled == false ? "custom-bootstrap-script.sh.tpl" : "custom-bootstrap-scriptipv6.sh.tpl"}")
 
   vars = {
@@ -252,7 +252,7 @@ data "template_file" "launch_template_userdata" {
 }
 
 resource "aws_launch_template" "eks_template" {
-  count = var.defaut_addon_enabled ? 1 : 0
+  count                  = var.default_addon_enabled ? 1 : 0
   name                   = format("%s-%s-%s", var.environment, var.name, "default-launch-template")
   key_name               = var.eks_nodes_keypair_name
   image_id               = data.aws_ami.launch_template_ami[0].image_id
@@ -292,7 +292,7 @@ resource "aws_launch_template" "eks_template" {
 }
 
 resource "aws_eks_node_group" "default_ng" {
-  count = var.defaut_addon_enabled ? 1 : 0
+  count           = var.default_addon_enabled ? 1 : 0
   subnet_ids      = var.subnet_ids
   cluster_name    = module.eks_addon[0].cluster_name
   node_role_arn   = aws_iam_role.node_role.arn
