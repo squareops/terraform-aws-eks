@@ -98,7 +98,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                               = "../../"
+  source                               = "squareops/eks/aws"
   depends_on                           = [module.vpc]
   name                                 = local.name
   vpc_id                               = module.vpc.vpc_id
@@ -147,7 +147,7 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                 = "../../modules/managed-nodegroup"
+  source                 = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on             = [module.vpc, module.eks]
   name                   = "Infra"
   min_size               = 1

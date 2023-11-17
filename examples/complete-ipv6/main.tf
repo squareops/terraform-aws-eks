@@ -104,7 +104,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                               = "../../"
+  source                               = "squareops/eks/aws"
   depends_on                           = [module.vpc]
   name                                 = local.name
   vpc_id                               = module.vpc.vpc_id
