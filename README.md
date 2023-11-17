@@ -5,9 +5,11 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.26.
+This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.27.
 <br>
-With this module, users can take advantage of the latest features and improvements offered by EKS 1.26 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
+we've introduced a new functionality that enhances the ease of cluster setup. Users can now choose to create a default nodegroup based on the  value of default_addon_enabled.the module now seamlessly integrates default addons, including CoreDNS, Kube-proxy, VPC CNI, and EBS CSI Driver. This ensures that your EKS clusters are equipped with essential components for optimal performance and functionality right from the start.
+<br>
+With this module, users can take advantage of the latest features and improvements offered by EKS 1.27 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
 
 
 ## Usage Example
@@ -22,6 +24,7 @@ module "eks" {
   cluster_version                      = "1.27"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
+  default_addon_enabled                = true
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
@@ -67,12 +70,13 @@ module "managed_node_group_production" {
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
   worker_iam_role_name   = module.eks.worker_iam_role_name
+  default_addon_enabled  = true
   eks_nodes_keypair_name = "key-pair-name"
   k8s_labels = {
     "Infra-Services" = "true"
   }
   tags = {
-    Name = "skaf-prod-cluster"
+    Name = "prod-cluster"
   }
 }
 
@@ -82,42 +86,7 @@ Refer [examples](https://github.com/squareops/terraform-aws-eks/tree/main/exampl
 ## IAM Permissions
 The required IAM permissions to create resources from this module can be found [here](https://github.com/squareops/terraform-aws-eks/blob/main/IAM.md)
 
-## Important Note:
 
-Please use this KMS key policy for encrypting cloudwatch log group. Change the account id and region.
-
-```json
-{
-    "Version": "2012-10-17",
-    "Id": "allow-cloudwatch-logs-encryption",
-    "Statement": [
-        {
-            "Sid": "AllowRootFullPermissions",
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "arn:aws:iam::12345678:root"
-            },
-            "Action": "kms:*",
-            "Resource": "*"
-        },
-        {
-            "Sid": "AllowCloudWatchLogsEncryption",
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "logs.us-east-2.amazonaws.com"
-            },
-            "Action": [
-                "kms:Encrypt*",
-                "kms:Decrypt*",
-                "kms:ReEncrypt*",
-                "kms:GenerateDataKey*",
-                "kms:Describe*"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
 ## EKS-Addons
 
 The EKS module is designed to be used as a standalone Terraform module. We recommend using [EKS-Addons](https://registry.terraform.io/modules/squareops/eks-addons/aws/latest) module  in conjunction to enhance functionality.
@@ -225,9 +194,6 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_k8s_labels"></a> [k8s\_labels](#input\_k8s\_labels) | Labels to be applied to the Kubernetes node groups. | `map(any)` | `{}` | no |
 | <a name="input_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#input\_worker\_iam\_role\_arn) | The ARN of the worker role for EKS. | `string` | `""` | no |
 | <a name="input_worker_iam_role_name"></a> [worker\_iam\_role\_name](#input\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role. | `string` | `""` | no |
-| <a name="input_cluster_addon_default_config"></a> [cluster\_addon\_default\_config](#input\_cluster\_addon\_default\_config) | addon config | `any` | <pre>{<br>  "aws-ebs-csi-driver": {<br>    "most_recent": true<br>  },<br>  "coredns": {<br>    "most_recent": true,<br>    "preserve": true,<br>    "timeouts": {<br>      "create": "25m",<br>      "delete": "10m"<br>    }<br>  },<br>  "kube-proxy": {<br>    "most_recent": true<br>  },<br>  "vpc-cni": {<br>    "most_recent": true<br>  }<br>}</pre> | no |
-| <a name="input_cluster_addon_config"></a> [cluster\_addon\_config](#input\_cluster\_addon\_config) | addon config | `any` | <pre>{<br>  "coredns": {<br>    "most_recent": true,<br>    "preserve": true,<br>    "timeouts": {<br>      "create": "25m",<br>      "delete": "10m"<br>    }<br>  },<br>  "kube-proxy": {<br>    "most_recent": true<br>  }<br>}</pre> | no |
-| <a name="input_default_ng_enable"></a> [default\_ng\_enable](#input\_default\_ng\_enable) | n/a | `bool` | `true` | no |
 
 ## Outputs
 

@@ -149,7 +149,7 @@ variable "ipv6_enabled" {
   default     = false
 }
 
-variable "defaut_addon_enabled" {
+variable "default_addon_enabled" {
   description = "Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation "
   default     = false
   type        = bool

@@ -76,7 +76,7 @@ No modules.
 | <a name="input_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#input\_worker\_iam\_role\_arn) | The ARN of the worker role for EKS. | `string` | `""` | no |
 | <a name="input_worker_iam_role_name"></a> [worker\_iam\_role\_name](#input\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role. | `string` | `""` | no |
 | <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Whether IPv6 enabled or not | `bool` | `false` | no |
-| <a name="input_defaut_addon_enabled"></a> [defaut\_addon\_enabled](#input\_defaut\_addon\_enabled) | Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation | `bool` | `false` | no |
+| <a name="input_default_addon_enabled"></a> [default\_addon\_enabled](#input\_default\_addon\_enabled) | Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation | `bool` | `false` | no |
 
 ## Outputs
 
