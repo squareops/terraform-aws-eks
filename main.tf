@@ -151,7 +151,7 @@ resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
 }
 
 resource "aws_iam_policy" "node_autoscaler_policy" {
-  name        = format("%s-%s-%s-node-autoscaler-policy", var.environment, var.name, var.eks_cluster_name)
+  name        = format("%s-%s-node-autoscaler-policy", var.environment, var.name)
   path        = "/"
   description = "Node auto scaler policy for node groups."
   policy      = <<EOF
@@ -184,7 +184,7 @@ resource "aws_iam_role_policy_attachment" "node_autoscaler_policy" {
 
 resource "aws_iam_policy" "eks_cni_ipv6_policy" {
   count       = var.ipv6_enabled == true ? 1 : 0
-  name        = format("%s-%s-%s-eks-cni-ipv6-policy", var.environment, var.name, var.eks_cluster_name)
+  name        = format("%s-%s-eks-cni-ipv6-policy", var.environment, var.name)
   path        = "/"
   description = "Node cni policy for node groups."
   policy      = <<EOF
