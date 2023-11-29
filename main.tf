@@ -218,7 +218,7 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "eks_kms_worker_policy_attachment" {
   role       = aws_iam_role.node_role.name
-  policy_arn = var.kms_policy_arn
+  policy_arn = aws_iam_policy.kubernetes_pvc_kms_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_policy" {
