@@ -163,7 +163,7 @@ module "managed_node_group_production" {
   worker_iam_role_name   = module.eks.worker_iam_role_name
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {
-    "Infra-Services" = "true"
+    "Addon-Services" = "true"
   }
   tags = local.additional_aws_tags
 }

@@ -120,7 +120,6 @@ module "eks" {
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   default_addon_enabled                = local.default_addon_enabled
   eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
-  kms_policy_arn                       = module.eks.kms_policy_arn
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
@@ -171,7 +170,7 @@ module "managed_node_group_production" {
   worker_iam_role_name   = module.eks.worker_iam_role_name
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {
-    "Infra-Services" = "true"
+    "Addon-Services" = "true"
   }
   tags         = local.additional_aws_tags
   ipv6_enabled = local.ipv6_enabled
