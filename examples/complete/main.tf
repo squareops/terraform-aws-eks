@@ -119,7 +119,6 @@ module "eks" {
   create_aws_auth_configmap            = true
   default_addon_enabled                = local.default_addon_enabled
   eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
-  kms_policy_arn                       = module.eks.kms_policy_arn
   aws_auth_roles = [
     {
       rolearn  = "arn:aws:iam::222222222222:role/service-role"
@@ -164,7 +163,7 @@ module "managed_node_group_production" {
   worker_iam_role_name   = module.eks.worker_iam_role_name
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {
-    "Infra-Services" = "true"
+    "Addon-Services" = "true"
   }
   tags = local.additional_aws_tags
 }

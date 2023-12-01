@@ -141,11 +141,6 @@ variable "eventRecordQPS" {
   default     = 5
 }
 
-variable "kms_policy_arn" {
-  description = "The KMS policy ARN used for encrypting Kubernetes PVC."
-  type        = string
-  default     = ""
-}
 
 variable "associate_public_ip_address" {
   description = "Set to true to enable network interface for launch template."
