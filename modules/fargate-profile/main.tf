@@ -1,0 +1,47 @@
+data "aws_partition" "current" {}
+
+data "aws_iam_policy_document" "eks_fargate_pod_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["eks-fargate-pods.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "eks_fargate_pod" {
+  name_prefix          = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
+  assume_role_policy   = data.aws_iam_policy_document.eks_fargate_pod_assume_role[0].json
+  permissions_boundary = var.permissions_boundary
+  tags = {
+    Name        = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
+    Environment = var.environment
+  }
+  path = var.iam_path
+}
+
+resource "aws_iam_role_policy_attachment" "eks_fargate_pod" {
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
+  role       = aws_iam_role.eks_fargate_pod.name
+}
+
+resource "aws_eks_fargate_profile" "this" {
+  cluster_name           = var.cluster_name
+  fargate_profile_name   = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
+  pod_execution_role_arn = aws_iam_role.eks_fargate_pod.arn
+  subnet_ids             = var.subnet_ids
+  selectors = [
+    {
+      namespace = var.namespace
+      labels    = var.labels
+    }
+  ]
+
+  tags = {
+    Name        = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
+    Environment = var.environment
+  }
+}
