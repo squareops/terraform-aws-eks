@@ -80,6 +80,19 @@ module "managed_node_group_production" {
   }
 }
 
+module "farget_profle" {
+  source       = "squareops/eks/aws//modules/fargate-profile"
+  depends_on   = [module.vpc, module.eks]
+  profile_name = "app"
+  subnet_ids   = [module.vpc.private_subnets[0]]
+  environment  = "prod"
+  cluster_name = module.eks.cluster_name
+  namespace    = ""
+  labels = {
+    "App-Services" = "fargate"
+  }
+}
+
 ```
 Refer [examples](https://github.com/squareops/terraform-aws-eks/tree/main/examples/complete) for more details.
 

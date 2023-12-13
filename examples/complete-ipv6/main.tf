@@ -175,3 +175,16 @@ module "managed_node_group_production" {
   tags         = local.additional_aws_tags
   ipv6_enabled = local.ipv6_enabled
 }
+
+module "farget_profle" {
+  source       = "squareops/eks/aws//modules/fargate-profile"
+  depends_on   = [module.vpc, module.eks]
+  profile_name = "app"
+  subnet_ids   = [module.vpc.private_subnets[0]]
+  environment  = local.environment
+  cluster_name = module.eks.cluster_name
+  namespace    = ""
+  labels = {
+    "App-Services" = "fargate"
+  }
+}

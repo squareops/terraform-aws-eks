@@ -28,6 +28,7 @@ This directory contains a complete example that demonstrates the usage of the Te
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
 | <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | n/a |
 | <a name="module_managed_node_group_production"></a> [managed\_node\_group\_production](#module\_managed\_node\_group\_production) | squareops/eks/aws//modules/managed-nodegroup | n/a |
+| <a name="module_farget_profle"></a> [farget\_profle](#module\_farget\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
 
 ## Resources
 
