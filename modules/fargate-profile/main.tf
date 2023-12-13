@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "eks_fargate_pod_assume_role" {
 
 resource "aws_iam_role" "eks_fargate_pod" {
   name_prefix          = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
-  assume_role_policy   = data.aws_iam_policy_document.eks_fargate_pod_assume_role[0].json
+  assume_role_policy   = data.aws_iam_policy_document.eks_fargate_pod_assume_role.json
   permissions_boundary = var.permissions_boundary
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
@@ -33,12 +33,10 @@ resource "aws_eks_fargate_profile" "this" {
   fargate_profile_name   = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
   pod_execution_role_arn = aws_iam_role.eks_fargate_pod.arn
   subnet_ids             = var.subnet_ids
-  selectors = [
-    {
+  selector {
       namespace = var.namespace
       labels    = var.labels
     }
-  ]
 
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
