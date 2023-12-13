@@ -177,6 +177,6 @@ module "farget_profle" {
   cluster_name = module.eks.cluster_name
   namespace    = ""
   labels = {
-    "App-Services" = "true"
+    "App-Services" = "fargate"
   }
 }

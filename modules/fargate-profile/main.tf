@@ -34,9 +34,9 @@ resource "aws_eks_fargate_profile" "this" {
   pod_execution_role_arn = aws_iam_role.eks_fargate_pod.arn
   subnet_ids             = var.subnet_ids
   selector {
-      namespace = var.namespace
-      labels    = var.labels
-    }
+    namespace = var.namespace
+    labels    = var.labels
+  }
 
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.profile_name, "fargate")
