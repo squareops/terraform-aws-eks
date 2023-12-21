@@ -1,7 +1,7 @@
 locals {
   region      = "us-west-2"
-  environment = "test"
-  name        = "eks-navneet"
+  environment = "prod"
+  name        = "eks"
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
@@ -106,23 +106,47 @@ module "eks" {
   min_size                             = 2
   max_size                             = 5
   desired_size                         = 2
-  capacity_type                        = "SPOT"
+  capacity_type                        = "ON_DEMAND"
   instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = local.environment
   kms_key_arn                          = module.kms.key_arn
   cluster_version                      = "1.27"
-  cluster_log_types                    = []
+  cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  create_aws_auth_configmap            = false
+  create_aws_auth_configmap            = true
   default_addon_enabled                = local.default_addon_enabled
   eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::222222222222:role/service-role"
+      username = "username"
+      groups   = ["system:masters"]
+    }
+  ]
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::222222222222:user/aws-user"
+      username = "aws-user"
+      groups   = ["system:masters"]
+    },
+  ]
+  additional_rules = {
+    ingress_port_mgmt_tcp = {
+      description = "mgmt vpc cidr"
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      cidr_blocks = ["10.10.0.0/16"]
+    }
+  }
 }
 
 module "managed_node_group_production" {
-  source                 = "../../modules/managed-nodegroup"
+  source                 = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on             = [module.vpc, module.eks]
   name                   = "Infra"
   min_size               = 1
@@ -131,7 +155,7 @@ module "managed_node_group_production" {
   subnet_ids             = [module.vpc.private_subnets[0]]
   environment            = local.environment
   kms_key_arn            = module.kms.key_arn
-  capacity_type          = "SPOT"
+  capacity_type          = "ON_DEMAND"
   disk_size              = 50
   instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
@@ -145,4 +169,16 @@ module "managed_node_group_production" {
   tags = local.additional_aws_tags
 }
 
+module "farget_profle" {
+  source       = "squareops/eks/aws//modules/fargate-profile"
+  depends_on   = [module.vpc, module.eks]
+  profile_name = "app"
+  subnet_ids   = [module.vpc.private_subnets[0]]
+  environment  = local.environment
+  cluster_name = module.eks.cluster_name
+  namespace    = ""
+  labels = {
+    "App-Services" = "fargate"
+  }
+}
 

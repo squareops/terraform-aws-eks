@@ -66,6 +66,7 @@ module "managed_node_group_production" {
   environment            = "prod"
   kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   capacity_type          = "ON_DEMAND"
+  disk_size              = 50
   instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
