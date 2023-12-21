@@ -28,6 +28,12 @@ variable "capacity_type" {
   default     = "ON_DEMAND"
 }
 
+variable "disk_size" {
+  description = "Disk size in GiB for nodes. Defaults to `20`. Only valid when `use_custom_launch_template` = `false`"
+  type        = number
+  default     = 20
+}
+
 variable "image_high_threshold_percent" {
   description = "The percentage of disk usage at which garbage collection should be triggered."
   type        = number

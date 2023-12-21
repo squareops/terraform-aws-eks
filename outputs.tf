@@ -42,3 +42,5 @@ output "cluster_certificate_authority_data" {
   description = "Base64 encoded certificate data required to communicate with the cluster"
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_certificate_authority_data : module.eks[0].cluster_certificate_authority_data
 }
+
+

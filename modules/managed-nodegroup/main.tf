@@ -80,6 +80,7 @@ resource "aws_eks_node_group" "managed_ng" {
   }
   labels         = var.k8s_labels
   capacity_type  = var.capacity_type
+  disk_size      = var.disk_size
   instance_types = var.instance_types
   launch_template {
     id      = aws_launch_template.eks_template.id
