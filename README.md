@@ -82,12 +82,12 @@ module "managed_node_group_production" {
 
 module "farget_profle" {
   source       = "squareops/eks/aws//modules/fargate-profile"
-  depends_on   = [module.vpc, module.eks]
+  depends_on   = [module.eks]
   profile_name = "app"
-  subnet_ids   = [module.vpc.private_subnets[0]]
+  subnet_ids   = ["subnet-abc123"]
   environment  = "prod"
   cluster_name = module.eks.cluster_name
-  namespace    = ""
+  namespace    = "default"
   labels = {
     "App-Services" = "fargate"
   }
