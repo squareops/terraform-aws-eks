@@ -181,4 +181,3 @@ module "farget_profle" {
     "App-Services" = "fargate"
   }
 }
-

@@ -47,6 +47,7 @@ No modules.
 | <a name="input_name"></a> [name](#input\_name) | Specify the name of the EKS Nodegroup | `string` | `""` | no |
 | <a name="input_instance_types"></a> [instance\_types](#input\_instance\_types) | The instance types to be used for the EKS node group (e.g., t2.medium). | `list(any)` | <pre>[<br>  "t3a.medium"<br>]</pre> | no |
 | <a name="input_capacity_type"></a> [capacity\_type](#input\_capacity\_type) | The capacity type for the EKS node group (ON\_DEMAND or SPOT). | `string` | `"ON_DEMAND"` | no |
+| <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Disk size in GiB for nodes. Defaults to `20`. Only valid when `use_custom_launch_template` = `false` | `number` | `20` | no |
 | <a name="input_image_high_threshold_percent"></a> [image\_high\_threshold\_percent](#input\_image\_high\_threshold\_percent) | The percentage of disk usage at which garbage collection should be triggered. | `number` | `60` | no |
 | <a name="input_image_low_threshold_percent"></a> [image\_low\_threshold\_percent](#input\_image\_low\_threshold\_percent) | The percentage of disk usage at which garbage collection took place. | `number` | `40` | no |
 | <a name="input_eventRecordQPS"></a> [eventRecordQPS](#input\_eventRecordQPS) | The maximum number of events created per second. | `number` | `5` | no |
@@ -71,5 +72,13 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_node_group_arn"></a> [node\_group\_arn](#output\_node\_group\_arn) | n/a |
+| <a name="output_min_node"></a> [min\_node](#output\_min\_node) | n/a |
+| <a name="output_max_node"></a> [max\_node](#output\_max\_node) | n/a |
+| <a name="output_desired_node"></a> [desired\_node](#output\_desired\_node) | n/a |
+| <a name="output_capacity_type"></a> [capacity\_type](#output\_capacity\_type) | n/a |
+| <a name="output_instance_types"></a> [instance\_types](#output\_instance\_types) | n/a |
+| <a name="output_disk_size"></a> [disk\_size](#output\_disk\_size) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

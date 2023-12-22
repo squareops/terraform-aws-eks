@@ -45,7 +45,7 @@ output "kms_policy_arn" {
 
 output "node_group_arn" {
   description = "ARN for the nodegroup"
-  value = module.managed_node_group_production.node_group_arn
+  value       = module.managed_node_group_production.node_group_arn
 }
 
 output "min_node" {
