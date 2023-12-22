@@ -45,7 +45,7 @@ output "cluster_certificate_authority_data" {
 
 output "default_ng_node_group_arn" {
   description = "ARN for the nodegroup"
-  value       = var.default_addon_enabled ? aws_eks_node_group.default_ng[0].arn : null 
+  value       = var.default_addon_enabled ? aws_eks_node_group.default_ng[0].arn : null
 }
 
 output "default_ng_min_node" {
