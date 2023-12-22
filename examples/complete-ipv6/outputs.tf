@@ -42,3 +42,32 @@ output "kms_policy_arn" {
   description = "ARN of the KMS policy that is used by the EKS cluster."
   value       = module.eks.kms_policy_arn
 }
+
+output "node_group_arn" {
+  description = "ARN for the nodegroup"
+  value = module.managed_node_group_production.node_group_arn
+}
+
+output "min_node" {
+  value = module.managed_node_group_production.min_node
+}
+
+output "max_node" {
+  value = module.managed_node_group_production.max_node
+}
+
+output "desired_node" {
+  value = module.managed_node_group_production.desired_node
+}
+
+output "capacity_type" {
+  value = module.managed_node_group_production.capacity_type
+}
+
+output "instance_types" {
+  value = module.managed_node_group_production.instance_types
+}
+
+output "disk_size" {
+  value = module.managed_node_group_production.disk_size
+}
