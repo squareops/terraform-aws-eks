@@ -98,7 +98,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                               = "squareops/eks/aws"
+  source                               = "../../"
   depends_on                           = [module.vpc]
   name                                 = local.name
   vpc_id                               = module.vpc.vpc_id
@@ -157,7 +157,7 @@ module "managed_node_group_production" {
   environment            = local.environment
   kms_key_arn            = module.kms.key_arn
   capacity_type          = "ON_DEMAND"
-  ebs_volume_size              = 50
+  ebs_volume_size        = 50
   instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
