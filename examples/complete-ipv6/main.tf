@@ -112,6 +112,7 @@ module "eks" {
   min_size                             = 2
   max_size                             = 5
   desired_size                         = 2
+  ebs_volume_size                            = 50
   capacity_type                        = "ON_DEMAND"
   instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = local.environment
@@ -163,7 +164,7 @@ module "managed_node_group_production" {
   environment            = local.environment
   kms_key_arn            = module.kms.key_arn
   capacity_type          = "ON_DEMAND"
-  disk_size              = 50
+  ebs_volume_size              = 50
   instance_types         = ["t3a.large", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name

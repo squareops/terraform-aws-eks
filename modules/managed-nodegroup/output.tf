@@ -22,6 +22,6 @@ output "instance_types" {
   value = var.instance_types
 }
 
-output "disk_size" {
-  value = var.disk_size
+output "ebs_volume_size" {
+  value = var.ebs_volume_size
 }

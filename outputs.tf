@@ -42,3 +42,32 @@ output "cluster_certificate_authority_data" {
   description = "Base64 encoded certificate data required to communicate with the cluster"
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_certificate_authority_data : module.eks[0].cluster_certificate_authority_data
 }
+
+output "default_ng_node_group_arn" {
+  description = "ARN for the nodegroup"
+  value       = var.default_addon_enabled ? aws_eks_node_group.default_ng.arn : null 
+}
+
+output "default_ng_min_node" {
+  value = var.default_addon_enabled ? var.min_size : null
+}
+
+output "default_ng_max_node" {
+  value = var.default_addon_enabled ? var.max_size : null
+}
+
+output "default_ng_desired_node" {
+  value = var.default_addon_enabled ? var.desired_size : null
+}
+
+output "default_ng_capacity_type" {
+  value = var.default_addon_enabled ? var.capacity_type : null
+}
+
+output "default_ng_instance_types" {
+  value = var.default_addon_enabled ? var.instance_types : null
+}
+
+output "default_ng_ebs_volume_size" {
+  value = var.default_addon_enabled ? var.ebs_volume_size : null
+}
