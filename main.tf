@@ -302,8 +302,8 @@ resource "aws_eks_node_group" "default_ng" {
     max_size     = var.max_size
     min_size     = var.min_size
   }
-  labels         = var.k8s_labels
-  capacity_type  = var.capacity_type
+  labels        = var.k8s_labels
+  capacity_type = var.capacity_type
 
   instance_types = var.instance_types
   launch_template {

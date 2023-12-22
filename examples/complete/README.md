@@ -53,11 +53,18 @@ No inputs.
 | <a name="output_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#output\_worker\_iam\_role\_arn) | ARN of the IAM role assigned to the EKS worker nodes. |
 | <a name="output_worker_iam_role_name"></a> [worker\_iam\_role\_name](#output\_worker\_iam\_role\_name) | Name of the IAM role assigned to the EKS worker nodes. |
 | <a name="output_kms_policy_arn"></a> [kms\_policy\_arn](#output\_kms\_policy\_arn) | ARN of the KMS policy that is used by the EKS cluster. |
-| <a name="output_node_group_arn"></a> [node\_group\_arn](#output\_node\_group\_arn) | ARN for the nodegroup |
-| <a name="output_min_node"></a> [min\_node](#output\_min\_node) | n/a |
-| <a name="output_max_node"></a> [max\_node](#output\_max\_node) | n/a |
-| <a name="output_desired_node"></a> [desired\_node](#output\_desired\_node) | n/a |
-| <a name="output_capacity_type"></a> [capacity\_type](#output\_capacity\_type) | n/a |
-| <a name="output_instance_types"></a> [instance\_types](#output\_instance\_types) | n/a |
-| <a name="output_disk_size"></a> [disk\_size](#output\_disk\_size) | n/a |
+| <a name="output_managed_ng_node_group_arn"></a> [managed\_ng\_node\_group\_arn](#output\_managed\_ng\_node\_group\_arn) | ARN for the nodegroup |
+| <a name="output_managed_ng_min_node"></a> [managed\_ng\_min\_node](#output\_managed\_ng\_min\_node) | Minimum node of managed node group |
+| <a name="output_managed_ng_max_node"></a> [managed\_ng\_max\_node](#output\_managed\_ng\_max\_node) | Maximum node of managed node group |
+| <a name="output_managed_ng_desired_node"></a> [managed\_ng\_desired\_node](#output\_managed\_ng\_desired\_node) | Desired node of managed node group |
+| <a name="output_managed_ng_capacity_type"></a> [managed\_ng\_capacity\_type](#output\_managed\_ng\_capacity\_type) | Capacity type of managed node |
+| <a name="output_managed_ng_instance_types"></a> [managed\_ng\_instance\_types](#output\_managed\_ng\_instance\_types) | Instance types of managed node |
+| <a name="output_managed_ng_disk_size"></a> [managed\_ng\_disk\_size](#output\_managed\_ng\_disk\_size) | Disk size of node in managed node group |
+| <a name="output_default_ng_node_group_arn"></a> [default\_ng\_node\_group\_arn](#output\_default\_ng\_node\_group\_arn) | ARN for the nodegroup |
+| <a name="output_default_ng_min_node"></a> [default\_ng\_min\_node](#output\_default\_ng\_min\_node) | n/a |
+| <a name="output_default_ng_max_node"></a> [default\_ng\_max\_node](#output\_default\_ng\_max\_node) | n/a |
+| <a name="output_default_ng_desired_node"></a> [default\_ng\_desired\_node](#output\_default\_ng\_desired\_node) | n/a |
+| <a name="output_default_ng_capacity_type"></a> [default\_ng\_capacity\_type](#output\_default\_ng\_capacity\_type) | n/a |
+| <a name="output_default_ng_instance_types"></a> [default\_ng\_instance\_types](#output\_default\_ng\_instance\_types) | n/a |
+| <a name="output_default_ng_ebs_volume_size"></a> [default\_ng\_ebs\_volume\_size](#output\_default\_ng\_ebs\_volume\_size) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
