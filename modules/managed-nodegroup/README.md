@@ -71,5 +71,13 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_node_group_arn"></a> [node\_group\_arn](#output\_node\_group\_arn) | n/a |
+| <a name="output_min_node"></a> [min\_node](#output\_min\_node) | n/a |
+| <a name="output_max_node"></a> [max\_node](#output\_max\_node) | n/a |
+| <a name="output_desired_node"></a> [desired\_node](#output\_desired\_node) | n/a |
+| <a name="output_capacity_type"></a> [capacity\_type](#output\_capacity\_type) | n/a |
+| <a name="output_instance_types"></a> [instance\_types](#output\_instance\_types) | n/a |
+| <a name="output_ebs_volume_size"></a> [ebs\_volume\_size](#output\_ebs\_volume\_size) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

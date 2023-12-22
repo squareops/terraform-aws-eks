@@ -106,6 +106,7 @@ module "eks" {
   min_size                             = 2
   max_size                             = 5
   desired_size                         = 2
+  ebs_volume_size                      = 50
   capacity_type                        = "ON_DEMAND"
   instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = local.environment
@@ -156,6 +157,7 @@ module "managed_node_group_production" {
   environment            = local.environment
   kms_key_arn            = module.kms.key_arn
   capacity_type          = "ON_DEMAND"
+  ebs_volume_size        = 50
   instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
@@ -163,7 +165,7 @@ module "managed_node_group_production" {
   worker_iam_role_name   = module.eks.worker_iam_role_name
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {
-    "Addon-Services" = "true"
+    "Addons-Services" = "true"
   }
   tags = local.additional_aws_tags
 }

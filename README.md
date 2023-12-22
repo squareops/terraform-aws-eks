@@ -19,16 +19,24 @@ module "eks" {
   source                               = "squareops/eks/aws"
   name                                 = "skaf"
   vpc_id                               = "vpc-xyz425342176"
+  subnet_ids                           = [module.vpc.private_subnets[0]]
+  min_size                             = 2
+  max_size                             = 5
+  desired_size                         = 2
+  ebs_volume_size                      = 50
+  capacity_type                        = "ON_DEMAND"
+  instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = "prod"
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   cluster_version                      = "1.27"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
-  default_addon_enabled                = true
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
+  default_addon_enabled                = true
+  eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
   aws_auth_roles = [
     {
       rolearn  = "arn:aws:iam::222222222222:role/service-role"
@@ -66,6 +74,7 @@ module "managed_node_group_production" {
   environment            = "prod"
   kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   capacity_type          = "ON_DEMAND"
+  ebs_volume_size        = 50
   instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
@@ -220,6 +229,13 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="output_worker_iam_role_name"></a> [worker\_iam\_role\_name](#output\_worker\_iam\_role\_name) | Name of the IAM role assigned to the EKS worker nodes. |
 | <a name="output_kms_policy_arn"></a> [kms\_policy\_arn](#output\_kms\_policy\_arn) | ARN of the KMS policy that is used by the EKS cluster. |
 | <a name="output_cluster_certificate_authority_data"></a> [cluster\_certificate\_authority\_data](#output\_cluster\_certificate\_authority\_data) | Base64 encoded certificate data required to communicate with the cluster |
+| <a name="output_default_ng_node_group_arn"></a> [default\_ng\_node\_group\_arn](#output\_default\_ng\_node\_group\_arn) | ARN for the nodegroup |
+| <a name="output_default_ng_min_node"></a> [default\_ng\_min\_node](#output\_default\_ng\_min\_node) | n/a |
+| <a name="output_default_ng_max_node"></a> [default\_ng\_max\_node](#output\_default\_ng\_max\_node) | n/a |
+| <a name="output_default_ng_desired_node"></a> [default\_ng\_desired\_node](#output\_default\_ng\_desired\_node) | n/a |
+| <a name="output_default_ng_capacity_type"></a> [default\_ng\_capacity\_type](#output\_default\_ng\_capacity\_type) | n/a |
+| <a name="output_default_ng_instance_types"></a> [default\_ng\_instance\_types](#output\_default\_ng\_instance\_types) | n/a |
+| <a name="output_default_ng_ebs_volume_size"></a> [default\_ng\_ebs\_volume\_size](#output\_default\_ng\_ebs\_volume\_size) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Contribution & Issue Reporting
