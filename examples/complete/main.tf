@@ -106,7 +106,7 @@ module "eks" {
   min_size                             = 2
   max_size                             = 5
   desired_size                         = 2
-  ebs_volume_size                            = 50
+  ebs_volume_size                      = 50
   capacity_type                        = "ON_DEMAND"
   instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = local.environment
@@ -147,7 +147,7 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                 = "squareops/eks/aws//modules/managed-nodegroup"
+  source                 = "../../modules/managed-nodegroup"
   depends_on             = [module.vpc, module.eks]
   name                   = "Infra"
   min_size               = 1

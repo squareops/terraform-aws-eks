@@ -76,7 +76,7 @@ output "managed_ng_instance_types" {
 
 output "managed_ng_disk_size" {
   description = "Disk size of node in managed node group"
-  value = module.managed_node_group_production.disk_size
+  value = module.managed_node_group_production.ebs_volume_size
 }
 
 
