@@ -20,10 +20,10 @@ module "kms" {
 
   deletion_window_in_days = 7
   description             = "Symetric Key to Enable Encryption at rest using KMS services."
-  enable_key_rotation     = false
+  enable_key_rotation     = true
   is_enabled              = true
   key_usage               = "ENCRYPT_DECRYPT"
-  multi_region            = false
+  multi_region            = true
 
   # Policy
   enable_default_policy                  = true
@@ -103,15 +103,15 @@ module "eks" {
   name                                 = local.name
   vpc_id                               = module.vpc.vpc_id
   subnet_ids                           = [module.vpc.private_subnets[0]]
-  min_size                             = 2
-  max_size                             = 5
-  desired_size                         = 2
+  min_size                             = 1
+  max_size                             = 3
+  desired_size                         = 1
   ebs_volume_size                      = 50
   capacity_type                        = "ON_DEMAND"
   instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = local.environment
   kms_key_arn                          = module.kms.key_arn
-  cluster_version                      = "1.27"
+  cluster_version                      = "1.28"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
@@ -150,9 +150,9 @@ module "managed_node_group_production" {
   source                 = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on             = [module.vpc, module.eks]
   name                   = "Infra"
-  min_size               = 1
-  max_size               = 3
-  desired_size           = 1
+  min_size               = 2
+  max_size               = 5
+  desired_size           = 2
   subnet_ids             = [module.vpc.private_subnets[0]]
   environment            = local.environment
   kms_key_arn            = module.kms.key_arn
