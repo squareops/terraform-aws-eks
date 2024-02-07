@@ -5,11 +5,11 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.27.
+This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.28.
 <br>
 we've introduced a new functionality that enhances the ease of cluster setup. Users can now choose to create a default nodegroup based on the  value of default_addon_enabled.the module now seamlessly integrates default addons, including CoreDNS, Kube-proxy, VPC CNI, and EBS CSI Driver. This ensures that your EKS clusters are equipped with essential components for optimal performance and functionality right from the start.
 <br>
-With this module, users can take advantage of the latest features and improvements offered by EKS 1.27 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
+With this module, users can take advantage of the latest features and improvements offered by EKS 1.28 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
 
 
 ## Usage Example
@@ -28,7 +28,7 @@ module "eks" {
   instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = "prod"
   kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  cluster_version                      = "1.27"
+  cluster_version                      = "1.28"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
   cluster_log_retention_in_days        = 30
@@ -150,8 +150,8 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 19.15.2 |
-| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 19.15.2 |
+| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 19.21.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 19.21.0 |
 
 ## Resources
 
