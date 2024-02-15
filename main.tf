@@ -150,6 +150,15 @@ resource "aws_iam_role_policy_attachment" "SSMManagedInstanceCore_attachment" {
   policy_arn = data.aws_iam_policy.SSMManagedInstanceCore.arn
 }
 
+data "aws_iam_policy" "S3Access" {
+  arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "S3Access_attachment" {
+  role       = aws_iam_role.node_role.name
+  policy_arn = data.aws_iam_policy.S3Access.arn
+}
+
 resource "aws_iam_policy" "node_autoscaler_policy" {
   name        = format("%s-%s-node-autoscaler-policy", var.environment, var.name)
   path        = "/"
