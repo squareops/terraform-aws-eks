@@ -9,8 +9,8 @@ locals {
   }
   kms_user              = null
   vpc_cidr              = "10.10.0.0/16"
-  vpn_server_enabled    = true
-  default_addon_enabled = true
+  vpn_server_enabled    = false
+  default_addon_enabled = false
   current_identity      = data.aws_caller_identity.current.arn
 }
 data "aws_caller_identity" "current" {}
@@ -85,13 +85,13 @@ module "vpc" {
   availability_zones                              = ["us-west-2a", "us-west-2b"]
   public_subnet_enabled                           = true
   private_subnet_enabled                          = true
-  database_subnet_enabled                         = true
-  intra_subnet_enabled                            = true
+  database_subnet_enabled                         = false
+  intra_subnet_enabled                            = false
   one_nat_gateway_per_az                          = true
   vpn_server_enabled                              = local.vpn_server_enabled
   vpn_server_instance_type                        = "t3a.small"
   vpn_key_pair_name                               = local.vpn_server_enabled ? module.key_pair_vpn[0].key_pair_name : null
-  flow_log_enabled                                = true
+  flow_log_enabled                                = false
   flow_log_max_aggregation_interval               = 60
   flow_log_cloudwatch_log_group_retention_in_days = 90
   flow_log_cloudwatch_log_group_kms_key_arn       = module.kms.key_arn
@@ -111,7 +111,7 @@ module "eks" {
   instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = local.environment
   kms_key_arn                          = module.kms.key_arn
-  cluster_version                      = "1.28"
+  cluster_version                      = "1.27"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   private_subnet_ids                   = module.vpc.private_subnets
   cluster_log_retention_in_days        = 30
