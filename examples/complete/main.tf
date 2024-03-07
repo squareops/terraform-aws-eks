@@ -158,7 +158,7 @@ module "managed_node_group_production" {
   kms_key_arn            = module.kms.key_arn
   capacity_type          = "ON_DEMAND"
   ebs_volume_size        = 50
-  instance_types         = ["t3.large"]
+  instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
   default_addon_enabled  = local.default_addon_enabled
@@ -171,15 +171,15 @@ module "managed_node_group_production" {
   tags = local.additional_aws_tags
 }
 
-module "farget_profle" {
-  source       = "squareops/eks/aws//modules/fargate-profile"
-  depends_on   = [module.vpc, module.eks]
-  profile_name = "app"
-  subnet_ids   = [module.vpc.private_subnets[0]]
-  environment  = local.environment
-  cluster_name = module.eks.cluster_name
-  namespace    = ""
-  labels = {
-    "App-Services" = "fargate"
-  }
-}
+# module "farget_profle" {
+#   source       = "squareops/eks/aws//modules/fargate-profile"
+#   depends_on   = [module.vpc, module.eks]
+#   profile_name = "app"
+#   subnet_ids   = [module.vpc.private_subnets[0]]
+#   environment  = local.environment
+#   cluster_name = module.eks.cluster_name
+#   namespace    = ""
+#   labels = {
+#     "App-Services" = "fargate"
+#   }
+# }
