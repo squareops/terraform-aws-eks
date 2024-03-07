@@ -2,10 +2,6 @@ data "aws_eks_cluster" "eks" {
   name = var.eks_cluster_name
 }
 
-data "aws_iam_role" "worker_iam_role_name" {
-  name = var.worker_iam_role_name
-}
-
 data "aws_ami" "launch_template_ami" {
   owners      = ["602401143452"]
   most_recent = true
@@ -71,25 +67,23 @@ resource "aws_launch_template" "eks_template" {
 resource "aws_eks_node_group" "managed_ng" {
   subnet_ids      = var.subnet_ids
   cluster_name    = var.eks_cluster_name
-  node_role_arn   = data.aws_iam_role.worker_iam_role_name.arn
+  node_role_arn   = var.worker_iam_role_arn
   node_group_name = format("%s-%s-%s", var.environment, var.name, "ng")
   scaling_config {
     desired_size = var.desired_size
     max_size     = var.max_size
     min_size     = var.min_size
   }
-  labels         = var.k8s_labels
-  capacity_type  = var.capacity_type
-  instance_types = var.instance_types
+  labels               = var.k8s_labels
+  capacity_type        = var.capacity_type
+  instance_types       = var.instance_types
+  force_update_version = true
   launch_template {
     id      = aws_launch_template.eks_template.id
     version = aws_launch_template.eks_template.latest_version
   }
-  lifecycle {
-    create_before_destroy = true
-    ignore_changes = [
-      scaling_config[0].desired_size,
-    ]
+  update_config {
+    max_unavailable_percentage = 50
   }
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.name, "ng")

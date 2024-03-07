@@ -158,11 +158,12 @@ module "managed_node_group_production" {
   kms_key_arn            = module.kms.key_arn
   capacity_type          = "ON_DEMAND"
   ebs_volume_size        = 50
-  instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  instance_types         = ["t3.large"]
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
   default_addon_enabled  = local.default_addon_enabled
   worker_iam_role_name   = module.eks.worker_iam_role_name
+  worker_iam_role_arn    = module.eks.worker_iam_role_arn
   eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
   k8s_labels = {
     "Addons-Services" = "true"
