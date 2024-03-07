@@ -171,15 +171,15 @@ module "managed_node_group_production" {
   tags = local.additional_aws_tags
 }
 
-# module "farget_profle" {
-#   source       = "squareops/eks/aws//modules/fargate-profile"
-#   depends_on   = [module.vpc, module.eks]
-#   profile_name = "app"
-#   subnet_ids   = [module.vpc.private_subnets[0]]
-#   environment  = local.environment
-#   cluster_name = module.eks.cluster_name
-#   namespace    = ""
-#   labels = {
-#     "App-Services" = "fargate"
-#   }
-# }
+module "farget_profle" {
+  source       = "squareops/eks/aws//modules/fargate-profile"
+  depends_on   = [module.vpc, module.eks]
+  profile_name = "app"
+  subnet_ids   = [module.vpc.private_subnets[0]]
+  environment  = local.environment
+  cluster_name = module.eks.cluster_name
+  namespace    = ""
+  labels = {
+    "App-Services" = "fargate"
+  }
+}
