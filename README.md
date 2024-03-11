@@ -79,10 +79,11 @@ module "managed_node_group_production" {
   kms_policy_arn         = module.eks.kms_policy_arn
   eks_cluster_name       = module.eks.cluster_name
   worker_iam_role_name   = module.eks.worker_iam_role_name
+  worker_iam_role_arn    = module.eks.worker_iam_role_arn
   default_addon_enabled  = true
   eks_nodes_keypair_name = "key-pair-name"
   k8s_labels = {
-    "Infra-Services" = "true"
+    "Addons-Services" = "true"
   }
   tags = {
     Name = "prod-cluster"
