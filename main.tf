@@ -3,12 +3,12 @@ module "eks_addon" {
   source                    = "terraform-aws-modules/eks/aws"
   version                   = "19.21.0"
   vpc_id                    = var.vpc_id
-  subnet_ids                = var.private_subnet_ids
-  enable_irsa               = true
+  subnet_ids                = var.vpc_private_subnet_ids
+  enable_irsa               = var.irsa_enabled
   cluster_name              = format("%s-%s", var.environment, var.name)
   create_kms_key            = var.create_kms_key
-  cluster_version           = var.cluster_version
-  cluster_enabled_log_types = var.cluster_log_types
+  cluster_version           = var.eks_cluster_version
+  cluster_enabled_log_types = var.eks_cluster_log_types
   tags = {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
@@ -17,11 +17,11 @@ module "eks_addon" {
   aws_auth_users                          = var.aws_auth_users
   create_aws_auth_configmap               = var.create_aws_auth_configmap
   manage_aws_auth_configmap               = var.create_aws_auth_configmap
-  cluster_security_group_additional_rules = var.additional_rules
-  cluster_endpoint_public_access          = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access         = var.cluster_endpoint_public_access ? false : true
-  cluster_endpoint_public_access_cidrs    = var.cluster_endpoint_public_access_cidrs
-  cloudwatch_log_group_retention_in_days  = var.cluster_log_retention_in_days
+  cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
+  cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
+  cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
+  cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
+  cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
   cloudwatch_log_group_kms_key_id         = var.kms_key_arn
   cluster_encryption_config = {
     provider_key_arn = var.kms_key_arn
@@ -55,12 +55,12 @@ module "eks" {
   source                    = "terraform-aws-modules/eks/aws"
   version                   = "19.21.0"
   vpc_id                    = var.vpc_id
-  subnet_ids                = var.private_subnet_ids
-  enable_irsa               = true
+  subnet_ids                = var.vpc_private_subnet_ids
+  enable_irsa               = var.irsa_enabled
   cluster_name              = format("%s-%s", var.environment, var.name)
   create_kms_key            = var.create_kms_key
-  cluster_version           = var.cluster_version
-  cluster_enabled_log_types = var.cluster_log_types
+  cluster_version           = var.eks_cluster_version
+  cluster_enabled_log_types = var.eks_cluster_log_types
   tags = {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
@@ -69,11 +69,11 @@ module "eks" {
   aws_auth_users                          = var.aws_auth_users
   create_aws_auth_configmap               = var.create_aws_auth_configmap
   manage_aws_auth_configmap               = var.create_aws_auth_configmap
-  cluster_security_group_additional_rules = var.additional_rules
-  cluster_endpoint_public_access          = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access         = var.cluster_endpoint_public_access ? false : true
-  cluster_endpoint_public_access_cidrs    = var.cluster_endpoint_public_access_cidrs
-  cloudwatch_log_group_retention_in_days  = var.cluster_log_retention_in_days
+  cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
+  cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
+  cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
+  cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
+  cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
   cloudwatch_log_group_kms_key_id         = var.kms_key_arn
   cluster_encryption_config = {
     provider_key_arn = var.kms_key_arn
@@ -266,13 +266,13 @@ resource "aws_launch_template" "eks_template" {
   key_name               = var.eks_nodes_keypair_name
   image_id               = data.aws_ami.launch_template_ami[0].image_id
   user_data              = base64encode(data.template_file.launch_template_userdata[0].rendered)
-  update_default_version = true
+  update_default_version = var.update_default_version
   block_device_mappings {
     device_name = "/dev/xvda"
     ebs {
       volume_size           = var.ebs_volume_size
       volume_type           = var.ebs_volume_type
-      delete_on_termination = true
+      delete_on_termination = var.volume_delete_on_termination
       encrypted             = var.ebs_encrypted
       kms_key_id            = var.kms_key_arn
     }
@@ -280,7 +280,7 @@ resource "aws_launch_template" "eks_template" {
 
   network_interfaces {
     associate_public_ip_address = var.associate_public_ip_address
-    delete_on_termination       = true
+    delete_on_termination       = var.eni_delete_on_termination
   }
 
   monitoring {

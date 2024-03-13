@@ -1,3 +1,25 @@
+variable "additional_tags" {
+  description = "Additional tags to be applied to AWS resources"
+  type        = map(string)
+  default     = {
+    Owner      = "organization_name"
+    Expires    = "Never"
+    Department = "Engineering"
+  }
+}
+
+variable "aws_region" {
+  description = "Name of the AWS region where S3 bucket is to be created."
+  default     = "us-east-1"
+  type        = string
+}
+
+variable "aws_account_id" {
+  description = "Account ID of the AWS Account."
+  default     = ""
+  type        = string
+}
+
 variable "environment" {
   description = "Environment identifier for the EKS cluster, such as dev, qa, prod, etc."
   default     = ""
@@ -10,19 +32,25 @@ variable "name" {
   type        = string
 }
 
-variable "cluster_version" {
+variable "eks_cluster_version" {
   description = "Specifies the Kubernetes version (major.minor) to use for the EKS cluster."
   default     = ""
   type        = string
 }
 
-variable "cluster_endpoint_public_access" {
+variable "irsa_enabled" {
+  description = "Set to true to associate an AWS IAM role with a Kubernetes service account. "
+  default     = true
+  type        = bool
+}
+
+variable "eks_cluster_endpoint_public_access" {
   description = "Whether the Amazon EKS public API server endpoint is enabled or not."
   default     = true
   type        = bool
 }
 
-variable "cluster_endpoint_public_access_cidrs" {
+variable "eks_cluster_endpoint_public_access_cidrs" {
   description = "CIDR blocks that can access the Amazon EKS public API server endpoint."
   default     = [""]
   type        = list(string)
@@ -40,19 +68,19 @@ variable "kms_key_arn" {
   type        = string
 }
 
-variable "cluster_log_types" {
+variable "eks_cluster_log_types" {
   description = "A list of desired control plane logs to enable for the EKS cluster. Valid values include: api, audit, authenticator, controllerManager, scheduler."
-  default     = [""]
+  default     = []
   type        = list(string)
 }
 
-variable "cluster_log_retention_in_days" {
+variable "eks_cluster_log_retention_in_days" {
   description = "Retention period for EKS cluster logs in days. Default is set to 90 days."
   default     = 90
   type        = number
 }
 
-variable "private_subnet_ids" {
+variable "vpc_private_subnet_ids" {
   description = "Private subnets of the VPC which can be used by EKS"
   default     = [""]
   type        = list(string)
@@ -64,7 +92,7 @@ variable "create_kms_key" {
   default     = false
 }
 
-variable "additional_rules" {
+variable "eks_cluster_security_group_additional_rules" {
   description = "List of additional security group rules to add to the cluster security group created."
   type        = any
   default     = {}
@@ -219,4 +247,22 @@ variable "worker_iam_role_name" {
   description = "The name of the EKS Worker IAM role."
   type        = string
   default     = ""
+}
+
+variable "update_default_version" {
+  description = "Set to true if update the default version of launch template for eks template."
+  type        = bool
+  default     = true
+}
+
+variable "volume_delete_on_termination" {
+  description = "Set to true if delete the volumes when eks cluster is terminated."
+  type        = bool
+  default     = true
+}
+
+variable "eni_delete_on_termination" {
+  description = "Set to true if delete the network interfaces when eks cluster is terminated."
+  type        = bool
+  default     = true
 }

@@ -1,24 +1,24 @@
-output "cluster_name" {
+output "eks_cluster_name" {
   description = "Name of the Kubernetes cluster."
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_name : module.eks[0].cluster_name
 }
 
-output "cluster_endpoint" {
+output "eks_cluster_endpoint" {
   description = "Endpoint URL for the EKS control plane."
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_endpoint : module.eks[0].cluster_endpoint
 }
 
-output "cluster_security_group_id" {
+output "eks_cluster_security_group_id" {
   description = "Security group IDs that are attached to the control plane of the EKS cluster."
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_primary_security_group_id : module.eks[0].cluster_primary_security_group_id
 }
 
-output "cluster_arn" {
+output "eks_cluster_arn" {
   description = "ARN of the EKS Cluster."
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_arn : module.eks[0].cluster_arn
 }
 
-output "cluster_oidc_issuer_url" {
+output "eks_cluster_oidc_issuer_url" {
   description = "URL of the OpenID Connect identity provider on the EKS cluster."
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_oidc_issuer_url : module.eks[0].cluster_oidc_issuer_url
 }
@@ -38,7 +38,7 @@ output "kms_policy_arn" {
   description = "ARN of the KMS policy that is used by the EKS cluster."
 }
 
-output "cluster_certificate_authority_data" {
+output "eks_cluster_certificate_authority_data" {
   description = "Base64 encoded certificate data required to communicate with the cluster"
   value       = var.default_addon_enabled ? module.eks_addon[0].cluster_certificate_authority_data : module.eks[0].cluster_certificate_authority_data
 }
