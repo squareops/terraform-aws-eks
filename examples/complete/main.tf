@@ -28,6 +28,7 @@ locals {
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap                = true
   node_group_ebs_volume_size               = 50
+  fargate_profile_name                     = "app"
   current_identity                         = data.aws_caller_identity.current.arn
   additional_aws_tags = {
     Owner      = "Organization_name"
@@ -196,7 +197,7 @@ module "managed_node_group_production" {
 module "farget_profle" {
   source       = "squareops/eks/aws//modules/fargate-profile"
   depends_on   = [module.vpc, module.eks]
-  profile_name = "app"
+  profile_name = local.fargate_profile_name
   subnet_ids   = [module.vpc.private_subnets[0]]
   environment  = local.environment
   cluster_name = module.eks.eks_cluster_name
