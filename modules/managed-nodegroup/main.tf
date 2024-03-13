@@ -48,7 +48,7 @@ resource "aws_launch_template" "eks_template" {
   }
 
   monitoring {
-    enabled = var.enable_monitoring
+    enabled = var.monitoring_enabled
   }
 
   tag_specifications {
@@ -65,7 +65,7 @@ resource "aws_launch_template" "eks_template" {
 }
 
 resource "aws_eks_node_group" "managed_ng" {
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.vpc_subnet_ids
   cluster_name    = var.eks_cluster_name
   node_role_arn   = var.worker_iam_role_arn
   node_group_name = format("%s-%s-%s", var.environment, var.name, "ng")
@@ -75,8 +75,8 @@ resource "aws_eks_node_group" "managed_ng" {
     min_size     = var.min_size
   }
   labels               = var.k8s_labels
-  capacity_type        = var.capacity_type
-  instance_types       = var.instance_types
+  capacity_type        = var.managed_nodegroups_capacity_type
+  instance_types       = var.managed_nodegroups_instance_types
   force_update_version = true
   launch_template {
     id      = aws_launch_template.eks_template.id

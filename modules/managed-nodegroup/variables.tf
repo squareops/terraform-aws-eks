@@ -16,13 +16,13 @@ variable "name" {
   default     = ""
 }
 
-variable "instance_types" {
+variable "managed_nodegroups_instance_types" {
   description = "The instance types to be used for the EKS node group (e.g., t2.medium)."
   type        = list(any)
   default     = ["t3a.medium"]
 }
 
-variable "capacity_type" {
+variable "managed_nodegroups_capacity_type" {
   description = "The capacity type for the EKS node group (ON_DEMAND or SPOT)."
   type        = string
   default     = "ON_DEMAND"
@@ -70,7 +70,7 @@ variable "associate_public_ip_address" {
   default     = false
 }
 
-variable "enable_monitoring" {
+variable "monitoring_enabled" {
   description = "Specify whether to enable monitoring for nodes."
   type        = bool
   default     = true
@@ -112,7 +112,7 @@ variable "ebs_encrypted" {
   default     = true
 }
 
-variable "subnet_ids" {
+variable "vpc_subnet_ids" {
   description = "The IDs of the subnets in the VPC that can be used by EKS."
   type        = list(string)
   default     = [""]

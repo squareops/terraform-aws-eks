@@ -302,7 +302,7 @@ resource "aws_launch_template" "eks_template" {
 
 resource "aws_eks_node_group" "default_ng" {
   count           = var.default_addon_enabled ? 1 : 0
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.vpc_subnet_ids
   cluster_name    = module.eks_addon[0].cluster_name
   node_role_arn   = aws_iam_role.node_role.arn
   node_group_name = format("%s-%s-%s", var.environment, "default", "ng")

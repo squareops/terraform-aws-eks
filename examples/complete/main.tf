@@ -125,7 +125,7 @@ module "eks" {
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
-  subnet_ids                               = [module.vpc.private_subnets[0]]
+  vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
   min_size                                 = 1
   max_size                                 = 3
   desired_size                             = 1
@@ -170,24 +170,24 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                 = "squareops/eks/aws//modules/managed-nodegroup"
-  depends_on             = [module.vpc, module.eks]
-  name                   = "Infra"
-  min_size               = 2
-  max_size               = 5
-  desired_size           = 2
-  subnet_ids             = [module.vpc.private_subnets[0]]
-  environment            = local.environment
-  kms_key_arn            = module.kms.key_arn
-  capacity_type          = local.managed_node_group_capacity_type
-  ebs_volume_size        = 50
-  instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
-  kms_policy_arn         = module.eks.kms_policy_arn
-  eks_cluster_name       = module.eks.eks_cluster_name
-  default_addon_enabled  = local.default_addon_enabled
-  worker_iam_role_name   = module.eks.worker_iam_role_name
-  worker_iam_role_arn    = module.eks.worker_iam_role_arn
-  eks_nodes_keypair_name = module.key_pair_eks.key_pair_name
+  source                            = "squareops/eks/aws//modules/managed-nodegroup"
+  depends_on                        = [module.vpc, module.eks]
+  name                              = "Infra"
+  min_size                          = 2
+  max_size                          = 5
+  desired_size                      = 2
+  vpc_subnet_ids                    = [module.vpc.private_subnets[0]]
+  environment                       = local.environment
+  kms_key_arn                       = module.kms.key_arn
+  managed_nodegroups_capacity_type  = local.managed_node_group_capacity_type
+  ebs_volume_size                   = local.node_group_ebs_volume_size
+  managed_nodegroups_instance_types = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  kms_policy_arn                    = module.eks.kms_policy_arn
+  eks_cluster_name                  = module.eks.eks_cluster_name
+  default_addon_enabled             = local.default_addon_enabled
+  worker_iam_role_name              = module.eks.worker_iam_role_name
+  worker_iam_role_arn               = module.eks.worker_iam_role_arn
+  eks_nodes_keypair_name            = module.key_pair_eks.key_pair_name
   k8s_labels = {
     "Addons-Services" = "true"
   }

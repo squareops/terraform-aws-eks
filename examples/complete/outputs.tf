@@ -66,12 +66,12 @@ output "managed_ng_desired_node" {
 
 output "managed_ng_capacity_type" {
   description = "Capacity type of managed node"
-  value       = module.managed_node_group_production.capacity_type
+  value       = module.managed_node_group_production.managed_nodegroups_capacity_type
 }
 
 output "managed_ng_instance_types" {
   description = "Instance types of managed node "
-  value       = module.managed_node_group_production.instance_types
+  value       = module.managed_node_group_production.managed_nodegroups_instance_types
 }
 
 output "managed_ng_disk_size" {

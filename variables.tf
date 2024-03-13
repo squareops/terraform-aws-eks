@@ -1,7 +1,7 @@
 variable "additional_tags" {
   description = "Additional tags to be applied to AWS resources"
   type        = map(string)
-  default     = {
+  default = {
     Owner      = "organization_name"
     Expires    = "Never"
     Department = "Engineering"
@@ -218,7 +218,7 @@ variable "ebs_encrypted" {
   default     = true
 }
 
-variable "subnet_ids" {
+variable "vpc_subnet_ids" {
   description = "The IDs of the subnets in the VPC that can be used by EKS."
   type        = list(string)
   default     = [""]
