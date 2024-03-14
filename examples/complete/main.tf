@@ -1,10 +1,10 @@
 locals {
   aws_region                               = "us-east-1"
-  aws_account_id                           = ""
+  aws_account_id                           = "767398031518"
   kms_deletion_window_in_days              = 7
-  key_rotation_enabled                     = true
+  kms_key_rotation_enabled                     = true
   is_enabled                               = true
-  multi_region                             = true
+  multi_region                             = false
   environment                              = "prod"
   name                                     = "eks"
   vpc_availability_zones                   = ["us-east-1a", "us-east-1b"]
@@ -18,7 +18,7 @@ locals {
   kms_user                                 = null
   vpc_cidr                                 = "10.10.0.0/16"
   vpn_server_enabled                       = false
-  default_addon_enabled                    = false
+  eks_default_addon_enabled                = false
   eks_cluster_version                      = "1.27"
   eks_cluster_log_types                    = []
   eks_cluster_log_retention_in_days        = 30
@@ -43,7 +43,7 @@ module "kms" {
 
   deletion_window_in_days = local.kms_deletion_window_in_days
   description             = "Symetric Key to Enable Encryption at rest using KMS services."
-  enable_key_rotation     = local.key_rotation_enabled
+  enable_key_rotation     = local.kms_key_rotation_enabled
   is_enabled              = local.is_enabled
   key_usage               = "ENCRYPT_DECRYPT"
   multi_region            = local.multi_region
@@ -121,7 +121,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                                   = "squareops/eks/aws"
+  source                                   = "../.."
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
@@ -141,7 +141,7 @@ module "eks" {
   eks_cluster_endpoint_public_access       = local.eks_cluster_endpoint_public_access
   eks_cluster_endpoint_public_access_cidrs = local.eks_cluster_endpoint_public_access_cidrs
   create_aws_auth_configmap                = local.create_aws_auth_configmap
-  default_addon_enabled                    = local.default_addon_enabled
+  eks_default_addon_enabled                = local.eks_default_addon_enabled
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
   aws_auth_roles = [
     {
@@ -170,7 +170,7 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                            = "squareops/eks/aws//modules/managed-nodegroup"
+  source                            = "../../modules/managed-nodegroup"
   depends_on                        = [module.vpc, module.eks]
   name                              = "Infra"
   min_size                          = 2
@@ -184,7 +184,7 @@ module "managed_node_group_production" {
   managed_nodegroups_instance_types = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   kms_policy_arn                    = module.eks.kms_policy_arn
   eks_cluster_name                  = module.eks.eks_cluster_name
-  default_addon_enabled             = local.default_addon_enabled
+  default_addon_enabled             = local.eks_default_addon_enabled
   worker_iam_role_name              = module.eks.worker_iam_role_name
   worker_iam_role_arn               = module.eks.worker_iam_role_arn
   eks_nodes_keypair_name            = module.key_pair_eks.key_pair_name
@@ -194,15 +194,15 @@ module "managed_node_group_production" {
   tags = local.additional_aws_tags
 }
 
-module "farget_profle" {
-  source       = "squareops/eks/aws//modules/fargate-profile"
-  depends_on   = [module.vpc, module.eks]
-  profile_name = local.fargate_profile_name
-  subnet_ids   = [module.vpc.private_subnets[0]]
-  environment  = local.environment
-  cluster_name = module.eks.eks_cluster_name
-  namespace    = ""
-  labels = {
-    "App-Services" = "fargate"
-  }
-}
+# module "farget_profle" {
+#   source       = "squareops/eks/aws//modules/fargate-profile"
+#   depends_on   = [module.vpc, module.eks]
+#   profile_name = local.fargate_profile_name
+#   subnet_ids   = [module.vpc.private_subnets[0]]
+#   environment  = local.environment
+#   cluster_name = module.eks.eks_cluster_name
+#   namespace    = ""
+#   labels = {
+#     "App-Services" = "fargate"
+#   }
+# }

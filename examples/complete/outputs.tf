@@ -83,29 +83,29 @@ output "managed_ng_disk_size" {
 # default Nodegroup
 output "default_ng_node_group_arn" {
   description = "ARN for the nodegroup"
-  value       = local.default_addon_enabled ? module.eks.default_ng_node_group_arn : null
+  value       = local.eks_default_addon_enabled ? module.eks.default_ng_node_group_arn : null
 }
 
 output "default_ng_min_node" {
-  value = local.default_addon_enabled ? module.eks.default_ng_min_node : null
+  value = local.eks_default_addon_enabled ? module.eks.default_ng_min_node : null
 }
 
 output "default_ng_max_node" {
-  value = local.default_addon_enabled ? module.eks.default_ng_max_node : null
+  value = local.eks_default_addon_enabled ? module.eks.default_ng_max_node : null
 }
 
 output "default_ng_desired_node" {
-  value = local.default_addon_enabled ? module.eks.default_ng_desired_node : null
+  value = local.eks_default_addon_enabled ? module.eks.default_ng_desired_node : null
 }
 
 output "default_ng_capacity_type" {
-  value = local.default_addon_enabled ? module.eks.default_ng_capacity_type : null
+  value = local.eks_default_addon_enabled ? module.eks.default_ng_capacity_type : null
 }
 
 output "default_ng_instance_types" {
-  value = local.default_addon_enabled ? module.eks.default_ng_instance_types : null
+  value = local.eks_default_addon_enabled ? module.eks.default_ng_instance_types : null
 }
 
 output "default_ng_ebs_volume_size" {
-  value = local.default_addon_enabled ? module.eks.default_ng_ebs_volume_size : null
+  value = local.eks_default_addon_enabled ? module.eks.default_ng_ebs_volume_size : null
 }

@@ -154,3 +154,15 @@ variable "default_addon_enabled" {
   default     = false
   type        = bool
 }
+
+variable "network_interfaces_delete_on_termination" {
+  description = "Set to true if delete the network interfaces when eks cluster is terminated."
+  type        = bool
+  default     = true
+}
+
+variable "volume_delete_on_termination" {
+  description = "Set to true if delete the volumes when eks cluster is terminated."
+  type        = bool
+  default     = true
+}

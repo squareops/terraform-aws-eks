@@ -36,7 +36,7 @@ resource "aws_launch_template" "eks_template" {
     ebs {
       volume_size           = var.ebs_volume_size
       volume_type           = var.ebs_volume_type
-      delete_on_termination = true
+      delete_on_termination = var.volume_delete_on_termination
       encrypted             = var.ebs_encrypted
       kms_key_id            = var.kms_key_arn
     }
@@ -44,7 +44,7 @@ resource "aws_launch_template" "eks_template" {
 
   network_interfaces {
     associate_public_ip_address = var.associate_public_ip_address
-    delete_on_termination       = true
+    delete_on_termination       = var.network_interfaces_delete_on_termination
   }
 
   monitoring {

@@ -121,7 +121,7 @@ variable "ipv6_enabled" {
   type        = bool
   default     = false
 }
-variable "default_addon_enabled" {
+variable "eks_default_addon_enabled" {
   description = "Enable deafult addons(vpc-cni, ebs-csi) at the time of cluster creation"
   type        = bool
   default     = false
@@ -176,7 +176,7 @@ variable "associate_public_ip_address" {
   default     = false
 }
 
-variable "enable_monitoring" {
+variable "monitoring_enabled" {
   description = "Specify whether to enable monitoring for nodes."
   type        = bool
   default     = true
@@ -261,7 +261,7 @@ variable "volume_delete_on_termination" {
   default     = true
 }
 
-variable "eni_delete_on_termination" {
+variable "network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true
