@@ -14,12 +14,12 @@ output "desired_node" {
   value = var.desired_size
 }
 
-output "capacity_type" {
-  value = var.capacity_type
+output "managed_nodegroups_capacity_type" {
+  value = var.managed_nodegroups_capacity_type
 }
 
-output "instance_types" {
-  value = var.instance_types
+output "managed_nodegroups_instance_types" {
+  value = var.managed_nodegroups_instance_types
 }
 
 output "ebs_volume_size" {

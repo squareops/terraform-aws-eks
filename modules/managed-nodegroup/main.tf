@@ -36,7 +36,7 @@ resource "aws_launch_template" "eks_template" {
     ebs {
       volume_size           = var.ebs_volume_size
       volume_type           = var.ebs_volume_type
-      delete_on_termination = true
+      delete_on_termination = var.volume_delete_on_termination
       encrypted             = var.ebs_encrypted
       kms_key_id            = var.kms_key_arn
     }
@@ -44,11 +44,11 @@ resource "aws_launch_template" "eks_template" {
 
   network_interfaces {
     associate_public_ip_address = var.associate_public_ip_address
-    delete_on_termination       = true
+    delete_on_termination       = var.network_interfaces_delete_on_termination
   }
 
   monitoring {
-    enabled = var.enable_monitoring
+    enabled = var.monitoring_enabled
   }
 
   tag_specifications {
@@ -65,7 +65,7 @@ resource "aws_launch_template" "eks_template" {
 }
 
 resource "aws_eks_node_group" "managed_ng" {
-  subnet_ids      = var.subnet_ids
+  subnet_ids      = var.vpc_subnet_ids
   cluster_name    = var.eks_cluster_name
   node_role_arn   = var.worker_iam_role_arn
   node_group_name = format("%s-%s-%s", var.environment, var.name, "ng")
@@ -75,8 +75,8 @@ resource "aws_eks_node_group" "managed_ng" {
     min_size     = var.min_size
   }
   labels               = var.k8s_labels
-  capacity_type        = var.capacity_type
-  instance_types       = var.instance_types
+  capacity_type        = var.managed_nodegroups_capacity_type
+  instance_types       = var.managed_nodegroups_instance_types
   force_update_version = true
   launch_template {
     id      = aws_launch_template.eks_template.id
