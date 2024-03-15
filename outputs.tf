@@ -49,23 +49,23 @@ output "default_ng_node_group_arn" {
 }
 
 output "default_ng_min_node" {
-  value = var.eks_default_addon_enabled ? var.min_size : null
+  value = var.eks_default_addon_enabled ? var.eks_ng_min_size : null
 }
 
 output "default_ng_max_node" {
-  value = var.eks_default_addon_enabled ? var.max_size : null
+  value = var.eks_default_addon_enabled ? var.eks_ng_max_size : null
 }
 
 output "default_ng_desired_node" {
-  value = var.eks_default_addon_enabled ? var.desired_size : null
+  value = var.eks_default_addon_enabled ? var.eks_ng_desired_size : null
 }
 
 output "default_ng_capacity_type" {
-  value = var.eks_default_addon_enabled ? var.capacity_type : null
+  value = var.eks_default_addon_enabled ? var.eks_ng_capacity_type : null
 }
 
 output "default_ng_instance_types" {
-  value = var.eks_default_addon_enabled ? var.instance_types : null
+  value = var.eks_default_addon_enabled ? var.eks_ng_instance_types : null
 }
 
 output "default_ng_ebs_volume_size" {

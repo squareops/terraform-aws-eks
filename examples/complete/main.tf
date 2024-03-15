@@ -2,7 +2,7 @@ locals {
   aws_region                               = "us-east-1"
   aws_account_id                           = "767398031518"
   kms_deletion_window_in_days              = 7
-  kms_key_rotation_enabled                     = true
+  kms_key_rotation_enabled                 = true
   is_enabled                               = true
   multi_region                             = false
   environment                              = "prod"
@@ -26,7 +26,7 @@ locals {
   managed_node_group_capacity_type         = "SPOT"
   eks_cluster_endpoint_public_access       = true
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  create_aws_auth_configmap                = true
+  aws_auth_configmap_enabled             = true
   node_group_ebs_volume_size               = 50
   fargate_profile_name                     = "app"
   current_identity                         = data.aws_caller_identity.current.arn
@@ -126,12 +126,12 @@ module "eks" {
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
   vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
-  min_size                                 = 1
-  max_size                                 = 3
-  desired_size                             = 1
+  eks_ng_min_size                               = 1
+  eks_ng_max_size                                 = 3
+  eks_ng_desired_size                             = 1
   ebs_volume_size                          = local.node_group_ebs_volume_size
-  capacity_type                            = local.eks_capacity_type
-  instance_types                           = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  eks_ng_capacity_type                            = local.eks_capacity_type
+  eks_ng_instance_types                           = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                              = local.environment
   kms_key_arn                              = module.kms.key_arn
   eks_cluster_version                      = local.eks_cluster_version
@@ -140,7 +140,7 @@ module "eks" {
   eks_cluster_log_retention_in_days        = local.eks_cluster_log_retention_in_days
   eks_cluster_endpoint_public_access       = local.eks_cluster_endpoint_public_access
   eks_cluster_endpoint_public_access_cidrs = local.eks_cluster_endpoint_public_access_cidrs
-  create_aws_auth_configmap                = local.create_aws_auth_configmap
+  aws_auth_configmap_enabled                = local.aws_auth_configmap_enabled
   eks_default_addon_enabled                = local.eks_default_addon_enabled
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
   aws_auth_roles = [

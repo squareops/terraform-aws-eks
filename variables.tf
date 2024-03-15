@@ -255,7 +255,7 @@ variable "update_default_version" {
   default     = true
 }
 
-variable "eks_ng_volume_delete_on_termination" {
+variable "eks_volume_delete_on_termination" {
   description = "Set to true if delete the volumes when eks cluster is terminated."
   type        = bool
   default     = true
