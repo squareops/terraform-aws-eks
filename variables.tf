@@ -86,7 +86,7 @@ variable "vpc_private_subnet_ids" {
   type        = list(string)
 }
 
-variable "create_kms_key" {
+variable "kms_key_enabled" {
   description = "Controls if a KMS key for cluster encryption should be created"
   type        = bool
   default     = false
@@ -98,7 +98,7 @@ variable "eks_cluster_security_group_additional_rules" {
   default     = {}
 }
 
-variable "create_aws_auth_configmap" {
+variable "aws_auth_configmap_enabled" {
   description = "Determines whether to manage the aws-auth configmap"
   default     = false
   type        = bool
@@ -139,13 +139,13 @@ variable "eks_cluster_name" {
   default     = ""
 }
 
-variable "instance_types" {
+variable "eks_ng_instance_types" {
   description = "The instance types to be used for the EKS node group (e.g., t2.medium)."
   type        = list(any)
   default     = ["t3a.medium"]
 }
 
-variable "capacity_type" {
+variable "eks_ng_capacity_type" {
   description = "The capacity type for the EKS node group (ON_DEMAND or SPOT)."
   type        = string
   default     = "ON_DEMAND"
@@ -176,25 +176,25 @@ variable "associate_public_ip_address" {
   default     = false
 }
 
-variable "monitoring_enabled" {
+variable "eks_ng_monitoring_enabled" {
   description = "Specify whether to enable monitoring for nodes."
   type        = bool
   default     = true
 }
 
-variable "min_size" {
+variable "eks_ng_min_size" {
   description = "The minimum number of nodes for the node group."
   type        = string
   default     = "1"
 }
 
-variable "max_size" {
+variable "eks_ng_max_size" {
   description = "The maximum number of nodes that can be added to the node group."
   type        = string
   default     = "3"
 }
 
-variable "desired_size" {
+variable "eks_ng_desired_size" {
   description = "The desired number of nodes for the node group."
   type        = string
   default     = "1"
@@ -255,13 +255,13 @@ variable "update_default_version" {
   default     = true
 }
 
-variable "volume_delete_on_termination" {
+variable "eks_ng_volume_delete_on_termination" {
   description = "Set to true if delete the volumes when eks cluster is terminated."
   type        = bool
   default     = true
 }
 
-variable "network_interfaces_delete_on_termination" {
+variable "eks_network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true

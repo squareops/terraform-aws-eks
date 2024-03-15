@@ -6,7 +6,7 @@ module "eks_addon" {
   subnet_ids                = var.vpc_private_subnet_ids
   enable_irsa               = var.irsa_enabled
   cluster_name              = format("%s-%s", var.environment, var.name)
-  create_kms_key            = var.create_kms_key
+  create_kms_key            = var.kms_key_enabled
   cluster_version           = var.eks_cluster_version
   cluster_enabled_log_types = var.eks_cluster_log_types
   tags = {
@@ -15,8 +15,8 @@ module "eks_addon" {
   }
   aws_auth_roles                          = var.aws_auth_roles
   aws_auth_users                          = var.aws_auth_users
-  create_aws_auth_configmap               = var.create_aws_auth_configmap
-  manage_aws_auth_configmap               = var.create_aws_auth_configmap
+  create_aws_auth_configmap               = var.aws_auth_configmap_enabled
+  manage_aws_auth_configmap               = var.aws_auth_configmap_enabled
   cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
   cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
   cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
@@ -58,7 +58,7 @@ module "eks" {
   subnet_ids                = var.vpc_private_subnet_ids
   enable_irsa               = var.irsa_enabled
   cluster_name              = format("%s-%s", var.environment, var.name)
-  create_kms_key            = var.create_kms_key
+  create_kms_key            = var.kms_key_enabled
   cluster_version           = var.eks_cluster_version
   cluster_enabled_log_types = var.eks_cluster_log_types
   tags = {
@@ -67,8 +67,8 @@ module "eks" {
   }
   aws_auth_roles                          = var.aws_auth_roles
   aws_auth_users                          = var.aws_auth_users
-  create_aws_auth_configmap               = var.create_aws_auth_configmap
-  manage_aws_auth_configmap               = var.create_aws_auth_configmap
+  create_aws_auth_configmap               = var.aws_auth_configmap_enabled
+  manage_aws_auth_configmap               = var.aws_auth_configmap_enabled
   cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
   cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
   cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
@@ -272,7 +272,7 @@ resource "aws_launch_template" "eks_template" {
     ebs {
       volume_size           = var.ebs_volume_size
       volume_type           = var.ebs_volume_type
-      delete_on_termination = var.volume_delete_on_termination
+      delete_on_termination = var.eks_volume_delete_on_termination
       encrypted             = var.ebs_encrypted
       kms_key_id            = var.kms_key_arn
     }
@@ -280,11 +280,11 @@ resource "aws_launch_template" "eks_template" {
 
   network_interfaces {
     associate_public_ip_address = var.associate_public_ip_address
-    delete_on_termination       = var.network_interfaces_delete_on_termination
+    delete_on_termination       = var.eks_network_interfaces_delete_on_termination
   }
 
   monitoring {
-    enabled = var.monitoring_enabled
+    enabled = var.eks_ng_monitoring_enabled
   }
 
   tag_specifications {
@@ -307,14 +307,14 @@ resource "aws_eks_node_group" "default_ng" {
   node_role_arn   = aws_iam_role.node_role.arn
   node_group_name = format("%s-%s-%s", var.environment, "default", "ng")
   scaling_config {
-    desired_size = var.desired_size
-    max_size     = var.max_size
-    min_size     = var.min_size
+    desired_size = var.eks_ng_desired_size
+    max_size     = var.eks_ng_max_size
+    min_size     = var.eks_ng_min_size
   }
   labels        = var.k8s_labels
-  capacity_type = var.capacity_type
+  capacity_type = var.eks_ng_capacity_type
 
-  instance_types = var.instance_types
+  instance_types = var.eks_ng_instance_types
   launch_template {
     id      = aws_launch_template.eks_template[0].id
     version = aws_launch_template.eks_template[0].latest_version
