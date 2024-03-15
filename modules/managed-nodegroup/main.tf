@@ -2,6 +2,8 @@ data "aws_eks_cluster" "eks" {
   name = var.eks_cluster_name
 }
 
+data "aws_region" "current" {}
+
 data "aws_ami" "launch_template_ami" {
   owners      = ["602401143452"]
   most_recent = true
@@ -21,6 +23,7 @@ data "template_file" "launch_template_userdata" {
     cluster_auth_base64          = data.aws_eks_cluster.eks.certificate_authority[0].data
     image_low_threshold_percent  = var.image_low_threshold_percent
     image_high_threshold_percent = var.image_high_threshold_percent
+    managed_ng_pod_capacity      = var.managed_ng_pod_capacity
 
   }
 }
@@ -88,5 +91,27 @@ resource "aws_eks_node_group" "managed_ng" {
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.name, "ng")
     Environment = var.environment
+  }
+}
+
+resource "aws_eks_addon" "managed_ng_addons" {
+  depends_on                  = [aws_eks_node_group.managed_ng]
+  for_each                    = var.addons
+  cluster_name                = var.eks_cluster_name
+  addon_name                  = each.value.name
+  addon_version               = each.value.version
+  resolve_conflicts_on_create = "OVERWRITE"
+}
+
+resource "null_resource" "update_vpc_cni_env_var" {
+  depends_on = [aws_eks_addon.managed_ng_addons["vpc_cni"]]
+
+  provisioner "local-exec" {
+    command = <<-EOF
+      aws eks update-kubeconfig --name ${var.eks_cluster_name} --region ${data.aws_region.current.name} &&
+      kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
+      kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
+      kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
+    EOF
   }
 }
