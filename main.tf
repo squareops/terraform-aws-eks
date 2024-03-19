@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 module "eks_addon" {
   count                     = var.default_addon_enabled ? 1 : 0
   source                    = "terraform-aws-modules/eks/aws"
@@ -47,6 +49,19 @@ module "eks_addon" {
     aws-ebs-csi-driver = {
       most_recent = true
     }
+  }
+}
+
+resource "null_resource" "update_vpc_cni_prifix" {
+  count      = var.default_addon_enabled ? 1 : 0
+  depends_on = [module.eks_addon]
+  provisioner "local-exec" {
+    command = <<-EOF
+      aws eks update-kubeconfig --name ${module.eks[0].cluster_name} --region ${data.aws_region.current.name} &&
+      kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
+      kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
+      kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
+    EOF
   }
 }
 

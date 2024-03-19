@@ -81,6 +81,7 @@ module "managed_node_group_production" {
   worker_iam_role_name   = module.eks.worker_iam_role_name
   worker_iam_role_arn    = module.eks.worker_iam_role_arn
   default_addon_enabled  = true
+  managed_ng_pod_capacity= 90
   eks_nodes_keypair_name = "key-pair-name"
   k8s_labels = {
     "Addons-Services" = "true"
