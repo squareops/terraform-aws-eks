@@ -57,7 +57,7 @@ resource "null_resource" "update_cni_prifix" {
   depends_on = [module.eks_addon]
   provisioner "local-exec" {
     command = <<-EOF
-      aws eks update-kubeconfig --name ${module.eks_addons[0].cluster_name} --region ${data.aws_region.current.name} &&
+      aws eks update-kubeconfig --name ${module.eks_addon[0].cluster_name} --region ${data.aws_region.current.name} &&
       kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
       kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
       kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
