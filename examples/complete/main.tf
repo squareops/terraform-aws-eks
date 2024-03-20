@@ -118,6 +118,7 @@ module "eks" {
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
+  managed_ng_pod_capacity              = 90
   default_addon_enabled                = local.default_addon_enabled
   eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
   aws_auth_roles = [
