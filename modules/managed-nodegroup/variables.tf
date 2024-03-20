@@ -163,16 +163,16 @@ variable "managed_ng_pod_capacity" {
 
 variable "addons" {
   description = "A map variable representing various Kubernetes add-ons with their respective name and version."
-  type        = map(object({
-    name      = string
-    version   = string
+  type = map(object({
+    name    = string
+    version = string
   }))
-  default     = {
-    coredns   = {
+  default = {
+    coredns = {
       name    = "coredns"
       version = "v1.10.1-eksbuild.4"
     }
-    vpc_cni   = {
+    vpc_cni = {
       name    = "vpc-cni"
       version = "v1.16.4-eksbuild.2"
     }
@@ -180,7 +180,7 @@ variable "addons" {
       name    = "kube-proxy"
       version = "v1.27.6-eksbuild.2"
     }
-    ebs_csi   = {
+    ebs_csi = {
       name    = "aws-ebs-csi-driver"
       version = "v1.28.0-eksbuild.1"
     }
