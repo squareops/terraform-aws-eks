@@ -52,12 +52,12 @@ module "eks_addon" {
   }
 }
 
-resource "null_resource" "update_vpc_cni_prifix" {
+resource "null_resource" "update_cni_prifix" {
   count      = var.default_addon_enabled ? 1 : 0
   depends_on = [module.eks_addon]
   provisioner "local-exec" {
     command = <<-EOF
-      aws eks update-kubeconfig --name ${module.eks[0].cluster_name} --region ${data.aws_region.current.name} &&
+      aws eks update-kubeconfig --name ${module.eks_addons[0].cluster_name} --region ${data.aws_region.current.name} &&
       kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
       kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
       kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
@@ -271,6 +271,7 @@ data "template_file" "launch_template_userdata" {
     cluster_auth_base64          = module.eks_addon[0].cluster_certificate_authority_data
     image_low_threshold_percent  = var.image_low_threshold_percent
     image_high_threshold_percent = var.image_high_threshold_percent
+    managed_ng_pod_capacity      = var.managed_ng_pod_capacity
 
   }
 }
