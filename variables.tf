@@ -220,3 +220,9 @@ variable "worker_iam_role_name" {
   type        = string
   default     = ""
 }
+
+variable "managed_ng_pod_capacity" {
+  description = "Maximum number of pods you want to schedule on one node. This value should not exceed 110."
+  default     = 70
+  type        = number
+}

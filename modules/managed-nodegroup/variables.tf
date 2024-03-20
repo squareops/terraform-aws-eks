@@ -154,3 +154,35 @@ variable "default_addon_enabled" {
   default     = false
   type        = bool
 }
+
+variable "managed_ng_pod_capacity" {
+  description = "Maximum number of pods you want to schedule on one node. This value should not exceed 110."
+  default     = 70
+  type        = number
+}
+
+variable "addons" {
+  description = "A map variable representing various Kubernetes add-ons with their respective name and version."
+  type = map(object({
+    name    = string
+    version = string
+  }))
+  default = {
+    coredns = {
+      name    = "coredns"
+      version = "v1.10.1-eksbuild.4"
+    }
+    vpc_cni = {
+      name    = "vpc-cni"
+      version = "v1.16.4-eksbuild.2"
+    }
+    kube_proxy = {
+      name    = "kube-proxy"
+      version = "v1.27.6-eksbuild.2"
+    }
+    ebs_csi = {
+      name    = "aws-ebs-csi-driver"
+      version = "v1.28.0-eksbuild.1"
+    }
+  }
+}

@@ -22,6 +22,7 @@ No requirements.
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
 | <a name="provider_template"></a> [template](#provider\_template) | n/a |
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 
 ## Modules
 
@@ -31,11 +32,13 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [aws_eks_addon.managed_ng_addons](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) | resource |
 | [aws_eks_node_group.managed_ng](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
 | [aws_launch_template.eks_template](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
+| [null_resource.update_vpc_cni_env_var](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_ami.launch_template_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_eks_cluster.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
-| [aws_iam_role.worker_iam_role_name](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [template_file.launch_template_userdata](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
@@ -68,6 +71,8 @@ No modules.
 | <a name="input_worker_iam_role_name"></a> [worker\_iam\_role\_name](#input\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role. | `string` | `""` | no |
 | <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Whether IPv6 enabled or not | `bool` | `false` | no |
 | <a name="input_default_addon_enabled"></a> [default\_addon\_enabled](#input\_default\_addon\_enabled) | Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation | `bool` | `false` | no |
+| <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
+| <a name="input_addons"></a> [addons](#input\_addons) | A map variable representing various Kubernetes add-ons with their respective name and version. | <pre>map(object({<br>    name    = string<br>    version = string<br>  }))</pre> | <pre>{<br>  "coredns": {<br>    "name": "coredns",<br>    "version": "v1.10.1-eksbuild.4"<br>  },<br>  "ebs_csi": {<br>    "name": "aws-ebs-csi-driver",<br>    "version": "v1.28.0-eksbuild.1"<br>  },<br>  "kube_proxy": {<br>    "name": "kube-proxy",<br>    "version": "v1.27.6-eksbuild.2"<br>  },<br>  "vpc_cni": {<br>    "name": "vpc-cni",<br>    "version": "v1.16.4-eksbuild.2"<br>  }<br>}</pre> | no |
 
 ## Outputs
 
