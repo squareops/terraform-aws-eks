@@ -22,6 +22,12 @@ variable "cluster_endpoint_public_access" {
   type        = bool
 }
 
+variable "cluster_endpoint_private_access" {
+  description = "Whether the Amazon EKS private API server endpoint is enabled or not."
+  default     = true
+  type        = bool
+}
+
 variable "cluster_endpoint_public_access_cidrs" {
   description = "CIDR blocks that can access the Amazon EKS public API server endpoint."
   default     = [""]
