@@ -33,6 +33,7 @@ module "eks" {
   private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
   cluster_log_retention_in_days        = 30
   cluster_endpoint_public_access       = true
+  cluster_endpoint_private_access      = false
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   create_aws_auth_configmap            = true
   default_addon_enabled                = true
