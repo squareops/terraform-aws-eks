@@ -86,7 +86,7 @@ module "eks" {
   manage_aws_auth_configmap               = var.create_aws_auth_configmap
   cluster_security_group_additional_rules = var.additional_rules
   cluster_endpoint_public_access          = var.cluster_endpoint_public_access
-  cluster_endpoint_private_access         = var.cluster_endpoint_public_access ? false : true
+  cluster_endpoint_private_access         = var.cluster_endpoint_private_access
   cluster_endpoint_public_access_cidrs    = var.cluster_endpoint_public_access_cidrs
   cloudwatch_log_group_retention_in_days  = var.cluster_log_retention_in_days
   cloudwatch_log_group_kms_key_id         = var.kms_key_arn
