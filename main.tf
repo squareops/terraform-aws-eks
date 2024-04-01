@@ -22,9 +22,9 @@ module "eks_addon" {
   cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
   cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
   cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
-  cloudwatch_log_group_kms_key_id         = var.kms_key_arn
+  cloudwatch_log_group_kms_key_id         = var.eks_kms_key_arn
   cluster_encryption_config = {
-    provider_key_arn = var.kms_key_arn
+    provider_key_arn = var.eks_kms_key_arn
     resources        = ["secrets"]
   }
   cluster_ip_family = var.ipv6_enabled ? "ipv6" : null
@@ -74,9 +74,9 @@ module "eks" {
   cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
   cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
   cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
-  cloudwatch_log_group_kms_key_id         = var.kms_key_arn
+  cloudwatch_log_group_kms_key_id         = var.eks_kms_key_arn
   cluster_encryption_config = {
-    provider_key_arn = var.kms_key_arn
+    provider_key_arn = var.eks_kms_key_arn
     resources        = ["secrets"]
   }
   cluster_ip_family = var.ipv6_enabled ? "ipv6" : null
@@ -96,7 +96,7 @@ resource "aws_iam_policy" "kubernetes_pvc_kms_policy" {
             "kms:CreateGrant",
             "kms:GenerateDataKeyWithoutPlaintext"
         ],
-        "Resource": "${var.kms_key_arn}"
+        "Resource": "${var.eks_kms_key_arn}"
       }
   ]
 }

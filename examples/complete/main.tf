@@ -7,7 +7,7 @@ locals {
   multi_region                             = false
   environment                              = "stg"
   name                                     = "rachit"
-  vpc_availability_zones                   = ["ap-northeast-1a", "ap-northeast-1b"]
+  vpc_availability_zones                   = ["ap-northeast-1a", "ap-northeast-1c"]
   vpc_public_subnet_enabled                = true
   vpc_private_subnet_enabled               = true
   database_subnet_enabled                  = true

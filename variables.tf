@@ -262,21 +262,3 @@ variable "eks_network_interfaces_delete_on_termination" {
   type        = bool
   default     = true
 }
-
-variable "eks_cluster_creator_admin_permissions_enabled" {
-  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
-  default     = true
-  type        = bool
-}
-
-variable "access_entries" {
-  description = "List of user maps to add to the aws-auth configmap"
-  type        = any
-  default     = []
-}
-
-variable "authentication_mode" {
-  description = "The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`"
-  type        = string
-  default     = "API_AND_CONFIG_MAP"
-}

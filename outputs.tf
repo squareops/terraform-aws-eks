@@ -75,5 +75,5 @@ output "default_ng_instance_types" {
 
 output "default_ng_ebs_volume_size" {
   description = "The size of the EBS volume attached to worker nodes in the default node group in the EKS Cluster."
-  value       = var.eks_default_addon_enabled ? var.ebs_volume_size : null
+  value       = var.eks_default_addon_enabled ? var.eks_ebs_volume_size : null
 }
