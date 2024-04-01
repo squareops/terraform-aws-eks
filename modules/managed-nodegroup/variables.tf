@@ -180,9 +180,5 @@ variable "addons" {
       name    = "kube-proxy"
       version = "v1.27.6-eksbuild.2"
     }
-    ebs_csi = {
-      name    = "aws-ebs-csi-driver"
-      version = "v1.28.0-eksbuild.1"
-    }
   }
 }
