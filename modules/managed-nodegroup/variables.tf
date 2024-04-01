@@ -10,19 +10,19 @@ variable "environment" {
   default     = null
 }
 
-variable "name" {
-  description = "Specify the name of the EKS Nodegroup"
+variable "managed_ng_name" {
+  description = "Specify the name of the EKS managed Nodegroup"
   type        = string
   default     = ""
 }
 
-variable "managed_nodegroups_instance_types" {
+variable "managed_ng_instance_types" {
   description = "The instance types to be used for the EKS node group (e.g., t2.medium)."
   type        = list(any)
   default     = ["t3a.medium"]
 }
 
-variable "managed_nodegroups_capacity_type" {
+variable "managed_ng_capacity_type" {
   description = "The capacity type for the EKS node group (ON_DEMAND or SPOT)."
   type        = string
   default     = "ON_DEMAND"
@@ -52,13 +52,13 @@ variable "eks_nodes_keypair_name" {
   default     = ""
 }
 
-variable "kms_key_arn" {
+variable "managed_ng_kms_key_arn" {
   description = "The KMS key ID used for encrypting node groups."
   type        = string
   default     = ""
 }
 
-variable "kms_policy_arn" {
+variable "managed_ng_kms_policy_arn" {
   description = "The KMS policy ARN used for encrypting Kubernetes PVC."
   type        = string
   default     = ""
@@ -70,43 +70,43 @@ variable "associate_public_ip_address" {
   default     = false
 }
 
-variable "monitoring_enabled" {
+variable "managed_ng_monitoring_enabled" {
   description = "Specify whether to enable monitoring for nodes."
   type        = bool
   default     = true
 }
 
-variable "min_size" {
+variable "managed_ng_min_size" {
   description = "The minimum number of nodes for the node group."
   type        = string
   default     = "1"
 }
 
-variable "max_size" {
+variable "managed_ng_max_size" {
   description = "The maximum number of nodes that can be added to the node group."
   type        = string
   default     = "3"
 }
 
-variable "desired_size" {
+variable "managed_ng_desired_size" {
   description = "The desired number of nodes for the node group."
   type        = string
   default     = "3"
 }
 
-variable "ebs_volume_size" {
+variable "managed_ng_ebs_volume_size" {
   description = "The type of EBS volume for nodes."
   type        = string
   default     = "50"
 }
 
-variable "ebs_volume_type" {
+variable "managed_ng_ebs_volume_type" {
   description = "Specify the type of EBS volume for nodes."
   type        = string
   default     = "gp3"
 }
 
-variable "ebs_encrypted" {
+variable "managed_ng_ebs_encrypted" {
   description = "Specify whether to encrypt the EBS volume for nodes."
   type        = bool
   default     = true
@@ -155,13 +155,13 @@ variable "default_addon_enabled" {
   type        = bool
 }
 
-variable "ng_network_interfaces_delete_on_termination" {
+variable "managed_ng_network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true
 }
 
-variable "ng_volume_delete_on_termination" {
+variable "managed_ng_volume_delete_on_termination" {
   description = "Set to true if delete the volumes when eks cluster is terminated."
   type        = bool
   default     = true

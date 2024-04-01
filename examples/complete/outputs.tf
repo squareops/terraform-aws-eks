@@ -51,32 +51,32 @@ output "managed_ng_node_group_arn" {
 
 output "managed_ng_min_node" {
   description = "Minimum node of managed node group"
-  value       = module.managed_node_group_production.min_node
+  value       = module.managed_node_group_production.managed_ng_min_node
 }
 
 output "managed_ng_max_node" {
   description = "Maximum node of managed node group"
-  value       = module.managed_node_group_production.max_node
+  value       = module.managed_node_group_production.managed_ng_max_node
 }
 
 output "managed_ng_desired_node" {
   description = "Desired node of managed node group"
-  value       = module.managed_node_group_production.desired_node
+  value       = module.managed_node_group_production.managed_ng_desired_node
 }
 
 output "managed_ng_capacity_type" {
   description = "Capacity type of managed node"
-  value       = module.managed_node_group_production.managed_nodegroups_capacity_type
+  value       = module.managed_node_group_production.managed_ng_capacity_type
 }
 
 output "managed_ng_instance_types" {
   description = "Instance types of managed node "
-  value       = module.managed_node_group_production.managed_nodegroups_instance_types
+  value       = module.managed_node_group_production.managed_ng_instance_types
 }
 
 output "managed_ng_disk_size" {
   description = "Disk size of node in managed node group"
-  value       = module.managed_node_group_production.ebs_volume_size
+  value       = module.managed_node_group_production.managed_ng_ebs_volume_size
 }
 
 

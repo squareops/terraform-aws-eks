@@ -1,11 +1,7 @@
 variable "additional_tags" {
   description = "Additional tags to be applied to AWS resources"
   type        = map(string)
-  default = {
-    Owner      = "organization_name"
-    Expires    = "Never"
-    Department = "Engineering"
-  }
+  default     = {}
 }
 
 variable "aws_region" {
@@ -62,7 +58,7 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "kms_key_arn" {
+variable "eks_kms_key_arn" {
   description = "ARN of the KMS key used to encrypt EKS resources."
   default     = ""
   type        = string
@@ -200,19 +196,19 @@ variable "eks_ng_desired_size" {
   default     = "1"
 }
 
-variable "ebs_volume_size" {
+variable "eks_ebs_volume_size" {
   description = "The type of EBS volume for nodes."
   type        = string
   default     = "50"
 }
 
-variable "ebs_volume_type" {
+variable "eks_ebs_volume_type" {
   description = "Specify the type of EBS volume for nodes."
   type        = string
   default     = "gp3"
 }
 
-variable "ebs_encrypted" {
+variable "eks_ebs_encrypted" {
   description = "Specify whether to encrypt the EBS volume for nodes."
   type        = bool
   default     = true
@@ -265,4 +261,22 @@ variable "eks_network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true
+}
+
+variable "eks_cluster_creator_admin_permissions_enabled" {
+  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
+  default     = true
+  type        = bool
+}
+
+variable "access_entries" {
+  description = "List of user maps to add to the aws-auth configmap"
+  type        = any
+  default     = []
+}
+
+variable "authentication_mode" {
+  description = "The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`"
+  type        = string
+  default     = "API_AND_CONFIG_MAP"
 }

@@ -1,33 +1,33 @@
 locals {
-  aws_region                               = "us-east-1"
+  aws_region                               = "ap-northeast-1"
   aws_account_id                           = "767398031518"
   kms_deletion_window_in_days              = 7
   kms_key_rotation_enabled                 = true
   is_enabled                               = true
   multi_region                             = false
-  environment                              = "prod"
-  name                                     = "eks"
-  vpc_availability_zones                   = ["us-east-1a", "us-east-1b"]
+  environment                              = "stg"
+  name                                     = "rachit"
+  vpc_availability_zones                   = ["ap-northeast-1a", "ap-northeast-1b"]
   vpc_public_subnet_enabled                = true
   vpc_private_subnet_enabled               = true
-  database_subnet_enabled                  = false
-  vpc_intra_subnet_enabled                 = false
+  database_subnet_enabled                  = true
+  vpc_intra_subnet_enabled                 = true
   vpc_one_nat_gateway_per_az               = true
   vpn_server_instance_type                 = "t3a.small"
   vpc_flow_log_enabled                     = false
   kms_user                                 = null
   vpc_cidr                                 = "10.10.0.0/16"
-  vpn_server_enabled                       = false
+  vpn_server_enabled                       = true
   eks_default_addon_enabled                = false
-  eks_cluster_version                      = "1.27"
+  eks_cluster_version                      = "1.29"
   eks_cluster_log_types                    = []
   eks_cluster_log_retention_in_days        = 30
   eks_capacity_type                        = "SPOT"
-  managed_node_group_capacity_type         = "SPOT"
+  managed_ng_capacity_type                 = "SPOT"
   eks_cluster_endpoint_public_access       = true
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  aws_auth_configmap_enabled             = true
-  node_group_ebs_volume_size               = 50
+  aws_auth_configmap_enabled               = true
+  eks_ebs_volume_size                      = 50
   fargate_profile_name                     = "app"
   current_identity                         = data.aws_caller_identity.current.arn
   additional_aws_tags = {
@@ -121,26 +121,26 @@ module "vpc" {
 }
 
 module "eks" {
-  source                                   = "../.."
+  source                                   = "../../"
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
   vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
-  eks_ng_min_size                               = 1
-  eks_ng_max_size                                 = 3
-  eks_ng_desired_size                             = 1
-  ebs_volume_size                          = local.node_group_ebs_volume_size
-  eks_ng_capacity_type                            = local.eks_capacity_type
-  eks_ng_instance_types                           = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  eks_ng_min_size                          = 1
+  eks_ng_max_size                          = 5
+  eks_ng_desired_size                      = 1
+  eks_ebs_volume_size                      = local.eks_ebs_volume_size
+  eks_ng_capacity_type                     = local.eks_capacity_type
+  eks_ng_instance_types                    = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                              = local.environment
-  kms_key_arn                              = module.kms.key_arn
+  eks_kms_key_arn                          = module.kms.key_arn
   eks_cluster_version                      = local.eks_cluster_version
   eks_cluster_log_types                    = local.eks_cluster_log_types
   vpc_private_subnet_ids                   = module.vpc.private_subnets
   eks_cluster_log_retention_in_days        = local.eks_cluster_log_retention_in_days
   eks_cluster_endpoint_public_access       = local.eks_cluster_endpoint_public_access
   eks_cluster_endpoint_public_access_cidrs = local.eks_cluster_endpoint_public_access_cidrs
-  aws_auth_configmap_enabled                = local.aws_auth_configmap_enabled
+  aws_auth_configmap_enabled               = local.aws_auth_configmap_enabled
   eks_default_addon_enabled                = local.eks_default_addon_enabled
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
   aws_auth_roles = [
@@ -170,39 +170,42 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                            = "../../modules/managed-nodegroup"
-  depends_on                        = [module.vpc, module.eks]
-  name                              = "Infra"
-  min_size                          = 2
-  max_size                          = 5
-  desired_size                      = 2
-  vpc_subnet_ids                    = [module.vpc.private_subnets[0]]
-  environment                       = local.environment
-  kms_key_arn                       = module.kms.key_arn
-  managed_nodegroups_capacity_type  = local.managed_node_group_capacity_type
-  ebs_volume_size                   = local.node_group_ebs_volume_size
-  managed_nodegroups_instance_types = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
-  kms_policy_arn                    = module.eks.kms_policy_arn
-  eks_cluster_name                  = module.eks.eks_cluster_name
-  default_addon_enabled             = local.eks_default_addon_enabled
-  worker_iam_role_name              = module.eks.worker_iam_role_name
-  worker_iam_role_arn               = module.eks.worker_iam_role_arn
-  eks_nodes_keypair_name            = module.key_pair_eks.key_pair_name
+  source                        = "../../modules/managed-nodegroup"
+  depends_on                    = [module.vpc, module.eks]
+  managed_ng_name               = "Infra"
+  managed_ng_min_size           = 2
+  managed_ng_max_size           = 5
+  managed_ng_desired_size       = 2
+  vpc_subnet_ids                = [module.vpc.private_subnets[0]]
+  environment                   = local.environment
+  managed_ng_kms_key_arn        = module.kms.key_arn
+  managed_ng_capacity_type      = local.managed_ng_capacity_type
+  managed_ng_ebs_volume_size    = local.eks_ebs_volume_size
+  managed_ng_ebs_volume_type    = "gp3"
+  managed_ng_ebs_encrypted      = true
+  managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  managed_ng_kms_policy_arn     = module.eks.kms_policy_arn
+  eks_cluster_name              = module.eks.eks_cluster_name
+  default_addon_enabled         = local.eks_default_addon_enabled
+  worker_iam_role_name          = module.eks.worker_iam_role_name
+  worker_iam_role_arn           = module.eks.worker_iam_role_arn
+  eks_nodes_keypair_name        = module.key_pair_eks.key_pair_name
+  managed_ng_monitoring_enabled = true
   k8s_labels = {
     "Addons-Services" = "true"
   }
   tags = local.additional_aws_tags
 }
 
-# module "farget_profle" {
-#   source       = "squareops/eks/aws//modules/fargate-profile"
-#   depends_on   = [module.vpc, module.eks]
-#   profile_name = local.fargate_profile_name
-#   subnet_ids   = [module.vpc.private_subnets[0]]
-#   environment  = local.environment
-#   cluster_name = module.eks.eks_cluster_name
-#   namespace    = ""
-#   labels = {
-#     "App-Services" = "fargate"
-#   }
-# }
+module "fargate_profle" {
+  source               = "../../modules/fargate-profile"
+  depends_on           = [module.vpc, module.eks]
+  fargate_profile_name = local.fargate_profile_name
+  fargate_subnet_ids   = [module.vpc.private_subnets[0]]
+  environment          = local.environment
+  eks_cluster_name     = module.eks.eks_cluster_name
+  fargate_namespace    = "fargate"
+  labels = {
+    "App-Services" = "fargate"
+  }
+}

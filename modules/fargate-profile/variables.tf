@@ -3,12 +3,12 @@ variable "environment" {
   type        = string
 }
 
-variable "profile_name" {
+variable "fargate_profile_name" {
   description = "The profile name"
   type        = string
 }
 
-variable "cluster_name" {
+variable "eks_cluster_name" {
   description = "Name of the EKS cluster."
   type        = string
   default     = ""
@@ -26,13 +26,13 @@ variable "permissions_boundary" {
   default     = null
 }
 
-variable "subnet_ids" {
+variable "fargate_subnet_ids" {
   description = "A list of subnets for the EKS Fargate profile."
   type        = list(string)
   default     = []
 }
 
-variable "namespace" {
+variable "fargate_namespace" {
   description = "The Kubernetes namespace for the Fargate profile"
   type        = string
 }

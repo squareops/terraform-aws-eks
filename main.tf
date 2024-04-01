@@ -270,11 +270,11 @@ resource "aws_launch_template" "eks_template" {
   block_device_mappings {
     device_name = "/dev/xvda"
     ebs {
-      volume_size           = var.ebs_volume_size
-      volume_type           = var.ebs_volume_type
+      volume_size           = var.eks_ebs_volume_size
+      volume_type           = var.eks_ebs_volume_type
       delete_on_termination = var.eks_volume_delete_on_termination
-      encrypted             = var.ebs_encrypted
-      kms_key_id            = var.kms_key_arn
+      encrypted             = var.eks_ebs_encrypted
+      kms_key_id            = var.eks_kms_key_arn
     }
   }
 
