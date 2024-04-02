@@ -1,15 +1,4 @@
-## NodeGroup
-
-This directory contains a Terraform module that provisions a managed node group for an existing Amazon Elastic Kubernetes Service (EKS) cluster in AWS. The module simplifies the process of creating and managing worker nodes in the EKS cluster, providing a scalable and reliable infrastructure for running containerized applications.
-Features
-
-The managed-nodegroup module offers the following features:
-
-  1. Automatic provisioning and scaling of EC2 instances for the node group.
-  2. Integration with AWS Auto Scaling to maintain desired capacity and manage node group size.
-  3. Support for different instance types and sizes to meet your application requirements.
-  4. Configuration of node group parameters such as instance tags, labels, and IAM roles.
-  5. Flexible customization options for EBS volumes, encryption, and network settings.
+# graviton-managed-nodegroup
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -72,7 +61,7 @@ No modules.
 | <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Whether IPv6 enabled or not | `bool` | `false` | no |
 | <a name="input_default_addon_enabled"></a> [default\_addon\_enabled](#input\_default\_addon\_enabled) | Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation | `bool` | `false` | no |
 | <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
-| <a name="input_aws_managed_node_group_amd64"></a> [aws\_managed\_node\_group\_amd64](#input\_aws\_managed\_node\_group\_amd64) | Specifies whether to use the AMD64 architecture for the managed node group in Amazon EKS (Elastic Kubernetes Service) | `bool` | `true` | no |
+| <a name="input_aws_managed_node_group_arm64"></a> [aws\_managed\_node\_group\_arm64](#input\_aws\_managed\_node\_group\_arm64) | Specifies whether to use the ARM64 architecture for the managed node group in Amazon EKS (Elastic Kubernetes Service) | `bool` | `false` | no |
 
 ## Outputs
 
