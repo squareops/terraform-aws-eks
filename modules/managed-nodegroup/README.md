@@ -73,7 +73,7 @@ No modules.
 | <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Whether IPv6 enabled or not | `bool` | `false` | no |
 | <a name="input_default_addon_enabled"></a> [default\_addon\_enabled](#input\_default\_addon\_enabled) | Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation | `bool` | `false` | no |
 | <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
-| <a name="input_aws_managed_node_group_arch"></a> [aws\_managed\_node\_group\_arch](#input\_aws\_managed\_node\_group\_arch) | The name of the EKS Worker IAM role. | `string` | `"arm64"` | no |
+| <a name="input_aws_managed_node_group_arch"></a> [aws\_managed\_node\_group\_arch](#input\_aws\_managed\_node\_group\_arch) | Enter your linux architecture. | `string` | `"arm64"` | no |
 
 ## Outputs
 
