@@ -28,7 +28,6 @@ This directory contains a complete example that demonstrates the usage of the Te
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
 | <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | n/a |
 | <a name="module_managed_node_group_production"></a> [managed\_node\_group\_production](#module\_managed\_node\_group\_production) | squareops/eks/aws//modules/managed-nodegroup | n/a |
-| <a name="module_graviton_managed_node_group_production"></a> [graviton\_managed\_node\_group\_production](#module\_graviton\_managed\_node\_group\_production) | squareops/eks/aws//modules/graviton-managed-nodegroup | n/a |
 | <a name="module_farget_profle"></a> [farget\_profle](#module\_farget\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
 
 ## Resources
@@ -61,13 +60,6 @@ No inputs.
 | <a name="output_managed_ng_capacity_type"></a> [managed\_ng\_capacity\_type](#output\_managed\_ng\_capacity\_type) | Capacity type of managed node |
 | <a name="output_managed_ng_instance_types"></a> [managed\_ng\_instance\_types](#output\_managed\_ng\_instance\_types) | Instance types of managed node |
 | <a name="output_managed_ng_disk_size"></a> [managed\_ng\_disk\_size](#output\_managed\_ng\_disk\_size) | Disk size of node in managed node group |
-| <a name="output_arm_managed_ng_node_group_arn"></a> [arm\_managed\_ng\_node\_group\_arn](#output\_arm\_managed\_ng\_node\_group\_arn) | ARN for the nodegroup |
-| <a name="output_arm_managed_ng_min_node"></a> [arm\_managed\_ng\_min\_node](#output\_arm\_managed\_ng\_min\_node) | Minimum node of managed node group |
-| <a name="output_arm_managed_ng_max_node"></a> [arm\_managed\_ng\_max\_node](#output\_arm\_managed\_ng\_max\_node) | Maximum node of managed node group |
-| <a name="output_arm_managed_ng_desired_node"></a> [arm\_managed\_ng\_desired\_node](#output\_arm\_managed\_ng\_desired\_node) | Desired node of managed node group |
-| <a name="output_arm_managed_ng_capacity_type"></a> [arm\_managed\_ng\_capacity\_type](#output\_arm\_managed\_ng\_capacity\_type) | Capacity type of managed node |
-| <a name="output_arm_managed_ng_instance_types"></a> [arm\_managed\_ng\_instance\_types](#output\_arm\_managed\_ng\_instance\_types) | Instance types of managed node |
-| <a name="output_arm_managed_ng_disk_size"></a> [arm\_managed\_ng\_disk\_size](#output\_arm\_managed\_ng\_disk\_size) | Disk size of node in managed node group |
 | <a name="output_default_ng_node_group_arn"></a> [default\_ng\_node\_group\_arn](#output\_default\_ng\_node\_group\_arn) | ARN for the nodegroup |
 | <a name="output_default_ng_min_node"></a> [default\_ng\_min\_node](#output\_default\_ng\_min\_node) | n/a |
 | <a name="output_default_ng_max_node"></a> [default\_ng\_max\_node](#output\_default\_ng\_max\_node) | n/a |

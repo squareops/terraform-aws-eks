@@ -36,7 +36,8 @@ No modules.
 | [aws_eks_node_group.managed_ng](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
 | [aws_launch_template.eks_template](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
 | [null_resource.update_vpc_cni_env_var](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
-| [aws_ami.launch_template_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.launch_template_ami_amd64](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.launch_template_ami_arm64](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_eks_cluster.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [template_file.launch_template_userdata](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
@@ -72,7 +73,7 @@ No modules.
 | <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Whether IPv6 enabled or not | `bool` | `false` | no |
 | <a name="input_default_addon_enabled"></a> [default\_addon\_enabled](#input\_default\_addon\_enabled) | Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation | `bool` | `false` | no |
 | <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
-| <a name="input_aws_managed_node_group_amd64"></a> [aws\_managed\_node\_group\_amd64](#input\_aws\_managed\_node\_group\_amd64) | Specifies whether to use the AMD64 architecture for the managed node group in Amazon EKS (Elastic Kubernetes Service) | `bool` | `true` | no |
+| <a name="input_aws_managed_node_group_arch"></a> [aws\_managed\_node\_group\_arch](#input\_aws\_managed\_node\_group\_arch) | Enter your linux architecture. | `string` | `"arm64"` | no |
 
 ## Outputs
 

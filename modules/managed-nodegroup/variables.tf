@@ -161,8 +161,8 @@ variable "managed_ng_pod_capacity" {
   type        = number
 }
 
-variable "aws_managed_node_group_amd64" {
-  description = "Specifies whether to use the AMD64 architecture for the managed node group in Amazon EKS (Elastic Kubernetes Service)"
-  default     = true
-  type        = bool
+variable "aws_managed_node_group_arch" {
+  description = "Enter your linux architecture."
+  type        = string
+  default     = "amd64"
 }
