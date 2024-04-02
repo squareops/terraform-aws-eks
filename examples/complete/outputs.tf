@@ -43,42 +43,78 @@ output "kms_policy_arn" {
   value       = module.eks.kms_policy_arn
 }
 
-# Managed Nodegroup
+# Managed Nodegroup amd64
 output "managed_ng_node_group_arn" {
   description = "ARN for the nodegroup"
-  value       = module.managed_node_group_production.node_group_arn
+  value       = local.aws_managed_node_group_amd64 ? module.managed_node_group_production.node_group_arn : null
 }
 
 output "managed_ng_min_node" {
   description = "Minimum node of managed node group"
-  value       = module.managed_node_group_production.min_node
+  value       = local.aws_managed_node_group_amd64 ? module.managed_node_group_production.min_node : null
 }
 
 output "managed_ng_max_node" {
   description = "Maximum node of managed node group"
-  value       = module.managed_node_group_production.max_node
+  value       = local.aws_managed_node_group_amd64 ? module.managed_node_group_production.max_node : null
 }
 
 output "managed_ng_desired_node" {
   description = "Desired node of managed node group"
-  value       = module.managed_node_group_production.desired_node
+  value       = local.aws_managed_node_group_amd64 ? module.managed_node_group_production.desired_node : null
 }
 
 output "managed_ng_capacity_type" {
   description = "Capacity type of managed node"
-  value       = module.managed_node_group_production.capacity_type
+  value       = local.aws_managed_node_group_amd64 ? module.managed_node_group_production.capacity_type : null
 }
 
 output "managed_ng_instance_types" {
   description = "Instance types of managed node "
-  value       = module.managed_node_group_production.instance_types
+  value       = local.aws_managed_node_group_amd64 ? module.managed_node_group_production.instance_types : null
 }
 
 output "managed_ng_disk_size" {
   description = "Disk size of node in managed node group"
-  value       = module.managed_node_group_production.ebs_volume_size
+  value       = local.aws_managed_node_group_amd64 ? module.managed_node_group_production.ebs_volume_size : null
 }
 
+# Managed Nodegroup arm64
+
+output "arm_managed_ng_node_group_arn" {
+  description = "ARN for the nodegroup"
+  value       = local.aws_managed_node_group_arm64 ? module.graviton_managed_node_group_production.node_group_arn : null
+}
+
+output "arm_managed_ng_min_node" {
+  description = "Minimum node of managed node group"
+  value       = local.aws_managed_node_group_arm64 ? module.graviton_managed_node_group_production.min_node : null
+}
+
+output "arm_managed_ng_max_node" {
+  description = "Maximum node of managed node group"
+  value       = local.aws_managed_node_group_arm64 ? module.graviton_managed_node_group_production.max_node : null
+}
+
+output "arm_managed_ng_desired_node" {
+  description = "Desired node of managed node group"
+  value       = local.aws_managed_node_group_arm64 ? module.graviton_managed_node_group_production.desired_node : null
+}
+
+output "arm_managed_ng_capacity_type" {
+  description = "Capacity type of managed node"
+  value       = local.aws_managed_node_group_arm64 ? module.graviton_managed_node_group_production.capacity_type : null
+}
+
+output "arm_managed_ng_instance_types" {
+  description = "Instance types of managed node "
+  value       = local.aws_managed_node_group_arm64 ? module.graviton_managed_node_group_production.instance_types : null
+}
+
+output "arm_managed_ng_disk_size" {
+  description = "Disk size of node in managed node group"
+  value       = local.aws_managed_node_group_arm64 ? module.graviton_managed_node_group_production.ebs_volume_size : null
+}
 
 # default Nodegroup
 output "default_ng_node_group_arn" {

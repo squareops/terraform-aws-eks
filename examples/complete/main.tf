@@ -1,17 +1,19 @@
 locals {
   region      = "us-west-2"
-  environment = "prod"
+  environment = "test"
   name        = "eks"
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
   }
-  kms_user              = null
-  vpc_cidr              = "10.10.0.0/16"
-  vpn_server_enabled    = false
-  default_addon_enabled = false
-  current_identity      = data.aws_caller_identity.current.arn
+  kms_user                     = null
+  vpc_cidr                     = "10.10.0.0/16"
+  vpn_server_enabled           = false
+  default_addon_enabled        = false
+  aws_managed_node_group_amd64 = true
+  aws_managed_node_group_arm64 = false
+  current_identity             = data.aws_caller_identity.current.arn
 }
 data "aws_caller_identity" "current" {}
 
@@ -149,25 +151,53 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                  = "squareops/eks/aws//modules/managed-nodegroup"
-  depends_on              = [module.vpc, module.eks]
-  name                    = "Infra"
-  min_size                = 2
-  max_size                = 5
-  desired_size            = 2
-  subnet_ids              = [module.vpc.private_subnets[0]]
-  environment             = local.environment
-  kms_key_arn             = module.kms.key_arn
-  capacity_type           = "ON_DEMAND"
-  ebs_volume_size         = 50
-  instance_types          = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
-  kms_policy_arn          = module.eks.kms_policy_arn
-  eks_cluster_name        = module.eks.cluster_name
-  default_addon_enabled   = local.default_addon_enabled
-  worker_iam_role_name    = module.eks.worker_iam_role_name
-  worker_iam_role_arn     = module.eks.worker_iam_role_arn
-  managed_ng_pod_capacity = 90
-  eks_nodes_keypair_name  = module.key_pair_eks.key_pair_name
+  source                       = "squareops/eks/aws//modules/managed-nodegroup"
+  depends_on                   = [module.vpc, module.eks]
+  name                         = "Infra"
+  min_size                     = 2
+  max_size                     = 5
+  desired_size                 = 2
+  subnet_ids                   = [module.vpc.private_subnets[0]]
+  environment                  = local.environment
+  kms_key_arn                  = module.kms.key_arn
+  capacity_type                = "ON_DEMAND"
+  ebs_volume_size              = 50
+  instance_types               = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  kms_policy_arn               = module.eks.kms_policy_arn
+  eks_cluster_name             = module.eks.cluster_name
+  aws_managed_node_group_amd64 = local.aws_managed_node_group_amd64
+  default_addon_enabled        = local.default_addon_enabled
+  worker_iam_role_name         = module.eks.worker_iam_role_name
+  worker_iam_role_arn          = module.eks.worker_iam_role_arn
+  managed_ng_pod_capacity      = 90
+  eks_nodes_keypair_name       = module.key_pair_eks.key_pair_name
+  k8s_labels = {
+    "Addons-Services" = "true"
+  }
+  tags = local.additional_aws_tags
+}
+
+module "graviton_managed_node_group_production" {
+  source                       = "squareops/eks/aws//modules/graviton-managed-nodegroup"
+  depends_on                   = [module.vpc, module.eks]
+  name                         = "Infra"
+  min_size                     = 2
+  max_size                     = 5
+  desired_size                 = 2
+  subnet_ids                   = [module.vpc.private_subnets[0]]
+  environment                  = local.environment
+  kms_key_arn                  = module.kms.key_arn
+  capacity_type                = "ON_DEMAND"
+  ebs_volume_size              = 50
+  instance_types               = ["t4g.large"]
+  kms_policy_arn               = module.eks.kms_policy_arn
+  eks_cluster_name             = module.eks.cluster_name
+  aws_managed_node_group_arm64 = local.aws_managed_node_group_arm64
+  default_addon_enabled        = local.default_addon_enabled
+  worker_iam_role_name         = module.eks.worker_iam_role_name
+  worker_iam_role_arn          = module.eks.worker_iam_role_arn
+  managed_ng_pod_capacity      = 90
+  eks_nodes_keypair_name       = module.key_pair_eks.key_pair_name
   k8s_labels = {
     "Addons-Services" = "true"
   }

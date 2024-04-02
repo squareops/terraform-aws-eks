@@ -9,12 +9,12 @@ data "aws_ami" "launch_template_ami" {
   most_recent = true
   filter {
     name   = "name"
-    values = [format("%s-%s-%s", "amazon-eks-node", data.aws_eks_cluster.eks.version, "v*")]
+    values = [format("%s-%s-%s", "amazon-eks-arm64-node", data.aws_eks_cluster.eks.version, "v*")]
   }
 }
 
 data "template_file" "launch_template_userdata" {
-  count    = var.aws_managed_node_group_amd64 ? 1 : 0
+  count    = var.aws_managed_node_group_arm64 ? 1 : 0
   template = file("${path.module}/templates/${data.aws_eks_cluster.eks.kubernetes_network_config[0].ip_family == "ipv4" ? "custom-bootstrap-script.sh.tpl" : "custom-bootstrap-scriptipv6.sh.tpl"}")
 
   vars = {
@@ -30,7 +30,7 @@ data "template_file" "launch_template_userdata" {
 }
 
 resource "aws_launch_template" "eks_template" {
-  count                  = var.aws_managed_node_group_amd64 ? 1 : 0
+  count                  = var.aws_managed_node_group_arm64 ? 1 : 0
   name                   = format("%s-%s-%s", var.environment, var.name, "launch-template")
   key_name               = var.eks_nodes_keypair_name
   image_id               = data.aws_ami.launch_template_ami.image_id
@@ -70,7 +70,7 @@ resource "aws_launch_template" "eks_template" {
 }
 
 resource "aws_eks_node_group" "managed_ng" {
-  count           = var.aws_managed_node_group_amd64 ? 1 : 0
+  count           = var.aws_managed_node_group_arm64 ? 1 : 0
   subnet_ids      = var.subnet_ids
   cluster_name    = var.eks_cluster_name
   node_role_arn   = var.worker_iam_role_arn
@@ -99,13 +99,13 @@ resource "aws_eks_node_group" "managed_ng" {
 
 resource "aws_eks_addon" "vpc_cni" {
   depends_on   = [aws_eks_node_group.managed_ng]
-  count        = var.aws_managed_node_group_amd64 ? 1 : 0
+  count        = var.aws_managed_node_group_arm64 ? 1 : 0
   cluster_name = var.eks_cluster_name
   addon_name   = "vpc-cni"
 }
 
 resource "null_resource" "update_vpc_cni_env_var" {
-  count      = var.aws_managed_node_group_amd64 ? 1 : 0
+  count      = var.aws_managed_node_group_arm64 ? 1 : 0
   depends_on = [aws_eks_addon.vpc_cni, aws_eks_node_group.managed_ng]
 
   provisioner "local-exec" {
