@@ -29,14 +29,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_environment"></a> [environment](#input\_environment) | The environment name | `string` | n/a | yes |
-| <a name="input_fargate_profile_name"></a> [fargate\_profile\_name](#input\_fargate\_profile\_name) | The profile name | `string` | n/a | yes |
-| <a name="input_eks_cluster_name"></a> [eks\_cluster\_name](#input\_eks\_cluster\_name) | Name of the EKS cluster. | `string` | `""` | no |
-| <a name="input_iam_path"></a> [iam\_path](#input\_iam\_path) | IAM roles will be created on this path. | `string` | `"/"` | no |
-| <a name="input_permissions_boundary"></a> [permissions\_boundary](#input\_permissions\_boundary) | If provided, all IAM roles will be created with this permissions boundary attached. | `string` | `null` | no |
-| <a name="input_fargate_subnet_ids"></a> [fargate\_subnet\_ids](#input\_fargate\_subnet\_ids) | A list of subnets for the EKS Fargate profile. | `list(string)` | `[]` | no |
-| <a name="input_fargate_namespace"></a> [fargate\_namespace](#input\_fargate\_namespace) | The Kubernetes namespace for the Fargate profile | `string` | n/a | yes |
-| <a name="input_labels"></a> [labels](#input\_labels) | The Kubernetes labels for the Fargate profile | `map(string)` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | The name of the environment (e.g., 'development', 'production'). | `string` | `""` | no |
+| <a name="input_fargate_profile_name"></a> [fargate\_profile\_name](#input\_fargate\_profile\_name) | The name of the Fargate profile. | `string` | `""` | no |
+| <a name="input_eks_cluster_name"></a> [eks\_cluster\_name](#input\_eks\_cluster\_name) | Name of the EKS cluster where fargate will be deployed. | `string` | `""` | no |
+| <a name="input_iam_role_path"></a> [iam\_role\_path](#input\_iam\_role\_path) | The path where IAM roles will be created. | `string` | `"/"` | no |
+| <a name="input_permissions_boundary"></a> [permissions\_boundary](#input\_permissions\_boundary) | The ARN of the permissions boundary to attach to IAM roles. | `string` | `null` | no |
+| <a name="input_fargate_subnet_ids"></a> [fargate\_subnet\_ids](#input\_fargate\_subnet\_ids) | A list of subnet IDs for the EKS Fargate profile. | `list(string)` | `[]` | no |
+| <a name="input_fargate_namespace"></a> [fargate\_namespace](#input\_fargate\_namespace) | The Kubernetes namespace for the Fargate profile | `string` | `""` | no |
+| <a name="input_k8s_labels"></a> [k8s\_labels](#input\_k8s\_labels) | A map of Kubernetes labels to apply to the Fargate profile. | `map(string)` | n/a | yes |
 
 ## Outputs
 

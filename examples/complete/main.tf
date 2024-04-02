@@ -121,7 +121,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source                                   = "../../"
+  source                                   = "squareops/eks/aws"
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
@@ -170,7 +170,7 @@ module "eks" {
 }
 
 module "managed_node_group_production" {
-  source                        = "../../modules/managed-nodegroup"
+  source                        = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on                    = [module.vpc, module.eks]
   managed_ng_name               = "Infra"
   managed_ng_min_size           = 2
@@ -198,14 +198,14 @@ module "managed_node_group_production" {
 }
 
 module "fargate_profle" {
-  source               = "../../modules/fargate-profile"
+  source               = "squareops/eks/aws//modules/fargate-profile"
   depends_on           = [module.vpc, module.eks]
   fargate_profile_name = local.fargate_profile_name
   fargate_subnet_ids   = [module.vpc.private_subnets[0]]
   environment          = local.environment
   eks_cluster_name     = module.eks.eks_cluster_name
   fargate_namespace    = "fargate"
-  labels = {
+  k8s_labels = {
     "App-Services" = "fargate"
   }
 }

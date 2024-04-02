@@ -98,7 +98,7 @@ module "fargate_profle" {
   environment           = "prod"
   eks_cluster_name      = module.eks.cluster_name
   fargate_namespace     = "default"
-  labels = {
+  k8s_labels = {
     "App-Services" = "fargate"
   }
 }
@@ -225,9 +225,6 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_update_default_version"></a> [update\_default\_version](#input\_update\_default\_version) | Set to true if update the default version of launch template for eks template. | `bool` | `true` | no |
 | <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_eks_network_interfaces_delete_on_termination"></a> [eks\_network\_interfaces\_delete\_on\_termination](#input\_eks\_network\_interfaces\_delete\_on\_termination) | Set to true if delete the network interfaces when eks cluster is terminated. | `bool` | `true` | no |
-| <a name="input_eks_cluster_creator_admin_permissions_enabled"></a> [eks\_cluster\_creator\_admin\_permissions\_enabled](#input\_eks\_cluster\_creator\_admin\_permissions\_enabled) | Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry | `bool` | `true` | no |
-| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | List of user maps to add to the aws-auth configmap | `any` | `[]` | no |
-| <a name="input_authentication_mode"></a> [authentication\_mode](#input\_authentication\_mode) | The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP` | `string` | `"API_AND_CONFIG_MAP"` | no |
 
 ## Outputs
 

@@ -74,11 +74,11 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_node_group_arn"></a> [node\_group\_arn](#output\_node\_group\_arn) | n/a |
-| <a name="output_managed_ng_min_node"></a> [managed\_ng\_min\_node](#output\_managed\_ng\_min\_node) | n/a |
-| <a name="output_managed_ng_max_node"></a> [managed\_ng\_max\_node](#output\_managed\_ng\_max\_node) | n/a |
-| <a name="output_managed_ng_desired_node"></a> [managed\_ng\_desired\_node](#output\_managed\_ng\_desired\_node) | n/a |
-| <a name="output_managed_ng_capacity_type"></a> [managed\_ng\_capacity\_type](#output\_managed\_ng\_capacity\_type) | n/a |
-| <a name="output_managed_ng_instance_types"></a> [managed\_ng\_instance\_types](#output\_managed\_ng\_instance\_types) | n/a |
-| <a name="output_managed_ng_ebs_volume_size"></a> [managed\_ng\_ebs\_volume\_size](#output\_managed\_ng\_ebs\_volume\_size) | n/a |
+| <a name="output_node_group_arn"></a> [node\_group\_arn](#output\_node\_group\_arn) | The Amazon Resource Name (ARN) of the managed node group. |
+| <a name="output_managed_ng_min_node"></a> [managed\_ng\_min\_node](#output\_managed\_ng\_min\_node) | The minimum number of nodes allowed in the managed node group. |
+| <a name="output_managed_ng_max_node"></a> [managed\_ng\_max\_node](#output\_managed\_ng\_max\_node) | The maximum number of nodes allowed in the managed node group. |
+| <a name="output_managed_ng_desired_node"></a> [managed\_ng\_desired\_node](#output\_managed\_ng\_desired\_node) | The desired number of nodes in the managed node group. |
+| <a name="output_managed_ng_capacity_type"></a> [managed\_ng\_capacity\_type](#output\_managed\_ng\_capacity\_type) | The capacity type for the managed node group (e.g., ON\_DEMAND, SPOT). |
+| <a name="output_managed_ng_instance_types"></a> [managed\_ng\_instance\_types](#output\_managed\_ng\_instance\_types) | The instance types used by the managed node group. |
+| <a name="output_managed_ng_ebs_volume_size"></a> [managed\_ng\_ebs\_volume\_size](#output\_managed\_ng\_ebs\_volume\_size) | The size of the EBS volume attached to each node in the managed node group. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
