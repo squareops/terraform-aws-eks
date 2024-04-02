@@ -162,7 +162,7 @@ variable "managed_ng_pod_capacity" {
 }
 
 variable "aws_managed_node_group_arch" {
-  description = "The name of the EKS Worker IAM role."
+  description = "Enter your linux architecture."
   type        = string
-  default     = "arm64"
+  default     = "amd64"
 }
