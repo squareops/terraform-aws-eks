@@ -1,5 +1,5 @@
 output "node_group_arn" {
-  value = var.aws_managed_node_group_amd64 ? aws_eks_node_group.managed_ng[0].arn : null
+  value = aws_eks_node_group.managed_ng.arn
 }
 
 output "min_node" {
