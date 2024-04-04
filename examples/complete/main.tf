@@ -17,7 +17,7 @@ locals {
   vpc_flow_log_enabled                     = false
   kms_user                                 = null
   vpc_cidr                                 = "10.10.0.0/16"
-  vpn_server_enabled                       = true
+  vpn_server_enabled                       = false
   eks_default_addon_enabled                = false
   eks_cluster_version                      = "1.29"
   eks_cluster_log_types                    = []
@@ -121,14 +121,31 @@ module "vpc" {
 }
 
 module "eks" {
-  source                                   = "squareops/eks/aws"
+  source = "squareops/eks/aws"
+  access_entries = {
+    "example" = {
+      kubernetes_groups = ["cluster-admins"]
+      principal_arn     = "arn:aws:iam::767398031518:role/proddd-eks-cluster-20240326061022341800000006"
+      policy_associations = {
+        example = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+          access_scope = {
+            namespaces = ["default"]
+            type       = "namespace"
+          }
+        }
+      }
+    }
+  }
+  enable_cluster_creator_admin_permissions = true
+  authentication_mode                      = "API_AND_CONFIG_MAP"
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
   vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
-  eks_ng_min_size                          = 1
+  eks_ng_min_size                          = 3
   eks_ng_max_size                          = 5
-  eks_ng_desired_size                      = 1
+  eks_ng_desired_size                      = 3
   eks_ebs_volume_size                      = local.eks_ebs_volume_size
   eks_ng_capacity_type                     = local.eks_capacity_type
   eks_ng_instance_types                    = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
@@ -140,23 +157,7 @@ module "eks" {
   eks_cluster_log_retention_in_days        = local.eks_cluster_log_retention_in_days
   eks_cluster_endpoint_public_access       = local.eks_cluster_endpoint_public_access
   eks_cluster_endpoint_public_access_cidrs = local.eks_cluster_endpoint_public_access_cidrs
-  aws_auth_configmap_enabled               = local.aws_auth_configmap_enabled
-  eks_default_addon_enabled                = local.eks_default_addon_enabled
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
-  aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::222222222222:role/service-role"
-      username = "username"
-      groups   = ["system:masters"]
-    }
-  ]
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::222222222222:user/aws-user"
-      username = "aws-user"
-      groups   = ["system:masters"]
-    },
-  ]
   eks_cluster_security_group_additional_rules = {
     ingress_port_mgmt_tcp = {
       description = "mgmt vpc cidr"
@@ -173,9 +174,9 @@ module "managed_node_group_production" {
   source                        = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on                    = [module.vpc, module.eks]
   managed_ng_name               = "Infra"
-  managed_ng_min_size           = 2
+  managed_ng_min_size           = 4
   managed_ng_max_size           = 5
-  managed_ng_desired_size       = 2
+  managed_ng_desired_size       = 4
   vpc_subnet_ids                = [module.vpc.private_subnets[0]]
   environment                   = local.environment
   managed_ng_kms_key_arn        = module.kms.key_arn

@@ -34,24 +34,26 @@ module "eks" {
   eks_cluster_log_retention_in_days        = 30
   eks_cluster_endpoint_public_access       = true
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  aws_auth_configmap_enabled               = true
   eks_default_addon_enabled                = true
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
-  aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::222222222222:role/service-role"
-      username = "username"
-      groups   = ["system:masters"]
+  access_entries = {
+    "example" = {
+      kubernetes_groups = ["cluster-admins"]
+      principal_arn     = "arn:aws:iam::767398031518:role/proddd-eks-cluster-20240326061022341800000006"
+      policy_associations = {
+        example = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+          access_scope = {
+            namespaces = ["default"]
+            type       = "namespace"
+          }
+        }
+      }
     }
-  ]
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::222222222222:user/aws-user"
-      username = "aws-user"
-      groups   = ["system:masters"]
-    },
-  ]
-  additional_rules = {
+  }
+  enable_cluster_creator_admin_permissions = true
+  authentication_mode                      = "API_AND_CONFIG_MAP"
+  eks_cluster_security_group_additional_rules = {
     ingress_port_mgmt_tcp = {
       description = "mgmt vpc cidr"
       protocol    = "tcp"
@@ -151,8 +153,8 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 19.21.0 |
-| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 19.21.0 |
+| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 20.8.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 20.8.0 |
 
 ## Resources
 
@@ -197,9 +199,6 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_vpc_private_subnet_ids"></a> [vpc\_private\_subnet\_ids](#input\_vpc\_private\_subnet\_ids) | Private subnets of the VPC which can be used by EKS | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_kms_key_enabled"></a> [kms\_key\_enabled](#input\_kms\_key\_enabled) | Controls if a KMS key for cluster encryption should be created | `bool` | `false` | no |
 | <a name="input_eks_cluster_security_group_additional_rules"></a> [eks\_cluster\_security\_group\_additional\_rules](#input\_eks\_cluster\_security\_group\_additional\_rules) | List of additional security group rules to add to the cluster security group created. | `any` | `{}` | no |
-| <a name="input_aws_auth_configmap_enabled"></a> [aws\_auth\_configmap\_enabled](#input\_aws\_auth\_configmap\_enabled) | Determines whether to manage the aws-auth configmap | `bool` | `false` | no |
-| <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | List of user maps to add to the aws-auth configmap | `any` | `[]` | no |
-| <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | List of role maps to add to the aws-auth configmap | `list(any)` | `[]` | no |
 | <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Enable cluster IP family as Ipv6 | `bool` | `false` | no |
 | <a name="input_eks_default_addon_enabled"></a> [eks\_default\_addon\_enabled](#input\_eks\_default\_addon\_enabled) | Enable deafult addons(vpc-cni, ebs-csi) at the time of cluster creation | `bool` | `false` | no |
 | <a name="input_eks_nodes_keypair_name"></a> [eks\_nodes\_keypair\_name](#input\_eks\_nodes\_keypair\_name) | The public key to be used for EKS cluster worker nodes. | `string` | `""` | no |
@@ -225,6 +224,9 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_update_default_version"></a> [update\_default\_version](#input\_update\_default\_version) | Set to true if update the default version of launch template for eks template. | `bool` | `true` | no |
 | <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_eks_network_interfaces_delete_on_termination"></a> [eks\_network\_interfaces\_delete\_on\_termination](#input\_eks\_network\_interfaces\_delete\_on\_termination) | Set to true if delete the network interfaces when eks cluster is terminated. | `bool` | `true` | no |
+| <a name="input_authentication_mode"></a> [authentication\_mode](#input\_authentication\_mode) | The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP` | `string` | `"API_AND_CONFIG_MAP"` | no |
+| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Map of access entries to add to the cluster | `any` | `{}` | no |
+| <a name="input_enable_cluster_creator_admin_permissions"></a> [enable\_cluster\_creator\_admin\_permissions](#input\_enable\_cluster\_creator\_admin\_permissions) | Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry | `bool` | `false` | no |
 
 ## Outputs
 
