@@ -64,7 +64,8 @@ module "eks" {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-  access_entries                           = var.access_entries
+  access_entries = var.access_entry_enabled ? var.access_entries : null
+  #  access_entries                           = var.access_entries
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
   cluster_security_group_additional_rules  = var.eks_cluster_security_group_additional_rules

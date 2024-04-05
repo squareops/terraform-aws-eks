@@ -253,6 +253,13 @@ variable "authentication_mode" {
 
 # Access Entry
 
+
+
+variable "access_entry_enabled" {
+  description = "Whether to enable access entry or not for eks cluster."
+  type        = bool
+  default     = true
+}
 variable "access_entries" {
   description = "Map of access entries to add to the cluster"
   type        = any
@@ -261,6 +268,18 @@ variable "access_entries" {
 
 variable "enable_cluster_creator_admin_permissions" {
   description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_s3_endpoint_enabled" {
+  description = "Set to true if you want to enable vpc S3 endpoints"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_ecr_endpoint_enabled" {
+  description = "Set to true if you want to enable vpc ecr endpoints"
   type        = bool
   default     = false
 }
