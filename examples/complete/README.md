@@ -28,7 +28,7 @@ This directory contains a complete example that demonstrates the usage of the Te
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
 | <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | n/a |
 | <a name="module_managed_node_group_production"></a> [managed\_node\_group\_production](#module\_managed\_node\_group\_production) | squareops/eks/aws//modules/managed-nodegroup | n/a |
-| <a name="module_farget_profle"></a> [farget\_profle](#module\_farget\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
+| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
 
 ## Resources
 
@@ -44,9 +44,9 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_region"></a> [region](#output\_region) | AWS region in which the EKS cluster is created. |
-| <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the Kubernetes cluster. |
-| <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint URL for the EKS control plane. |
+| <a name="output_aws_region"></a> [aws\_region](#output\_aws\_region) | AWS region in which the EKS cluster is created. |
+| <a name="output_eks_cluster_name"></a> [eks\_cluster\_name](#output\_eks\_cluster\_name) | Name of the Kubernetes cluster. |
+| <a name="output_eks_cluster_endpoint"></a> [eks\_cluster\_endpoint](#output\_eks\_cluster\_endpoint) | Endpoint URL for the EKS control plane. |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group IDs that are attached to the control plane of the EKS cluster. |
 | <a name="output_cluster_arn"></a> [cluster\_arn](#output\_cluster\_arn) | ARN of the EKS Cluster. |
 | <a name="output_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#output\_cluster\_oidc\_issuer\_url) | URL of the OpenID Connect identity provider on the EKS cluster. |
