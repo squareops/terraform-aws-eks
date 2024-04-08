@@ -72,6 +72,7 @@ module "eks" {
   vpc_id                    = var.vpc_id
   subnet_ids                = var.private_subnet_ids
   enable_irsa               = true
+  cluster_iam_role_dns_suffix = var.cluster_iam_role_dns_suffix
   cluster_name              = format("%s-%s", var.environment, var.name)
   create_kms_key            = var.create_kms_key
   cluster_version           = var.cluster_version
