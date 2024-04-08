@@ -102,22 +102,3 @@ resource "aws_eks_node_group" "managed_ng" {
     Environment = var.environment
   }
 }
-
-resource "aws_eks_addon" "vpc_cni" {
-  depends_on   = [aws_eks_node_group.managed_ng]
-  cluster_name = var.eks_cluster_name
-  addon_name   = "vpc-cni"
-}
-
-resource "null_resource" "update_vpc_cni_env_var" {
-  depends_on = [aws_eks_addon.vpc_cni, aws_eks_node_group.managed_ng]
-
-  provisioner "local-exec" {
-    command = <<-EOF
-      aws eks update-kubeconfig --name ${var.eks_cluster_name} --region ${data.aws_region.current.name} &&
-      kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
-      kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
-      kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
-    EOF
-  }
-}
