@@ -127,24 +127,30 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  access_entry_enabled = false
-  access_entries = {
-    "example" = {
-      kubernetes_groups = ["cluster-admins"]
-      principal_arn     = "arn:aws:iam::767398031518:role/proddd-eks-cluster-20240326061022341800000006"
-      policy_associations = {
-        example = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-          access_scope = {
-            namespaces = ["default"]
-            type       = "namespace"
-          }
-        }
-      }
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::222222222222:role/service-role"
+      username = "username"
+      groups   = ["system:masters"]
+    }
+  ]
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::222222222222:user/aws-user"
+      username = "aws-user"
+      groups   = ["system:masters"]
+    },
+  ]
+  additional_rules = {
+    ingress_port_mgmt_tcp = {
+      description = "mgmt vpc cidr"
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      cidr_blocks = ["10.10.0.0/16"]
     }
   }
-  enable_cluster_creator_admin_permissions = true
-  authentication_mode                      = "API_AND_CONFIG_MAP"
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
