@@ -1,7 +1,7 @@
 module "eks_addon" {
   count                     = var.eks_default_addon_enabled ? 1 : 0
   source                    = "terraform-aws-modules/eks/aws"
-  version                   = "19.21.0"
+  version                   = "20.8.0"
   vpc_id                    = var.vpc_id
   subnet_ids                = var.vpc_private_subnet_ids
   enable_irsa               = var.irsa_enabled
@@ -13,10 +13,8 @@ module "eks_addon" {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-  aws_auth_roles                          = var.aws_auth_roles
-  aws_auth_users                          = var.aws_auth_users
-  create_aws_auth_configmap               = var.create_aws_auth_configmap
-  manage_aws_auth_configmap               = var.create_aws_auth_configmap
+  access_entries                           = var.access_entries
+  enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
   cluster_security_group_additional_rules  = var.eks_cluster_security_group_additional_rules
   cluster_endpoint_public_access           = var.eks_cluster_endpoint_public_access
@@ -54,7 +52,7 @@ module "eks_addon" {
 module "eks" {
   count                     = var.eks_default_addon_enabled ? 0 : 1
   source                    = "terraform-aws-modules/eks/aws"
-  version                   = "19.21.0"
+  version                   = "20.8.0"
   vpc_id                    = var.vpc_id
   subnet_ids                = var.vpc_private_subnet_ids
   enable_irsa               = var.irsa_enabled
@@ -66,14 +64,10 @@ module "eks" {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-  aws_auth_roles                          = var.aws_auth_roles
-  aws_auth_users                          = var.aws_auth_users
-  create_aws_auth_configmap               = var.create_aws_auth_configmap
-  manage_aws_auth_configmap               = var.create_aws_auth_configmap
- ## access_entries = var.access_entry_enabled ? var.access_entries : null
+  access_entries = var.access_entry_enabled ? var.access_entries : null
   #  access_entries                           = var.access_entries
- ## enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
- ## authentication_mode                      = var.authentication_mode
+  enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
+  authentication_mode                      = var.authentication_mode
   cluster_security_group_additional_rules  = var.eks_cluster_security_group_additional_rules
   cluster_endpoint_public_access           = var.eks_cluster_endpoint_public_access
   cluster_endpoint_private_access          = var.eks_cluster_endpoint_public_access ? false : true
@@ -335,5 +329,3 @@ resource "aws_eks_node_group" "default_ng" {
     Environment = var.environment
   }
 }
-
-
