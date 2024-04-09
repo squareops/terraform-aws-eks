@@ -335,3 +335,5 @@ resource "aws_eks_node_group" "default_ng" {
     Environment = var.environment
   }
 }
+
+
