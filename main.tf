@@ -66,16 +66,17 @@ resource "null_resource" "update_cni_prifix" {
 }
 
 module "eks" {
-  count                     = var.default_addon_enabled ? 0 : 1
-  source                    = "terraform-aws-modules/eks/aws"
-  version                   = "19.21.0"
-  vpc_id                    = var.vpc_id
-  subnet_ids                = var.private_subnet_ids
-  enable_irsa               = true
-  cluster_name              = format("%s-%s", var.environment, var.name)
-  create_kms_key            = var.create_kms_key
-  cluster_version           = var.cluster_version
-  cluster_enabled_log_types = var.cluster_log_types
+  count                       = var.default_addon_enabled ? 0 : 1
+  source                      = "terraform-aws-modules/eks/aws"
+  version                     = "19.21.0"
+  vpc_id                      = var.vpc_id
+  subnet_ids                  = var.private_subnet_ids
+  enable_irsa                 = true
+  cluster_iam_role_dns_suffix = var.cluster_iam_role_dns_suffix
+  cluster_name                = format("%s-%s", var.environment, var.name)
+  create_kms_key              = var.create_kms_key
+  cluster_version             = var.cluster_version
+  cluster_enabled_log_types   = var.cluster_log_types
   tags = {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment

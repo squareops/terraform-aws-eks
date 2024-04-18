@@ -232,3 +232,8 @@ variable "managed_ng_pod_capacity" {
   default     = 70
   type        = number
 }
+variable "cluster_iam_role_dns_suffix" {
+  description = "Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China)"
+  type        = string
+  default     = "amazonaws.com"
+}
