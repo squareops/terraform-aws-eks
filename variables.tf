@@ -46,6 +46,7 @@ variable "eks_cluster_endpoint_public_access" {
   type        = bool
 }
 
+
 variable "eks_cluster_endpoint_public_access_cidrs" {
   description = "CIDR blocks that can access the Amazon EKS public API server endpoint."
   default     = [""]
@@ -261,4 +262,14 @@ variable "eks_network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true
+=======
+variable "managed_ng_pod_capacity" {
+  description = "Maximum number of pods you want to schedule on one node. This value should not exceed 110."
+  default     = 70
+  type        = number
+}
+variable "cluster_iam_role_dns_suffix" {
+  description = "Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China)"
+  type        = string
+  default     = "amazonaws.com"
 }

@@ -30,6 +30,7 @@ locals {
   eks_ebs_volume_size                      = 50
   fargate_profile_name                     = "app"
   current_identity                         = data.aws_caller_identity.current.arn
+  aws_managed_node_group_arch              = "" #Enter your linux arch (Example:- arm64 or amd64)
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
@@ -131,58 +132,58 @@ module "vpc" {
 }
 
 module "eks" {
-  # source                                   = "squareops/eks/aws"
-  source                                   = "../../"
-  depends_on                               = [module.vpc]
-  name                                     = local.name
-  vpc_id                                   = module.vpc.vpc_id
-  vpc_subnet_ids                           = [module.vpc.vpc_private_subnets[0]]
-  eks_ng_min_size                          = 1
-  eks_ng_max_size                          = 5
-  eks_ng_desired_size                      = 1
-  eks_ebs_volume_size                      = local.eks_ebs_volume_size
-  eks_ng_capacity_type                     = local.eks_capacity_type
-  eks_ng_instance_types                    = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
-  environment                              = local.environment
-  eks_kms_key_arn                          = module.kms.key_arn
-  eks_cluster_version                      = local.eks_cluster_version
-  eks_cluster_log_types                    = local.eks_cluster_log_types
-  vpc_private_subnet_ids                   = module.vpc.vpc_private_subnets
-  eks_cluster_log_retention_in_days        = local.eks_cluster_log_retention_in_days
-  eks_cluster_endpoint_public_access       = local.eks_cluster_endpoint_public_access
-  eks_cluster_endpoint_public_access_cidrs = local.eks_cluster_endpoint_public_access_cidrs
-  aws_auth_configmap_enabled               = local.aws_auth_configmap_enabled
-  eks_default_addon_enabled                = local.eks_default_addon_enabled
-  eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
-  # aws_auth_roles = [
-  #   {
-  #     rolearn  = "arn:aws:iam::222222222222:role/service-role"
-  #     username = "username"
-  #     groups   = ["system:masters"]
-  #   }
-  # ]
-  # aws_auth_users = [
-  #   {
-  #     userarn  = "arn:aws:iam::222222222222:user/aws-user"
-  #     username = "aws-user"
-  #     groups   = ["system:masters"]
-  #   },
-  # ]
-  # eks_cluster_security_group_additional_rules = {
-  #   ingress_port_mgmt_tcp = {
-  #     description = "mgmt vpc cidr"
-  #     protocol    = "tcp"
-  #     from_port   = 443
-  #     to_port     = 443
-  #     type        = "ingress"
-  #     cidr_blocks = ["10.10.0.0/16"]
-  #   }
-  # }
+   source                               = "squareops/eks/aws"
+  depends_on                           = [module.vpc]
+  name                                 = local.name
+  vpc_id                               = module.vpc.vpc_id
+  subnet_ids                           = [module.vpc.private_subnets[0]]
+  min_size                             = 1
+  max_size                             = 3
+  desired_size                         = 1
+  ebs_volume_size                      = 50
+  capacity_type                        = "ON_DEMAND"
+  instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  environment                          = local.environment
+  kms_key_arn                          = module.kms.key_arn
+  cluster_version                      = "1.27"
+  cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  private_subnet_ids                   = module.vpc.private_subnets
+  cluster_log_retention_in_days        = 30
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_private_access      = false
+  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+  create_aws_auth_configmap            = true
+  managed_ng_pod_capacity              = 90
+  default_addon_enabled                = local.default_addon_enabled
+  eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::222222222222:role/service-role"
+      username = "username"
+      groups   = ["system:masters"]
+    }
+  ]
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::222222222222:user/aws-user"
+      username = "aws-user"
+      groups   = ["system:masters"]
+    },
+  ]
+  additional_rules = {
+    ingress_port_mgmt_tcp = {
+      description = "mgmt vpc cidr"
+      protocol    = "tcp"
+      from_port   = 443
+      to_port     = 443
+      type        = "ingress"
+      cidr_blocks = ["10.10.0.0/16"]
+    }
+  }
 }
 
 module "managed_node_group_production" {
-  # source                        = "squareops/eks/aws//modules/managed-nodegroup"
-  source                        = "../..//modules/managed-nodegroup"
+  source                        = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on                    = [module.vpc, module.eks]
   managed_ng_name               = "Infra"
   managed_ng_min_size           = 2
@@ -209,15 +210,15 @@ module "managed_node_group_production" {
   tags = local.additional_aws_tags
 }
 
-# module "fargate_profle" {
-#   source               = "squareops/eks/aws//modules/fargate-profile"
-#   depends_on           = [module.vpc, module.eks]
-#   fargate_profile_name = local.fargate_profile_name
-#   fargate_subnet_ids   = [module.vpc.private_subnets[0]]
-#   environment          = local.environment
-#   eks_cluster_name     = module.eks.eks_cluster_name
-#   fargate_namespace    = "fargate"
-#   k8s_labels = {
-#     "App-Services" = "fargate"
-#   }
-# }
+module "fargate_profle" {
+  source               = "squareops/eks/aws//modules/fargate-profile"
+  depends_on           = [module.vpc, module.eks]
+  fargate_profile_name = local.fargate_profile_name
+  fargate_subnet_ids   = [module.vpc.private_subnets[0]]
+  environment          = local.environment
+  eks_cluster_name     = module.eks.eks_cluster_name
+  fargate_namespace    = "fargate"
+  k8s_labels = {
+    "App-Services" = "fargate"
+  }
+}

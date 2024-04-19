@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 module "eks_addon" {
   count                     = var.eks_default_addon_enabled ? 1 : 0
   source                    = "terraform-aws-modules/eks/aws"
@@ -50,31 +52,45 @@ module "eks_addon" {
   }
 }
 
+resource "null_resource" "update_cni_prifix" {
+  count      = var.default_addon_enabled ? 1 : 0
+  depends_on = [module.eks_addon]
+  provisioner "local-exec" {
+    command = <<-EOF
+      aws eks update-kubeconfig --name ${module.eks_addon[0].cluster_name} --region ${data.aws_region.current.name} &&
+      kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
+      kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
+      kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
+    EOF
+  }
+}
+
 module "eks" {
-  count                     = var.eks_default_addon_enabled ? 0 : 1
-  source                    = "terraform-aws-modules/eks/aws"
-  version                   = "19.21.0"
-  vpc_id                    = var.vpc_id
-  subnet_ids                = var.vpc_private_subnet_ids
-  enable_irsa               = var.irsa_enabled
-  cluster_name              = format("%s-%s", var.environment, var.name)
-  create_kms_key            = var.kms_key_enabled
-  cluster_version           = var.eks_cluster_version
-  cluster_enabled_log_types = var.eks_cluster_log_types
+  count                       = var.default_addon_enabled ? 0 : 1
+  source                      = "terraform-aws-modules/eks/aws"
+  version                     = "19.21.0"
+  vpc_id                      = var.vpc_id
+  subnet_ids                  = var.private_subnet_ids
+  enable_irsa                 = true
+  cluster_iam_role_dns_suffix = var.cluster_iam_role_dns_suffix
+  cluster_name                = format("%s-%s", var.environment, var.name)
+  create_kms_key              = var.create_kms_key
+  cluster_version             = var.cluster_version
+  cluster_enabled_log_types   = var.cluster_log_types
   tags = {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
   aws_auth_roles                          = var.aws_auth_roles
   aws_auth_users                          = var.aws_auth_users
-  create_aws_auth_configmap               = var.aws_auth_configmap_enabled
-  manage_aws_auth_configmap               = var.aws_auth_configmap_enabled
-  cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
-  cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
-  cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
-  cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
-  cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
-  cloudwatch_log_group_kms_key_id         = var.eks_kms_key_arn
+  create_aws_auth_configmap               = var.create_aws_auth_configmap
+  manage_aws_auth_configmap               = var.create_aws_auth_configmap
+  cluster_security_group_additional_rules = var.additional_rules
+  cluster_endpoint_public_access          = var.cluster_endpoint_public_access
+  cluster_endpoint_private_access         = var.cluster_endpoint_private_access
+  cluster_endpoint_public_access_cidrs    = var.cluster_endpoint_public_access_cidrs
+  cloudwatch_log_group_retention_in_days  = var.cluster_log_retention_in_days
+  cloudwatch_log_group_kms_key_id         = var.kms_key_arn
   cluster_encryption_config = {
     provider_key_arn = var.eks_kms_key_arn
     resources        = ["secrets"]
@@ -256,6 +272,7 @@ data "template_file" "launch_template_userdata" {
     cluster_auth_base64          = module.eks_addon[0].cluster_certificate_authority_data
     image_low_threshold_percent  = var.image_low_threshold_percent
     image_high_threshold_percent = var.image_high_threshold_percent
+    managed_ng_pod_capacity      = var.managed_ng_pod_capacity
 
   }
 }

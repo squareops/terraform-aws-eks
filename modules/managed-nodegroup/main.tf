@@ -2,12 +2,23 @@ data "aws_eks_cluster" "eks" {
   name = var.eks_cluster_name
 }
 
-data "aws_ami" "launch_template_ami" {
+data "aws_region" "current" {}
+
+data "aws_ami" "launch_template_ami_amd64" {
   owners      = ["602401143452"]
   most_recent = true
   filter {
     name   = "name"
     values = [format("%s-%s-%s", "amazon-eks-node", data.aws_eks_cluster.eks.version, "v*")]
+  }
+}
+
+data "aws_ami" "launch_template_ami_arm64" {
+  owners      = ["602401143452"]
+  most_recent = true
+  filter {
+    name   = "name"
+    values = [format("%s-%s-%s", "amazon-eks-arm64-node", data.aws_eks_cluster.eks.version, "v*")]
   }
 }
 
@@ -21,6 +32,7 @@ data "template_file" "launch_template_userdata" {
     cluster_auth_base64          = data.aws_eks_cluster.eks.certificate_authority[0].data
     image_low_threshold_percent  = var.image_low_threshold_percent
     image_high_threshold_percent = var.image_high_threshold_percent
+    managed_ng_pod_capacity      = var.managed_ng_pod_capacity
 
   }
 }
@@ -28,7 +40,7 @@ data "template_file" "launch_template_userdata" {
 resource "aws_launch_template" "eks_template" {
   name                   = format("%s-%s-%s", var.environment, var.managed_ng_name, "launch-template")
   key_name               = var.eks_nodes_keypair_name
-  image_id               = data.aws_ami.launch_template_ami.image_id
+  image_id               = var.aws_managed_node_group_arch == "arm64" ? data.aws_ami.launch_template_ami_arm64.image_id : data.aws_ami.launch_template_ami_amd64.image_id
   user_data              = base64encode(data.template_file.launch_template_userdata.rendered)
   update_default_version = true
   block_device_mappings {

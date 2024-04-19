@@ -165,4 +165,15 @@ variable "managed_ng_volume_delete_on_termination" {
   description = "Set to true if delete the volumes when eks cluster is terminated."
   type        = bool
   default     = true
+  
+variable "managed_ng_pod_capacity" {
+  description = "Maximum number of pods you want to schedule on one node. This value should not exceed 110."
+  default     = 70
+  type        = number
+}
+
+variable "aws_managed_node_group_arch" {
+  description = "Enter your linux architecture."
+  type        = string
+  default     = "amd64"
 }
