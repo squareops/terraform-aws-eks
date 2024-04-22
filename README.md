@@ -1,7 +1,13 @@
 # AWS EKS Terraform module
 ![squareops_avatar]
 
-[squareops_avatar]: https://squareops.com/wp-content/uploads/2022/12/squareops-logo.png
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://squareops.com/wp-content/uploads/2020/05/Squareops-png-white.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://squareops.com/wp-content/uploads/2021/09/Squareops-svg-2048x719.webp">
+  <img alt="Shows an illustrated sun in light mode and a moon with stars in dark mode." src="https://github.com/rachit89/terraform-aws-vpc/blob/feature/logo/png%20white%20bg%20squareops.png">
+</picture>
+
+### [squareops_avatar]: https://squareops.com/wp-content/uploads/2022/12/squareops-logo.png
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
@@ -30,30 +36,27 @@ module "eks" {
   eks_kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   eks_cluster_version                      = "1.29"
   eks_cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  private_subnet_ids                       = ["subnet-abc123" , "subnet-xyz12324"]
+  vpc_private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
   eks_cluster_log_retention_in_days        = 30
   eks_cluster_endpoint_public_access       = true
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   eks_default_addon_enabled                = true
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
-  access_entry_enabled                     = false
-  access_entries = {
-    "example" = {
-      kubernetes_groups = ["cluster-admins"]
-      principal_arn     = "arn:aws:iam::767398031518:role/proddd-eks-cluster-20240326061022341800000006"
-      policy_associations = {
-        example = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-          access_scope = {
-            namespaces = ["default"]
-            type       = "namespace"
-          }
-        }
-      }
+  aws_auth_configmap_enabled               = true
+  aws_auth_roles = [
+    {
+      rolearn  = "arn:aws:iam::222222222222:role/service-role"
+      username = "username"
+      groups   = ["system:masters"]
     }
-  }
-  enable_cluster_creator_admin_permissions = true
-  authentication_mode                      = "API_AND_CONFIG_MAP"
+  ]
+  aws_auth_users = [
+    {
+      userarn  = "arn:aws:iam::222222222222:user/aws-user"
+      username = "aws-user"
+      groups   = ["system:masters"]
+    },
+  ]
   eks_cluster_security_group_additional_rules = {
     ingress_port_mgmt_tcp = {
       description = "mgmt vpc cidr"
@@ -154,8 +157,8 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 20.8.0 |
-| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 20.8.0 |
+| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 19.21.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 19.21.0 |
 
 ## Resources
 
@@ -225,12 +228,11 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_update_default_version"></a> [update\_default\_version](#input\_update\_default\_version) | Set to true if update the default version of launch template for eks template. | `bool` | `true` | no |
 | <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_eks_network_interfaces_delete_on_termination"></a> [eks\_network\_interfaces\_delete\_on\_termination](#input\_eks\_network\_interfaces\_delete\_on\_termination) | Set to true if delete the network interfaces when eks cluster is terminated. | `bool` | `true` | no |
-| <a name="input_authentication_mode"></a> [authentication\_mode](#input\_authentication\_mode) | The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP` | `string` | `"API_AND_CONFIG_MAP"` | no |
-| <a name="input_access_entry_enabled"></a> [access\_entry\_enabled](#input\_access\_entry\_enabled) | Whether to enable access entry or not for eks cluster. | `bool` | `true` | no |
-| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Map of access entries to add to the cluster | `any` | `{}` | no |
-| <a name="input_enable_cluster_creator_admin_permissions"></a> [enable\_cluster\_creator\_admin\_permissions](#input\_enable\_cluster\_creator\_admin\_permissions) | Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry | `bool` | `false` | no |
 | <a name="input_vpc_s3_endpoint_enabled"></a> [vpc\_s3\_endpoint\_enabled](#input\_vpc\_s3\_endpoint\_enabled) | Set to true if you want to enable vpc S3 endpoints | `bool` | `false` | no |
 | <a name="input_vpc_ecr_endpoint_enabled"></a> [vpc\_ecr\_endpoint\_enabled](#input\_vpc\_ecr\_endpoint\_enabled) | Set to true if you want to enable vpc ecr endpoints | `bool` | `false` | no |
+| <a name="input_aws_auth_configmap_enabled"></a> [aws\_auth\_configmap\_enabled](#input\_aws\_auth\_configmap\_enabled) | Determines whether to manage the aws-auth configmap | `bool` | `false` | no |
+| <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | List of user maps to add to the aws-auth configmap | `any` | `[]` | no |
+| <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | List of role maps to add to the aws-auth configmap | `list(any)` | `[]` | no |
 
 ## Outputs
 

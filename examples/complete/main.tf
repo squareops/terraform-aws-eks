@@ -32,7 +32,7 @@ locals {
   fargate_profile_name                           = "app"
   current_identity                               = data.aws_caller_identity.current.arn
   vpc_s3_endpoint_enabled                        = true
-  vpc_ecr_endpoint_enabled                       = true
+  vpc_ecr_endpoint_enabled                       = false
   vpc_flow_log_cloudwatch_log_group_skip_destroy = false
   vpc_public_subnets_counts                      = 2
   vpc_private_subnets_counts                     = 2
@@ -139,7 +139,6 @@ module "vpc" {
   vpc_endpoint_type_private_s3                        = "Gateway"
   vpc_endpoint_type_ecr_dkr                           = "Interface"
   vpc_endpoint_type_ecr_api                           = "Interface"
-  worker_iam_role_name                                = "stg-rachit-node-role"
 }
 
 module "eks" {
@@ -220,16 +219,16 @@ module "managed_node_group_addons" {
   tags = local.additional_aws_tags
 }
 
-module "fargate_profle" {
-  # source               = "squareops/eks/aws//modules/fargate-profile"
-  source               = "../../modules/fargate-profile"
-  depends_on           = [module.vpc, module.eks]
-  fargate_profile_name = local.fargate_profile_name
-  fargate_subnet_ids   = [module.vpc.vpc_private_subnets[0]]
-  environment          = local.environment
-  eks_cluster_name     = module.eks.eks_cluster_name
-  fargate_namespace    = "fargate"
-  k8s_labels = {
-    "App-Services" = "fargate"
-  }
-}
+# module "fargate_profle" {
+#   # source               = "squareops/eks/aws//modules/fargate-profile"
+#   source               = "../../modules/fargate-profile"
+#   depends_on           = [module.vpc, module.eks]
+#   fargate_profile_name = local.fargate_profile_name
+#   fargate_subnet_ids   = [module.vpc.vpc_private_subnets[0]]
+#   environment          = local.environment
+#   eks_cluster_name     = module.eks.eks_cluster_name
+#   fargate_namespace    = "fargate"
+#   k8s_labels = {
+#     "App-Services" = "fargate"
+#   }
+# }
