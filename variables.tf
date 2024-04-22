@@ -245,33 +245,6 @@ variable "eks_network_interfaces_delete_on_termination" {
   default     = true
 }
 
-variable "authentication_mode" {
-  description = "The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`"
-  type        = string
-  default     = "API_AND_CONFIG_MAP"
-}
-
-# Access Entry
-
-
-
-variable "access_entry_enabled" {
-  description = "Whether to enable access entry or not for eks cluster."
-  type        = bool
-  default     = true
-}
-variable "access_entries" {
-  description = "Map of access entries to add to the cluster"
-  type        = any
-  default     = {}
-}
-
-variable "enable_cluster_creator_admin_permissions" {
-  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
-  type        = bool
-  default     = false
-}
-
 variable "vpc_s3_endpoint_enabled" {
   description = "Set to true if you want to enable vpc S3 endpoints"
   type        = bool
@@ -284,7 +257,7 @@ variable "vpc_ecr_endpoint_enabled" {
   default     = false
 }
 
-variable "create_aws_auth_configmap" {
+variable "aws_auth_configmap_enabled" {
   description = "Determines whether to manage the aws-auth configmap"
   default     = false
   type        = bool
