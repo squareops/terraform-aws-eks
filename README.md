@@ -63,10 +63,10 @@ module "eks" {
   }
 }
 
-module "managed_node_group_production" {
+module "managed_node_group_addons" {
   source                            = "squareops/eks/aws//modules/managed-nodegroup"
   depends_on                        = [module.eks]
-  managed_ng_name                   = "Infra"
+  managed_ng_name                   = "addons"
   managed_ng_min_size               = 1
   managed_ng_max_size               = 3
   managed_ng_desired_size           = 1

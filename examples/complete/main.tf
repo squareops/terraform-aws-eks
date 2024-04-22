@@ -1,35 +1,43 @@
 locals {
-  aws_region                               = "ap-northeast-1"
-  aws_account_id                           = "767398031518"
-  kms_deletion_window_in_days              = 7
-  kms_key_rotation_enabled                 = true
-  is_enabled                               = true
-  multi_region                             = false
-  environment                              = "stg"
-  name                                     = ""
-  vpc_availability_zones                   = ["ap-northeast-1a", "ap-northeast-1c"]
-  vpc_public_subnet_enabled                = true
-  vpc_private_subnet_enabled               = true
-  database_subnet_enabled                  = true
-  vpc_intra_subnet_enabled                 = true
-  vpc_one_nat_gateway_per_az               = true
-  vpn_server_instance_type                 = "t3a.small"
-  vpc_flow_log_enabled                     = false
-  kms_user                                 = null
-  vpc_cidr                                 = "10.10.0.0/16"
-  vpn_server_enabled                       = true
-  eks_default_addon_enabled                = false
-  eks_cluster_version                      = "1.29"
-  eks_cluster_log_types                    = []
-  eks_cluster_log_retention_in_days        = 30
-  eks_capacity_type                        = "SPOT"
-  managed_ng_capacity_type                 = "SPOT"
-  eks_cluster_endpoint_public_access       = true
-  eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  aws_auth_configmap_enabled               = true
-  eks_ebs_volume_size                      = 50
-  fargate_profile_name                     = "app"
-  current_identity                         = data.aws_caller_identity.current.arn
+  aws_region                                     = "ap-south-1"
+  aws_account_id                                 = "654654551614"
+  kms_deletion_window_in_days                    = 7
+  kms_key_rotation_enabled                       = true
+  is_enabled                                     = true
+  multi_region                                   = false
+  environment                                    = "stg"
+  name                                           = "rachit"
+  auto_assign_public_ip                          = true
+  vpc_availability_zones                         = ["ap-south-1a", "ap-south-1b"]
+  vpc_public_subnet_enabled                      = true
+  vpc_private_subnet_enabled                     = true
+  vpc_database_subnet_enabled                    = true
+  vpc_intra_subnet_enabled                       = true
+  vpc_one_nat_gateway_per_az                     = true
+  vpn_server_instance_type                       = "t3a.small"
+  vpc_flow_log_enabled                           = false
+  kms_user                                       = null
+  vpc_cidr                                       = "10.10.0.0/16"
+  vpn_server_enabled                             = true
+  eks_default_addon_enabled                      = false
+  eks_cluster_version                            = "1.29"
+  eks_cluster_log_types                          = []
+  eks_cluster_log_retention_in_days              = 30
+  eks_capacity_type                              = "SPOT"
+  managed_ng_capacity_type                       = "SPOT"
+  eks_cluster_endpoint_public_access             = true
+  eks_cluster_endpoint_public_access_cidrs       = ["0.0.0.0/0"]
+  aws_auth_configmap_enabled                     = false
+  eks_ebs_volume_size                            = 50
+  fargate_profile_name                           = "app"
+  current_identity                               = data.aws_caller_identity.current.arn
+  vpc_s3_endpoint_enabled                        = true
+  vpc_ecr_endpoint_enabled                       = true
+  vpc_flow_log_cloudwatch_log_group_skip_destroy = false
+  vpc_public_subnets_counts                      = 2
+  vpc_private_subnets_counts                     = 2
+  vpc_database_subnets_counts                    = 2
+  vpc_intra_subnets_counts                       = 2
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
@@ -101,34 +109,48 @@ module "key_pair_eks" {
 
 
 module "vpc" {
-  source                                          = "squareops/vpc/aws"
-  environment                                     = local.environment
-  name                                            = local.name
-  vpc_cidr                                        = local.vpc_cidr
-  availability_zones                              = local.vpc_availability_zones
-  public_subnet_enabled                           = local.vpc_public_subnet_enabled
-  private_subnet_enabled                          = local.vpc_private_subnet_enabled
-  database_subnet_enabled                         = local.database_subnet_enabled
-  intra_subnet_enabled                            = local.vpc_intra_subnet_enabled
-  one_nat_gateway_per_az                          = local.vpc_one_nat_gateway_per_az
-  vpn_server_enabled                              = local.vpn_server_enabled
-  vpn_server_instance_type                        = local.vpn_server_instance_type
-  vpn_key_pair_name                               = local.vpn_server_enabled ? module.key_pair_vpn[0].key_pair_name : null
-  flow_log_enabled                                = local.vpc_flow_log_enabled
-  flow_log_max_aggregation_interval               = 60
-  flow_log_cloudwatch_log_group_retention_in_days = 90
-  flow_log_cloudwatch_log_group_kms_key_arn       = module.kms.key_arn
+  # source                                          = "squareops/vpc/aws"
+  source                                              = "git@github.com:rachit89/terraform-aws-vpc.git"
+  name                                                = local.name
+  aws_region                                          = local.aws_region
+  vpc_cidr                                            = local.vpc_cidr
+  environment                                         = local.environment
+  vpc_flow_log_enabled                                = local.vpc_flow_log_enabled
+  vpn_server_key_pair_name                            = module.key_pair_vpn[0].key_pair_name
+  vpc_availability_zones                              = local.vpc_availability_zones
+  vpn_server_enabled                                  = local.vpn_server_enabled
+  vpc_intra_subnet_enabled                            = local.vpc_intra_subnet_enabled
+  vpc_public_subnet_enabled                           = local.vpc_public_subnet_enabled
+  auto_assign_public_ip                               = local.auto_assign_public_ip
+  vpc_private_subnet_enabled                          = local.vpc_private_subnet_enabled
+  vpc_one_nat_gateway_per_az                          = local.vpc_one_nat_gateway_per_az
+  vpc_database_subnet_enabled                         = local.vpc_database_subnet_enabled
+  vpn_server_instance_type                            = local.vpn_server_instance_type
+  vpc_s3_endpoint_enabled                             = local.vpc_s3_endpoint_enabled
+  vpc_ecr_endpoint_enabled                            = local.vpc_ecr_endpoint_enabled
+  vpc_flow_log_max_aggregation_interval               = 60 # In seconds
+  vpc_flow_log_cloudwatch_log_group_skip_destroy      = local.vpc_flow_log_cloudwatch_log_group_skip_destroy
+  vpc_flow_log_cloudwatch_log_group_retention_in_days = 90
+  vpc_flow_log_cloudwatch_log_group_kms_key_arn       = module.kms.key_arn #Enter your kms key arn
+  vpc_public_subnets_counts                           = local.vpc_public_subnets_counts
+  vpc_private_subnets_counts                          = local.vpc_private_subnets_counts
+  vpc_database_subnets_counts                         = local.vpc_database_subnets_counts
+  vpc_intra_subnets_counts                            = local.vpc_intra_subnets_counts
+  vpc_endpoint_type_private_s3                        = "Gateway"
+  vpc_endpoint_type_ecr_dkr                           = "Interface"
+  vpc_endpoint_type_ecr_api                           = "Interface"
+  worker_iam_role_name                                = "stg-rachit-node-role"
 }
 
 module "eks" {
-  source                                   = "squareops/eks/aws"
+  source                                   = "../../"
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
-  vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
-  eks_ng_min_size                          = 1
-  eks_ng_max_size                          = 5
-  eks_ng_desired_size                      = 1
+  vpc_subnet_ids                           = [module.vpc.vpc_private_subnets[0]]
+  eks_ng_min_size                          = 2
+  eks_ng_max_size                          = 2
+  eks_ng_desired_size                      = 2
   eks_ebs_volume_size                      = local.eks_ebs_volume_size
   eks_ng_capacity_type                     = local.eks_capacity_type
   eks_ng_instance_types                    = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
@@ -136,7 +158,7 @@ module "eks" {
   eks_kms_key_arn                          = module.kms.key_arn
   eks_cluster_version                      = local.eks_cluster_version
   eks_cluster_log_types                    = local.eks_cluster_log_types
-  vpc_private_subnet_ids                   = module.vpc.private_subnets
+  vpc_private_subnet_ids                   = module.vpc.vpc_private_subnets
   eks_cluster_log_retention_in_days        = local.eks_cluster_log_retention_in_days
   eks_cluster_endpoint_public_access       = local.eks_cluster_endpoint_public_access
   eks_cluster_endpoint_public_access_cidrs = local.eks_cluster_endpoint_public_access_cidrs
@@ -169,14 +191,15 @@ module "eks" {
   }
 }
 
-module "managed_node_group_production" {
-  source                        = "squareops/eks/aws//modules/managed-nodegroup"
+module "managed_node_group_addons" {
+  ## source                        = "squareops/eks/aws//modules/managed-nodegroup"
+  source                        = "../..//modules/managed-nodegroup"
   depends_on                    = [module.vpc, module.eks]
-  managed_ng_name               = "Infra"
+  managed_ng_name               = "addons"
   managed_ng_min_size           = 2
-  managed_ng_max_size           = 5
+  managed_ng_max_size           = 2
   managed_ng_desired_size       = 2
-  vpc_subnet_ids                = [module.vpc.private_subnets[0]]
+  vpc_subnet_ids                = [module.vpc.vpc_private_subnets[0]]
   environment                   = local.environment
   managed_ng_kms_key_arn        = module.kms.key_arn
   managed_ng_capacity_type      = local.managed_ng_capacity_type
@@ -198,10 +221,11 @@ module "managed_node_group_production" {
 }
 
 module "fargate_profle" {
-  source               = "squareops/eks/aws//modules/fargate-profile"
+  # source               = "squareops/eks/aws//modules/fargate-profile"
+  source               = "../../modules/fargate-profile"
   depends_on           = [module.vpc, module.eks]
   fargate_profile_name = local.fargate_profile_name
-  fargate_subnet_ids   = [module.vpc.private_subnets[0]]
+  fargate_subnet_ids   = [module.vpc.vpc_private_subnets[0]]
   environment          = local.environment
   eks_cluster_name     = module.eks.eks_cluster_name
   fargate_namespace    = "fargate"

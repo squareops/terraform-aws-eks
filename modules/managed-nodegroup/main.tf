@@ -13,7 +13,6 @@ data "aws_ami" "launch_template_ami" {
 
 data "template_file" "launch_template_userdata" {
   template = file("${path.module}/templates/${data.aws_eks_cluster.eks.kubernetes_network_config[0].ip_family == "ipv4" ? "custom-bootstrap-script.sh.tpl" : "custom-bootstrap-scriptipv6.sh.tpl"}")
-
   vars = {
     endpoint                     = data.aws_eks_cluster.eks.endpoint
     cluster_name                 = var.eks_cluster_name

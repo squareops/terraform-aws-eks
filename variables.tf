@@ -1,4 +1,4 @@
-variable "additional_tags" {
+variable "additional_aws_tags" {
   description = "Additional tags to be applied to AWS resources"
   type        = map(string)
   default     = {}

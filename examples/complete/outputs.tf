@@ -46,66 +46,35 @@ output "kms_policy_arn" {
 # Managed Nodegroup
 output "managed_ng_node_group_arn" {
   description = "ARN for the nodegroup"
-  value       = module.managed_node_group_production.node_group_arn
+  value       = module.managed_node_group_addons.node_group_arn
 }
 
 output "managed_ng_min_node" {
   description = "Minimum node of managed node group"
-  value       = module.managed_node_group_production.managed_ng_min_node
+  value       = module.managed_node_group_addons.managed_ng_min_node
 }
 
 output "managed_ng_max_node" {
   description = "Maximum node of managed node group"
-  value       = module.managed_node_group_production.managed_ng_max_node
+  value       = module.managed_node_group_addons.managed_ng_max_node
 }
 
 output "managed_ng_desired_node" {
   description = "Desired node of managed node group"
-  value       = module.managed_node_group_production.managed_ng_desired_node
+  value       = module.managed_node_group_addons.managed_ng_desired_node
 }
 
 output "managed_ng_capacity_type" {
   description = "Capacity type of managed node"
-  value       = module.managed_node_group_production.managed_ng_capacity_type
+  value       = module.managed_node_group_addons.managed_ng_capacity_type
 }
 
 output "managed_ng_instance_types" {
   description = "Instance types of managed node "
-  value       = module.managed_node_group_production.managed_ng_instance_types
+  value       = module.managed_node_group_addons.managed_ng_instance_types
 }
 
 output "managed_ng_disk_size" {
   description = "Disk size of node in managed node group"
-  value       = module.managed_node_group_production.managed_ng_ebs_volume_size
-}
-
-
-# default Nodegroup
-output "default_ng_node_group_arn" {
-  description = "ARN for the nodegroup"
-  value       = local.eks_default_addon_enabled ? module.eks.default_ng_node_group_arn : null
-}
-
-output "default_ng_min_node" {
-  value = local.eks_default_addon_enabled ? module.eks.default_ng_min_node : null
-}
-
-output "default_ng_max_node" {
-  value = local.eks_default_addon_enabled ? module.eks.default_ng_max_node : null
-}
-
-output "default_ng_desired_node" {
-  value = local.eks_default_addon_enabled ? module.eks.default_ng_desired_node : null
-}
-
-output "default_ng_capacity_type" {
-  value = local.eks_default_addon_enabled ? module.eks.default_ng_capacity_type : null
-}
-
-output "default_ng_instance_types" {
-  value = local.eks_default_addon_enabled ? module.eks.default_ng_instance_types : null
-}
-
-output "default_ng_ebs_volume_size" {
-  value = local.eks_default_addon_enabled ? module.eks.default_ng_ebs_volume_size : null
+  value       = module.managed_node_group_addons.managed_ng_ebs_volume_size
 }
