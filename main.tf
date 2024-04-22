@@ -247,7 +247,6 @@ resource "aws_iam_role_policy_attachment" "eks_worker_ecr_policy" {
 data "template_file" "launch_template_userdata" {
   count    = var.eks_default_addon_enabled ? 1 : 0
   template = file("${path.module}/modules/managed-nodegroup/templates/${var.ipv6_enabled == false ? "custom-bootstrap-script.sh.tpl" : "custom-bootstrap-scriptipv6.sh.tpl"}")
-
   vars = {
     endpoint                     = module.eks_addon[0].cluster_endpoint
     cluster_name                 = module.eks_addon[0].cluster_name
