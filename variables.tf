@@ -94,24 +94,6 @@ variable "eks_cluster_security_group_additional_rules" {
   default     = {}
 }
 
-variable "aws_auth_configmap_enabled" {
-  description = "Determines whether to manage the aws-auth configmap"
-  default     = false
-  type        = bool
-}
-
-variable "aws_auth_users" {
-  description = "List of user maps to add to the aws-auth configmap"
-  type        = any
-  default     = []
-}
-
-variable "aws_auth_roles" {
-  description = "List of role maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
-}
-
 variable "ipv6_enabled" {
   description = "Enable cluster IP family as Ipv6"
   type        = bool
@@ -261,4 +243,61 @@ variable "eks_network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true
+}
+
+variable "authentication_mode" {
+  description = "The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`"
+  type        = string
+  default     = "API_AND_CONFIG_MAP"
+}
+
+# Access Entry
+
+
+
+variable "access_entry_enabled" {
+  description = "Whether to enable access entry or not for eks cluster."
+  type        = bool
+  default     = true
+}
+variable "access_entries" {
+  description = "Map of access entries to add to the cluster"
+  type        = any
+  default     = {}
+}
+
+variable "enable_cluster_creator_admin_permissions" {
+  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_s3_endpoint_enabled" {
+  description = "Set to true if you want to enable vpc S3 endpoints"
+  type        = bool
+  default     = false
+}
+
+variable "vpc_ecr_endpoint_enabled" {
+  description = "Set to true if you want to enable vpc ecr endpoints"
+  type        = bool
+  default     = false
+}
+
+variable "create_aws_auth_configmap" {
+  description = "Determines whether to manage the aws-auth configmap"
+  default     = false
+  type        = bool
+}
+
+variable "aws_auth_users" {
+  description = "List of user maps to add to the aws-auth configmap"
+  type        = any
+  default     = []
+}
+
+variable "aws_auth_roles" {
+  description = "List of role maps to add to the aws-auth configmap"
+  type        = list(any)
+  default     = []
 }

@@ -1,7 +1,7 @@
 module "eks_addon" {
   count                     = var.eks_default_addon_enabled ? 1 : 0
   source                    = "terraform-aws-modules/eks/aws"
-  version                   = "19.21.0"
+  version                   = "20.8.0"
   vpc_id                    = var.vpc_id
   subnet_ids                = var.vpc_private_subnet_ids
   enable_irsa               = var.irsa_enabled
@@ -13,16 +13,15 @@ module "eks_addon" {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-  aws_auth_roles                          = var.aws_auth_roles
-  aws_auth_users                          = var.aws_auth_users
-  create_aws_auth_configmap               = var.aws_auth_configmap_enabled
-  manage_aws_auth_configmap               = var.aws_auth_configmap_enabled
-  cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
-  cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
-  cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
-  cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
-  cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
-  cloudwatch_log_group_kms_key_id         = var.eks_kms_key_arn
+  access_entries                           = var.access_entries
+  enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
+  authentication_mode                      = var.authentication_mode
+  cluster_security_group_additional_rules  = var.eks_cluster_security_group_additional_rules
+  cluster_endpoint_public_access           = var.eks_cluster_endpoint_public_access
+  cluster_endpoint_private_access          = var.eks_cluster_endpoint_public_access ? false : true
+  cluster_endpoint_public_access_cidrs     = var.eks_cluster_endpoint_public_access_cidrs
+  cloudwatch_log_group_retention_in_days   = var.eks_cluster_log_retention_in_days
+  cloudwatch_log_group_kms_key_id          = var.eks_kms_key_arn
   cluster_encryption_config = {
     provider_key_arn = var.eks_kms_key_arn
     resources        = ["secrets"]
@@ -53,7 +52,7 @@ module "eks_addon" {
 module "eks" {
   count                     = var.eks_default_addon_enabled ? 0 : 1
   source                    = "terraform-aws-modules/eks/aws"
-  version                   = "19.21.0"
+  version                   = "20.8.0"
   vpc_id                    = var.vpc_id
   subnet_ids                = var.vpc_private_subnet_ids
   enable_irsa               = var.irsa_enabled
@@ -65,16 +64,16 @@ module "eks" {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-  aws_auth_roles                          = var.aws_auth_roles
-  aws_auth_users                          = var.aws_auth_users
-  create_aws_auth_configmap               = var.aws_auth_configmap_enabled
-  manage_aws_auth_configmap               = var.aws_auth_configmap_enabled
-  cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
-  cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
-  cluster_endpoint_private_access         = var.eks_cluster_endpoint_public_access ? false : true
-  cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
-  cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
-  cloudwatch_log_group_kms_key_id         = var.eks_kms_key_arn
+  access_entries = var.access_entry_enabled ? var.access_entries : null
+  #  access_entries                           = var.access_entries
+  enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
+  authentication_mode                      = var.authentication_mode
+  cluster_security_group_additional_rules  = var.eks_cluster_security_group_additional_rules
+  cluster_endpoint_public_access           = var.eks_cluster_endpoint_public_access
+  cluster_endpoint_private_access          = var.eks_cluster_endpoint_public_access ? false : true
+  cluster_endpoint_public_access_cidrs     = var.eks_cluster_endpoint_public_access_cidrs
+  cloudwatch_log_group_retention_in_days   = var.eks_cluster_log_retention_in_days
+  cloudwatch_log_group_kms_key_id          = var.eks_kms_key_arn
   cluster_encryption_config = {
     provider_key_arn = var.eks_kms_key_arn
     resources        = ["secrets"]
