@@ -28,7 +28,8 @@ This directory contains a complete example that demonstrates the usage of the Te
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | git@github.com:rachit89/terraform-aws-vpc.git | n/a |
 | <a name="module_eks"></a> [eks](#module\_eks) | ../../ | n/a |
 | <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | ../..//modules/managed-nodegroup | n/a |
-| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | ../..///modules/fargate-profile | n/a |
+| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | ../..///modules/fargate-profile | n/a |=======
+
 
 ## Resources
 

@@ -49,17 +49,31 @@ module "eks_addon" {
   }
 }
 
+resource "null_resource" "update_cni_prifix" {
+  count      = var.eks_default_addon_enabled ? 1 : 0
+  depends_on = [module.eks_addon]
+  provisioner "local-exec" {
+    command = <<-EOF
+      aws eks update-kubeconfig --name ${module.eks_addon[0].cluster_name} --region ${var.aws_region} &&
+      kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
+      kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
+      kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
+    EOF
+  }
+}
+
 module "eks" {
-  count                     = var.eks_default_addon_enabled ? 0 : 1
-  source                    = "terraform-aws-modules/eks/aws"
-  version                   = "20.8.0"
-  vpc_id                    = var.vpc_id
-  subnet_ids                = var.vpc_private_subnet_ids
-  enable_irsa               = var.irsa_enabled
-  cluster_name              = format("%s-%s", var.environment, var.name)
-  create_kms_key            = var.kms_key_enabled
-  cluster_version           = var.eks_cluster_version
-  cluster_enabled_log_types = var.eks_cluster_log_types
+  count                       = var.eks_default_addon_enabled ? 0 : 1
+  source                      = "terraform-aws-modules/eks/aws"
+  version                     = "19.21.0"
+  vpc_id                      = var.vpc_id
+  subnet_ids                  = var.vpc_private_subnet_ids
+  enable_irsa                 = true
+  cluster_iam_role_dns_suffix = var.eks_cluster_iam_role_dns_suffix
+  cluster_name                = format("%s-%s", var.environment, var.name)
+  create_kms_key              = var.kms_key_enabled
+  cluster_version             = var.eks_cluster_version
+  cluster_enabled_log_types   = var.eks_cluster_log_types
   tags = {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
@@ -254,6 +268,7 @@ data "template_file" "launch_template_userdata" {
     cluster_auth_base64          = module.eks_addon[0].cluster_certificate_authority_data
     image_low_threshold_percent  = var.image_low_threshold_percent
     image_high_threshold_percent = var.image_high_threshold_percent
+    managed_ng_pod_capacity      = var.managed_ng_pod_capacity
 
   }
 }
@@ -311,7 +326,6 @@ resource "aws_eks_node_group" "default_ng" {
   }
   labels        = var.k8s_labels
   capacity_type = var.eks_ng_capacity_type
-
   instance_types = var.eks_ng_instance_types
   launch_template {
     id      = aws_launch_template.eks_template[0].id

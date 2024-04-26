@@ -1,4 +1,4 @@
-variable "additional_tags" {
+variable "additional_aws_tags" {
   description = "Additional tags to be applied to AWS resources"
   type        = map(string)
   default     = {}
@@ -42,6 +42,12 @@ variable "irsa_enabled" {
 
 variable "eks_cluster_endpoint_public_access" {
   description = "Whether the Amazon EKS public API server endpoint is enabled or not."
+  default     = true
+  type        = bool
+}
+
+variable "eks_cluster_endpoint_private_access" {
+  description = "Whether the Amazon EKS private API server endpoint is enabled or not."
   default     = true
   type        = bool
 }
@@ -99,6 +105,7 @@ variable "ipv6_enabled" {
   type        = bool
   default     = false
 }
+
 variable "eks_default_addon_enabled" {
   description = "Enable deafult addons(vpc-cni, ebs-csi) at the time of cluster creation"
   type        = bool
@@ -146,7 +153,6 @@ variable "eventRecordQPS" {
   type        = number
   default     = 5
 }
-
 
 variable "associate_public_ip_address" {
   description = "Set to true to enable network interface for launch template."
@@ -233,6 +239,18 @@ variable "update_default_version" {
   default     = true
 }
 
+variable "managed_ng_pod_capacity" {
+  description = "Maximum number of pods you want to schedule on one node. This value should not exceed 110."
+  default     = 70
+  type        = number
+}
+
+variable "eks_cluster_iam_role_dns_suffix" {
+  description = "Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China)"
+  type        = string
+  default     = "amazonaws.com"
+}
+
 variable "eks_volume_delete_on_termination" {
   description = "Set to true if delete the volumes when eks cluster is terminated."
   type        = bool
@@ -253,13 +271,12 @@ variable "authentication_mode" {
 
 # Access Entry
 
-
-
 variable "access_entry_enabled" {
   description = "Whether to enable access entry or not for eks cluster."
   type        = bool
   default     = true
 }
+
 variable "access_entries" {
   description = "Map of access entries to add to the cluster"
   type        = any

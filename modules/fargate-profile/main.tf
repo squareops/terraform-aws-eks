@@ -35,7 +35,6 @@ resource "aws_eks_fargate_profile" "eks_fargate_profile" {
     namespace = var.fargate_namespace
     labels    = var.k8s_labels
   }
-
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.fargate_profile_name, "fargate")
     Environment = var.environment
