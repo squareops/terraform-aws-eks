@@ -49,25 +49,31 @@ output "default_ng_node_group_arn" {
 }
 
 output "default_ng_min_node" {
-  value = var.eks_default_addon_enabled ? var.eks_ng_min_size : null
+  description = "The minimum number of worker nodes in the default node group of EKS Cluster."
+  value       = var.eks_default_addon_enabled ? var.eks_ng_min_size : null
 }
 
 output "default_ng_max_node" {
-  value = var.eks_default_addon_enabled ? var.eks_ng_max_size : null
+  description = "The maximum number of worker nodes in the default node group of EKS Cluster."
+  value       = var.eks_default_addon_enabled ? var.eks_ng_max_size : null
 }
 
 output "default_ng_desired_node" {
-  value = var.eks_default_addon_enabled ? var.eks_ng_desired_size : null
+  description = "The desired number of worker nodes in the default node group of EKS Cluster."
+  value       = var.eks_default_addon_enabled ? var.eks_ng_desired_size : null
 }
 
 output "default_ng_capacity_type" {
-  value = var.eks_default_addon_enabled ? var.eks_ng_capacity_type : null
+  description = "The capacity type of worker nodes in the default node group in the EKS Cluster."
+  value       = var.eks_default_addon_enabled ? var.eks_ng_capacity_type : null
 }
 
 output "default_ng_instance_types" {
-  value = var.eks_default_addon_enabled ? var.eks_ng_instance_types : null
+  description = "The instance type of worker nodes in the default node group in the EKS Cluster."
+  value       = var.eks_default_addon_enabled ? var.eks_ng_instance_types : null
 }
 
 output "default_ng_ebs_volume_size" {
-  value = var.eks_default_addon_enabled ? var.eks_ebs_volume_size : null
+  description = "The size of the EBS volume attached to worker nodes in the default node group in the EKS Cluster."
+  value       = var.eks_default_addon_enabled ? var.eks_ebs_volume_size : null
 }

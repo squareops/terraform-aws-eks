@@ -1,5 +1,3 @@
-data "aws_partition" "current" {}
-
 data "aws_iam_policy_document" "eks_fargate_pod_assume_role" {
   statement {
     effect  = "Allow"
@@ -24,7 +22,7 @@ resource "aws_iam_role" "eks_fargate_pod" {
 }
 
 resource "aws_iam_role_policy_attachment" "eks_fargate_pod" {
-  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
   role       = aws_iam_role.eks_fargate_pod.name
 }
 

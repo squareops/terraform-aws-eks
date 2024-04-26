@@ -21,39 +21,40 @@ module "eks" {
   source                                   = "squareops/eks/aws"
   name                                     = "skaf"
   vpc_id                                   = "vpc-xyz425342176"
-  vpc_subnet_ids                           = [module.vpc.vpc_private_subnets[0]]
-  eks_ng_min_size                          = 2
+  vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
+  eks_ng_min_size                          = 1
   eks_ng_max_size                          = 5
-  eks_ng_desired_size                      = 2
-  eks_ebs_volume_size                      = 50
-  eks_ng_capacity_type                     = "ON_DEMAND"
+  eks_ng_desired_size                      = 1
+  ebs_volume_size                          = 50
+  eks_ng_capacity_type                     = "SPOT"
   eks_ng_instance_types                    = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                              = "prod"
   eks_kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   eks_cluster_version                      = "1.29"
   eks_cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  vpc_private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
   eks_cluster_log_retention_in_days        = 30
   eks_cluster_endpoint_public_access       = true
-  eks_cluster_endpoint_private_access      = false
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  aws_auth_configmap_enabled               = true
   eks_default_addon_enabled                = true
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
-  aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::222222222222:role/service-role"
-      username = "username"
-      groups   = ["system:masters"]
+  access_entry_enabled                     = false
+  access_entries = {
+    "example" = {
+      kubernetes_groups = ["cluster-admins"]
+      principal_arn     = "arn:aws:iam::767398031518:role/role-name"
+      policy_associations = {
+        example = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+          access_scope = {
+            namespaces = ["default"]
+            type       = "namespace"
+          }
+        }
+      }
     }
-  ]
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::222222222222:user/aws-user"
-      username = "aws-user"
-      groups   = ["system:masters"]
-    },
-  ]
+  }
+  enable_cluster_creator_admin_permissions = true
+  authentication_mode                      = "API_AND_CONFIG_MAP"
   eks_cluster_security_group_additional_rules = {
     ingress_port_mgmt_tcp = {
       description = "mgmt vpc cidr"
@@ -96,14 +97,14 @@ module "managed_node_group_addons" {
 }
 
 module "fargate_profle" {
-  source               = "squareops/eks/aws//modules/fargate-profile"
-  depends_on           = [module.eks]
-  fargate_profile_name = "app"
-  fargate_subnet_ids   = ["subnet-abc123"]
-  environment          = "prod"
-  eks_cluster_name     = module.eks.eks_cluster_name
-  fargate_namespace    = "default"
-  labels = {
+  source                = "squareops/eks/aws//modules/fargate-profile"
+  depends_on            = [module.eks]
+  fargate_profile_name  = "app"
+  fargate_subnet_ids    = ["subnet-abc123"]
+  environment           = "prod"
+  eks_cluster_name      = module.eks.cluster_name
+  fargate_namespace     = "default"
+  k8s_labels = {
     "App-Services" = "fargate"
   }
 }
@@ -149,7 +150,6 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
 | <a name="provider_template"></a> [template](#provider\_template) | n/a |
 
@@ -157,8 +157,8 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 19.21.0 |
-| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 19.21.0 |
+| <a name="module_eks_addon"></a> [eks\_addon](#module\_eks\_addon) | terraform-aws-modules/eks/aws | 20.8.0 |
+| <a name="module_eks"></a> [eks](#module\_eks) | terraform-aws-modules/eks/aws | 20.8.0 |
 
 ## Resources
 
@@ -205,9 +205,6 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_vpc_private_subnet_ids"></a> [vpc\_private\_subnet\_ids](#input\_vpc\_private\_subnet\_ids) | Private subnets of the VPC which can be used by EKS | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_kms_key_enabled"></a> [kms\_key\_enabled](#input\_kms\_key\_enabled) | Controls if a KMS key for cluster encryption should be created | `bool` | `false` | no |
 | <a name="input_eks_cluster_security_group_additional_rules"></a> [eks\_cluster\_security\_group\_additional\_rules](#input\_eks\_cluster\_security\_group\_additional\_rules) | List of additional security group rules to add to the cluster security group created. | `any` | `{}` | no |
-| <a name="input_aws_auth_configmap_enabled"></a> [aws\_auth\_configmap\_enabled](#input\_aws\_auth\_configmap\_enabled) | Determines whether to manage the aws-auth configmap | `bool` | `false` | no |
-| <a name="input_aws_auth_users"></a> [aws\_auth\_users](#input\_aws\_auth\_users) | List of user maps to add to the aws-auth configmap | `any` | `[]` | no |
-| <a name="input_aws_auth_roles"></a> [aws\_auth\_roles](#input\_aws\_auth\_roles) | List of role maps to add to the aws-auth configmap | `list(any)` | `[]` | no |
 | <a name="input_ipv6_enabled"></a> [ipv6\_enabled](#input\_ipv6\_enabled) | Enable cluster IP family as Ipv6 | `bool` | `false` | no |
 | <a name="input_eks_default_addon_enabled"></a> [eks\_default\_addon\_enabled](#input\_eks\_default\_addon\_enabled) | Enable deafult addons(vpc-cni, ebs-csi) at the time of cluster creation | `bool` | `false` | no |
 | <a name="input_eks_nodes_keypair_name"></a> [eks\_nodes\_keypair\_name](#input\_eks\_nodes\_keypair\_name) | The public key to be used for EKS cluster worker nodes. | `string` | `""` | no |
@@ -230,6 +227,13 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_k8s_labels"></a> [k8s\_labels](#input\_k8s\_labels) | Labels to be applied to the Kubernetes node groups. | `map(any)` | `{}` | no |
 | <a name="input_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#input\_worker\_iam\_role\_arn) | The ARN of the worker role for EKS. | `string` | `""` | no |
 | <a name="input_worker_iam_role_name"></a> [worker\_iam\_role\_name](#input\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role. | `string` | `""` | no |
+| <a name="input_update_default_version"></a> [update\_default\_version](#input\_update\_default\_version) | Set to true if update the default version of launch template for eks template. | `bool` | `true` | no |
+| <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
+| <a name="input_eks_network_interfaces_delete_on_termination"></a> [eks\_network\_interfaces\_delete\_on\_termination](#input\_eks\_network\_interfaces\_delete\_on\_termination) | Set to true if delete the network interfaces when eks cluster is terminated. | `bool` | `true` | no |
+| <a name="input_authentication_mode"></a> [authentication\_mode](#input\_authentication\_mode) | The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP` | `string` | `"API_AND_CONFIG_MAP"` | no |
+| <a name="input_access_entry_enabled"></a> [access\_entry\_enabled](#input\_access\_entry\_enabled) | Whether to enable access entry or not for eks cluster. | `bool` | `true` | no |
+| <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Map of access entries to add to the cluster | `any` | `{}` | no |
+| <a name="input_enable_cluster_creator_admin_permissions"></a> [enable\_cluster\_creator\_admin\_permissions](#input\_enable\_cluster\_creator\_admin\_permissions) | Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry | `bool` | `false` | no |
 | <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
 | <a name="input_eks_cluster_iam_role_dns_suffix"></a> [eks\_cluster\_iam\_role\_dns\_suffix](#input\_eks\_cluster\_iam\_role\_dns\_suffix) | Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China) | `string` | `"amazonaws.com"` | no |
 | <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
@@ -251,12 +255,12 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="output_kms_policy_arn"></a> [kms\_policy\_arn](#output\_kms\_policy\_arn) | ARN of the KMS policy that is used by the EKS cluster. |
 | <a name="output_eks_cluster_certificate_authority_data"></a> [eks\_cluster\_certificate\_authority\_data](#output\_eks\_cluster\_certificate\_authority\_data) | Base64 encoded certificate data required to communicate with the cluster |
 | <a name="output_default_ng_node_group_arn"></a> [default\_ng\_node\_group\_arn](#output\_default\_ng\_node\_group\_arn) | ARN for the nodegroup |
-| <a name="output_default_ng_min_node"></a> [default\_ng\_min\_node](#output\_default\_ng\_min\_node) | n/a |
-| <a name="output_default_ng_max_node"></a> [default\_ng\_max\_node](#output\_default\_ng\_max\_node) | n/a |
-| <a name="output_default_ng_desired_node"></a> [default\_ng\_desired\_node](#output\_default\_ng\_desired\_node) | n/a |
-| <a name="output_default_ng_capacity_type"></a> [default\_ng\_capacity\_type](#output\_default\_ng\_capacity\_type) | n/a |
-| <a name="output_default_ng_instance_types"></a> [default\_ng\_instance\_types](#output\_default\_ng\_instance\_types) | n/a |
-| <a name="output_default_ng_ebs_volume_size"></a> [default\_ng\_ebs\_volume\_size](#output\_default\_ng\_ebs\_volume\_size) | n/a |
+| <a name="output_default_ng_min_node"></a> [default\_ng\_min\_node](#output\_default\_ng\_min\_node) | The minimum number of worker nodes in the default node group of EKS Cluster. |
+| <a name="output_default_ng_max_node"></a> [default\_ng\_max\_node](#output\_default\_ng\_max\_node) | The maximum number of worker nodes in the default node group of EKS Cluster. |
+| <a name="output_default_ng_desired_node"></a> [default\_ng\_desired\_node](#output\_default\_ng\_desired\_node) | The desired number of worker nodes in the default node group of EKS Cluster. |
+| <a name="output_default_ng_capacity_type"></a> [default\_ng\_capacity\_type](#output\_default\_ng\_capacity\_type) | The capacity type of worker nodes in the default node group in the EKS Cluster. |
+| <a name="output_default_ng_instance_types"></a> [default\_ng\_instance\_types](#output\_default\_ng\_instance\_types) | The instance type of worker nodes in the default node group in the EKS Cluster. |
+| <a name="output_default_ng_ebs_volume_size"></a> [default\_ng\_ebs\_volume\_size](#output\_default\_ng\_ebs\_volume\_size) | The size of the EBS volume attached to worker nodes in the default node group in the EKS Cluster. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Contribution & Issue Reporting

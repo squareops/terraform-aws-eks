@@ -34,15 +34,14 @@ variable "eks_cluster_version" {
   type        = string
 }
 
-variable "eks_cluster_endpoint_public_access" {
-  description = "Whether the Amazon EKS public API server endpoint is enabled or not."
+variable "irsa_enabled" {
+  description = "Set to true to associate an AWS IAM role with a Kubernetes service account. "
   default     = true
   type        = bool
 }
 
-variable "irsa_enabled" {
-
-  description = "Set to true to associate an AWS IAM role with a Kubernetes service account. "
+variable "eks_cluster_endpoint_public_access" {
+  description = "Whether the Amazon EKS public API server endpoint is enabled or not."
   default     = true
   type        = bool
 }
@@ -73,7 +72,7 @@ variable "eks_kms_key_arn" {
 
 variable "eks_cluster_log_types" {
   description = "A list of desired control plane logs to enable for the EKS cluster. Valid values include: api, audit, authenticator, controllerManager, scheduler."
-  default     = [""]
+  default     = []
   type        = list(string)
 }
 
@@ -101,29 +100,12 @@ variable "eks_cluster_security_group_additional_rules" {
   default     = {}
 }
 
-variable "aws_auth_configmap_enabled" {
-  description = "Determines whether to manage the aws-auth configmap"
-  default     = false
-  type        = bool
-}
-
-variable "aws_auth_users" {
-  description = "List of user maps to add to the aws-auth configmap"
-  type        = any
-  default     = []
-}
-
-variable "aws_auth_roles" {
-  description = "List of role maps to add to the aws-auth configmap"
-  type        = list(any)
-  default     = []
-}
-
 variable "ipv6_enabled" {
   description = "Enable cluster IP family as Ipv6"
   type        = bool
   default     = false
 }
+
 variable "eks_default_addon_enabled" {
   description = "Enable deafult addons(vpc-cni, ebs-csi) at the time of cluster creation"
   type        = bool
@@ -171,7 +153,6 @@ variable "eventRecordQPS" {
   type        = number
   default     = 5
 }
-
 
 variable "associate_public_ip_address" {
   description = "Set to true to enable network interface for launch template."
@@ -252,11 +233,18 @@ variable "worker_iam_role_name" {
   default     = ""
 }
 
+variable "update_default_version" {
+  description = "Set to true if update the default version of launch template for eks template."
+  type        = bool
+  default     = true
+}
+
 variable "managed_ng_pod_capacity" {
   description = "Maximum number of pods you want to schedule on one node. This value should not exceed 110."
   default     = 70
   type        = number
 }
+
 variable "eks_cluster_iam_role_dns_suffix" {
   description = "Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China)"
   type        = string
@@ -273,6 +261,32 @@ variable "eks_network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true
+}
+
+variable "authentication_mode" {
+  description = "The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP`"
+  type        = string
+  default     = "API_AND_CONFIG_MAP"
+}
+
+# Access Entry
+
+variable "access_entry_enabled" {
+  description = "Whether to enable access entry or not for eks cluster."
+  type        = bool
+  default     = true
+}
+
+variable "access_entries" {
+  description = "Map of access entries to add to the cluster"
+  type        = any
+  default     = {}
+}
+
+variable "enable_cluster_creator_admin_permissions" {
+  description = "Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry"
+  type        = bool
+  default     = false
 }
 
 variable "vpc_s3_endpoint_enabled" {

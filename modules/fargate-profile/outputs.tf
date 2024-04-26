@@ -1,11 +1,11 @@
 output "fargate_profile_ids" {
   description = "EKS Cluster name and EKS Fargate Profile names separated by a colon (:)."
-  value       = aws_eks_fargate_profile.this.id
+  value       = aws_eks_fargate_profile.eks_fargate_profile.id
 }
 
 output "fargate_profile_arns" {
   description = "Amazon Resource Name (ARN) of the EKS Fargate Profile."
-  value       = aws_eks_fargate_profile.this.arn
+  value       = aws_eks_fargate_profile.eks_fargate_profile.arn
 }
 
 output "iam_role_name" {

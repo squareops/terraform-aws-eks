@@ -28,7 +28,8 @@ This directory contains a complete example that demonstrates the usage of the Te
 | <a name="module_vpc"></a> [vpc](#module\_vpc) | git@github.com:rachit89/terraform-aws-vpc.git | n/a |
 | <a name="module_eks"></a> [eks](#module\_eks) | ../../ | n/a |
 | <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | ../..//modules/managed-nodegroup | n/a |
-| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | ../../modules/fargate-profile | n/a |
+| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | ../..///modules/fargate-profile | n/a |=======
+
 
 ## Resources
 
@@ -44,7 +45,7 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_region"></a> [region](#output\_region) | AWS region in which the EKS cluster is created. |
+| <a name="output_aws_region"></a> [aws\_region](#output\_aws\_region) | AWS region in which the EKS cluster is created. |
 | <a name="output_eks_cluster_name"></a> [eks\_cluster\_name](#output\_eks\_cluster\_name) | Name of the Kubernetes cluster. |
 | <a name="output_eks_cluster_endpoint"></a> [eks\_cluster\_endpoint](#output\_eks\_cluster\_endpoint) | Endpoint URL for the EKS control plane. |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group IDs that are attached to the control plane of the EKS cluster. |

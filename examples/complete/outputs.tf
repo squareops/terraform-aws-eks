@@ -1,4 +1,4 @@
-output "region" {
+output "aws_region" {
   description = "AWS region in which the EKS cluster is created."
   value       = local.aws_region
 }

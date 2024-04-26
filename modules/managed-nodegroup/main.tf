@@ -54,7 +54,6 @@ resource "aws_launch_template" "eks_template" {
   network_interfaces {
     associate_public_ip_address = var.associate_public_ip_address
     delete_on_termination       = var.managed_ng_network_interfaces_delete_on_termination
-
   }
 
   monitoring {
