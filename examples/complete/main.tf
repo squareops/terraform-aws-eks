@@ -217,6 +217,6 @@ module "fargate_profle" {
   eks_cluster_name     = module.eks.eks_cluster_name
   fargate_namespace    = "fargate"
   k8s_labels = {
-    "App-Services" = "fargate"
+    "App-Services" = "app"
   }
 }
