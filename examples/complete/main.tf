@@ -1,19 +1,19 @@
 locals {
-  aws_region                               = "ap-northeast-1"
-  aws_account_id                           = "767398031518"
+  aws_region                               = "ap-south-1"
+  aws_account_id                           = "654654551614"
   kms_deletion_window_in_days              = 7
   kms_key_rotation_enabled                 = true
   is_enabled                               = true
   multi_region                             = false
   environment                              = "stg"
   name                                     = "rachit"
-  vpc_availability_zones                   = ["ap-northeast-1a", "ap-northeast-1c"]
+  vpc_availability_zones                   = ["ap-south-1a", "ap-south-1b"]
   vpc_one_nat_gateway_per_az               = true
   vpc_flow_log_enabled                     = false
   kms_user                                 = null
   vpc_cidr                                 = "10.10.0.0/16"
-  vpn_server_enabled                       = false
-  eks_default_addon_enabled                = false
+  vpn_server_enabled                       = true
+  eks_default_addon_enabled                = true
   eks_cluster_version                      = "1.29"
   eks_cluster_log_types                    = []
   eks_cluster_log_retention_in_days        = 30
@@ -94,7 +94,8 @@ module "key_pair_eks" {
 }
 
 module "vpc" {
-  source                                              = "squareops/vpc/aws"
+  # source                                              = "squareops/vpc/aws"
+  source                                              = "git@github.com:rachit89/terraform-aws-vpc.git"
   name                                                = "stg-rachit"
   aws_region                                          = local.aws_region
   vpc_cidr                                            = local.vpc_cidr
@@ -126,7 +127,8 @@ module "vpc" {
 }
 
 module "eks" {
-  source               = "squareops/eks/aws"
+  #  source               = "squareops/eks/aws"
+  source               = "../../"
   access_entry_enabled = false
   access_entries = {
     "example" = {
@@ -176,10 +178,11 @@ module "eks" {
   }
 }
 
-module "managed_node_group_production" {
-  source                        = "squareops/eks/aws//modules/managed-nodegroup"
+module "managed_node_group_addons" {
+  #  source                        = "squareops/eks/aws//modules/managed-nodegroup"
+  source                        = "../..//modules/managed-nodegroup"
   depends_on                    = [module.vpc, module.eks]
-  managed_ng_name               = "Infra"
+  managed_ng_name               = "addons"
   managed_ng_min_size           = 2
   managed_ng_max_size           = 2
   managed_ng_desired_size       = 2
@@ -205,10 +208,11 @@ module "managed_node_group_production" {
 }
 
 module "fargate_profle" {
-  source               = "squareops/eks/aws//modules/fargate-profile"
+  # source               = "squareops/eks/aws//modules/fargate-profile"
+  source               = "../..///modules/fargate-profile"
   depends_on           = [module.vpc, module.eks]
   fargate_profile_name = local.fargate_profile_name
-  fargate_subnet_ids   = [module.vpc.private_subnets[0]]
+  fargate_subnet_ids   = [module.vpc.vpc_private_subnets[0]]
   environment          = local.environment
   eks_cluster_name     = module.eks.eks_cluster_name
   fargate_namespace    = "fargate"
