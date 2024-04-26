@@ -1,5 +1,4 @@
 # AWS EKS Terraform module
-
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://squareops.com/wp-content/uploads/2020/05/Squareops-png-white.png1-3.png">
   <source media="(prefers-color-scheme: light)" srcset="https://squareops.com/wp-content/uploads/2021/09/Squareops-png-1-1.png">
@@ -33,7 +32,7 @@ module "eks" {
   eks_kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
   eks_cluster_version                      = "1.29"
   eks_cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  private_subnet_ids                       = ["subnet-abc123" , "subnet-xyz12324"]
+  vpc_private_subnet_ids                   = ["subnet-abc123" , "subnet-xyz12324"]
   eks_cluster_log_retention_in_days        = 30
   eks_cluster_endpoint_public_access       = true
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
@@ -43,7 +42,7 @@ module "eks" {
   access_entries = {
     "example" = {
       kubernetes_groups = ["cluster-admins"]
-      principal_arn     = "arn:aws:iam::767398031518:role/proddd-eks-cluster-20240326061022341800000006"
+      principal_arn     = "arn:aws:iam::1234567890:role/rolename"
       policy_associations = {
         example = {
           policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
@@ -57,37 +56,28 @@ module "eks" {
   }
   enable_cluster_creator_admin_permissions = true
   authentication_mode                      = "API_AND_CONFIG_MAP"
-  eks_cluster_security_group_additional_rules = {
-    ingress_port_mgmt_tcp = {
-      description = "mgmt vpc cidr"
-      protocol    = "tcp"
-      from_port   = 443
-      to_port     = 443
-      type        = "ingress"
-      cidr_blocks = ["10.10.0.0/16"]
-    }
-  }
-}
-
-module "managed_node_group_production" {
-  source                            = "squareops/eks/aws//modules/managed-nodegroup"
-  depends_on                        = [module.eks]
-  managed_ng_name                   = "Infra"
-  managed_ng_min_size               = 1
-  managed_ng_max_size               = 3
-  managed_ng_desired_size           = 1
-  vpc_subnet_ids                    = ["subnet-abc123"]
-  environment                       = "prod"
-  managed_ng_kms_key_arn            = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  managed_ng_capacity_type          = "ON_DEMAND"
-  managed_ng_ebs_volume_size        = 50
-  managed_ng_instance_types         = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
-  managed_ng_kms_policy_arn         = module.eks.kms_policy_arn
-  eks_cluster_name                  = module.eks.cluster_name
-  worker_iam_role_name              = module.eks.worker_iam_role_name
-  worker_iam_role_arn               = module.eks.worker_iam_role_arn
-  default_addon_enabled             = true
-  eks_nodes_keypair_name            = "key-pair-name"
+  
+module "managed_node_group_addons" {
+  source                        = "squareops/eks/aws//modules/managed-nodegroup"
+  depends_on                    = [module.eks]
+  managed_ng_name               = "addons"
+  managed_ng_min_size           = 2
+  managed_ng_max_size           = 2
+  managed_ng_desired_size       = 2
+  vpc_subnet_ids                = ["subnet-abc123"]
+  environment                   = "prod"
+  managed_ng_kms_key_arn        = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
+  managed_ng_capacity_type      = "ON_DEMAND"
+  managed_ng_ebs_volume_size    = 50
+  managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  managed_ng_kms_policy_arn     = module.eks.kms_policy_arn
+  eks_cluster_name       = module.eks.eks_cluster_name
+  worker_iam_role_name   = module.eks.worker_iam_role_name
+  worker_iam_role_arn    = module.eks.worker_iam_role_arn
+  default_addon_enabled  = true
+  managed_ng_pod_capacity= 90
+  managed_ng_monitoring_enabled = true
+  eks_nodes_keypair_name = "key-pair-name"
   k8s_labels = {
     "Addons-Services" = "true"
   }
@@ -97,14 +87,14 @@ module "managed_node_group_production" {
 }
 
 module "fargate_profle" {
-  source                = "squareops/eks/aws//modules/fargate-profile"
-  depends_on            = [module.eks]
-  fargate_profile_name  = "app"
-  fargate_subnet_ids    = ["subnet-abc123"]
-  environment           = "prod"
-  eks_cluster_name      = module.eks.cluster_name
-  fargate_namespace     = "default"
-  k8s_labels = {
+  source               = "squareops/eks/aws//modules/fargate-profile"
+  depends_on           = [module.eks]
+  fargate_profile_name = "app"
+  fargate_subnet_ids   = ["subnet-abc123"]
+  environment          = "prod"
+  eks_cluster_name     = module.eks.eks_cluster_name
+  fargate_namespace    = "default"
+  labels = {
     "App-Services" = "fargate"
   }
 }
@@ -178,6 +168,7 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | [aws_iam_role_policy_attachment.eks_worker_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.node_autoscaler_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_launch_template.eks_template](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
+| [null_resource.update_cni_prifix](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 | [aws_ami.launch_template_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_iam_policy.S3Access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
 | [aws_iam_policy.SSMManagedInstanceCore](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
@@ -187,7 +178,7 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_additional_tags"></a> [additional\_tags](#input\_additional\_tags) | Additional tags to be applied to AWS resources | `map(string)` | `{}` | no |
+| <a name="input_additional_aws_tags"></a> [additional\_aws\_tags](#input\_additional\_aws\_tags) | Additional tags to be applied to AWS resources | `map(string)` | `{}` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | Name of the AWS region where S3 bucket is to be created. | `string` | `"us-east-1"` | no |
 | <a name="input_aws_account_id"></a> [aws\_account\_id](#input\_aws\_account\_id) | Account ID of the AWS Account. | `string` | `""` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment identifier for the EKS cluster, such as dev, qa, prod, etc. | `string` | `""` | no |
@@ -232,6 +223,10 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_access_entry_enabled"></a> [access\_entry\_enabled](#input\_access\_entry\_enabled) | Whether to enable access entry or not for eks cluster. | `bool` | `true` | no |
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Map of access entries to add to the cluster | `any` | `{}` | no |
 | <a name="input_enable_cluster_creator_admin_permissions"></a> [enable\_cluster\_creator\_admin\_permissions](#input\_enable\_cluster\_creator\_admin\_permissions) | Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry | `bool` | `false` | no |
+| <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
+| <a name="input_eks_cluster_iam_role_dns_suffix"></a> [eks\_cluster\_iam\_role\_dns\_suffix](#input\_eks\_cluster\_iam\_role\_dns\_suffix) | Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China) | `string` | `"amazonaws.com"` | no |
+| <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
+| <a name="input_eks_network_interfaces_delete_on_termination"></a> [eks\_network\_interfaces\_delete\_on\_termination](#input\_eks\_network\_interfaces\_delete\_on\_termination) | Set to true if delete the network interfaces when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_vpc_s3_endpoint_enabled"></a> [vpc\_s3\_endpoint\_enabled](#input\_vpc\_s3\_endpoint\_enabled) | Set to true if you want to enable vpc S3 endpoints | `bool` | `false` | no |
 | <a name="input_vpc_ecr_endpoint_enabled"></a> [vpc\_ecr\_endpoint\_enabled](#input\_vpc\_ecr\_endpoint\_enabled) | Set to true if you want to enable vpc ecr endpoints | `bool` | `false` | no |
 

@@ -49,6 +49,19 @@ module "eks_addon" {
   }
 }
 
+resource "null_resource" "update_cni_prifix" {
+  count      = var.eks_default_addon_enabled ? 1 : 0
+  depends_on = [module.eks_addon]
+  provisioner "local-exec" {
+    command = <<-EOF
+      aws eks update-kubeconfig --name ${module.eks_addon[0].cluster_name} --region ${var.aws_region} &&
+      kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true &&
+      kubectl set env daemonset aws-node -n kube-system WARM_PREFIX_TARGET=1 &&
+      kubectl set env daemonset aws-node -n kube-system WARM_ENI_TARGET=1
+    EOF
+  }
+}
+
 module "eks" {
   count                     = var.eks_default_addon_enabled ? 0 : 1
   source                    = "terraform-aws-modules/eks/aws"
@@ -65,7 +78,6 @@ module "eks" {
     "Environment" = var.environment
   }
   access_entries = var.access_entry_enabled ? var.access_entries : null
-  #  access_entries                           = var.access_entries
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
   cluster_security_group_additional_rules  = var.eks_cluster_security_group_additional_rules
@@ -74,6 +86,12 @@ module "eks" {
   cluster_endpoint_public_access_cidrs     = var.eks_cluster_endpoint_public_access_cidrs
   cloudwatch_log_group_retention_in_days   = var.eks_cluster_log_retention_in_days
   cloudwatch_log_group_kms_key_id          = var.eks_kms_key_arn
+  cluster_security_group_additional_rules = var.eks_cluster_security_group_additional_rules
+  cluster_endpoint_public_access          = var.eks_cluster_endpoint_public_access
+  cluster_endpoint_private_access         = var.eks_cluster_endpoint_private_access
+  cluster_endpoint_public_access_cidrs    = var.eks_cluster_endpoint_public_access_cidrs
+  cloudwatch_log_group_retention_in_days  = var.eks_cluster_log_retention_in_days
+  cloudwatch_log_group_kms_key_id         = var.eks_kms_key_arn
   cluster_encryption_config = {
     provider_key_arn = var.eks_kms_key_arn
     resources        = ["secrets"]
@@ -255,6 +273,7 @@ data "template_file" "launch_template_userdata" {
     cluster_auth_base64          = module.eks_addon[0].cluster_certificate_authority_data
     image_low_threshold_percent  = var.image_low_threshold_percent
     image_high_threshold_percent = var.image_high_threshold_percent
+    managed_ng_pod_capacity      = var.managed_ng_pod_capacity
 
   }
 }
@@ -312,7 +331,6 @@ resource "aws_eks_node_group" "default_ng" {
   }
   labels        = var.k8s_labels
   capacity_type = var.eks_ng_capacity_type
-
   instance_types = var.eks_ng_instance_types
   launch_template {
     id      = aws_launch_template.eks_template[0].id

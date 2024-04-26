@@ -43,7 +43,7 @@ output "kms_policy_arn" {
   value       = module.eks.kms_policy_arn
 }
 
-# Managed Nodegroup
+# Managed Nodegroup amd64
 output "managed_ng_node_group_arn" {
   description = "ARN for the nodegroup"
   value       = module.managed_node_group_addons.node_group_arn
@@ -78,7 +78,6 @@ output "managed_ng_disk_size" {
   description = "Disk size of node in managed node group"
   value       = module.managed_node_group_addons.managed_ng_ebs_volume_size
 }
-
 
 # default Nodegroup
 output "default_ng_node_group_arn" {
