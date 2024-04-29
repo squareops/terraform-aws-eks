@@ -150,6 +150,7 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 
 | Name | Version |
 |------|---------|
+| <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.0.0 |
 | <a name="provider_template"></a> [template](#provider\_template) | n/a |
 
@@ -194,13 +195,13 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment identifier for the EKS cluster, such as dev, qa, prod, etc. | `string` | `""` | no |
 | <a name="input_name"></a> [name](#input\_name) | Specify the name of the EKS cluster. | `string` | `""` | no |
 | <a name="input_eks_cluster_version"></a> [eks\_cluster\_version](#input\_eks\_cluster\_version) | Specifies the Kubernetes version (major.minor) to use for the EKS cluster. | `string` | `""` | no |
-| <a name="input_eks_cluster_endpoint_public_access"></a> [eks\_cluster\_endpoint\_public\_access](#input\_eks\_cluster\_endpoint\_public\_access) | Whether the Amazon EKS public API server endpoint is enabled or not. | `bool` | `true` | no |
 | <a name="input_irsa_enabled"></a> [irsa\_enabled](#input\_irsa\_enabled) | Set to true to associate an AWS IAM role with a Kubernetes service account. | `bool` | `true` | no |
+| <a name="input_eks_cluster_endpoint_public_access"></a> [eks\_cluster\_endpoint\_public\_access](#input\_eks\_cluster\_endpoint\_public\_access) | Whether the Amazon EKS public API server endpoint is enabled or not. | `bool` | `true` | no |
 | <a name="input_eks_cluster_endpoint_private_access"></a> [eks\_cluster\_endpoint\_private\_access](#input\_eks\_cluster\_endpoint\_private\_access) | Whether the Amazon EKS private API server endpoint is enabled or not. | `bool` | `true` | no |
 | <a name="input_eks_cluster_endpoint_public_access_cidrs"></a> [eks\_cluster\_endpoint\_public\_access\_cidrs](#input\_eks\_cluster\_endpoint\_public\_access\_cidrs) | CIDR blocks that can access the Amazon EKS public API server endpoint. | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of the VPC where the EKS cluster will be deployed. | `string` | `""` | no |
 | <a name="input_eks_kms_key_arn"></a> [eks\_kms\_key\_arn](#input\_eks\_kms\_key\_arn) | ARN of the KMS key used to encrypt EKS resources. | `string` | `""` | no |
-| <a name="input_eks_cluster_log_types"></a> [eks\_cluster\_log\_types](#input\_eks\_cluster\_log\_types) | A list of desired control plane logs to enable for the EKS cluster. Valid values include: api, audit, authenticator, controllerManager, scheduler. | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
+| <a name="input_eks_cluster_log_types"></a> [eks\_cluster\_log\_types](#input\_eks\_cluster\_log\_types) | A list of desired control plane logs to enable for the EKS cluster. Valid values include: api, audit, authenticator, controllerManager, scheduler. | `list(string)` | `[]` | no |
 | <a name="input_eks_cluster_log_retention_in_days"></a> [eks\_cluster\_log\_retention\_in\_days](#input\_eks\_cluster\_log\_retention\_in\_days) | Retention period for EKS cluster logs in days. Default is set to 90 days. | `number` | `90` | no |
 | <a name="input_vpc_private_subnet_ids"></a> [vpc\_private\_subnet\_ids](#input\_vpc\_private\_subnet\_ids) | Private subnets of the VPC which can be used by EKS | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_kms_key_enabled"></a> [kms\_key\_enabled](#input\_kms\_key\_enabled) | Controls if a KMS key for cluster encryption should be created | `bool` | `false` | no |
@@ -228,16 +229,13 @@ In this module, we have implemented the following CIS Compliance checks for EKS:
 | <a name="input_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#input\_worker\_iam\_role\_arn) | The ARN of the worker role for EKS. | `string` | `""` | no |
 | <a name="input_worker_iam_role_name"></a> [worker\_iam\_role\_name](#input\_worker\_iam\_role\_name) | The name of the EKS Worker IAM role. | `string` | `""` | no |
 | <a name="input_update_default_version"></a> [update\_default\_version](#input\_update\_default\_version) | Set to true if update the default version of launch template for eks template. | `bool` | `true` | no |
+| <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
 | <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_eks_network_interfaces_delete_on_termination"></a> [eks\_network\_interfaces\_delete\_on\_termination](#input\_eks\_network\_interfaces\_delete\_on\_termination) | Set to true if delete the network interfaces when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_authentication_mode"></a> [authentication\_mode](#input\_authentication\_mode) | The authentication mode for the cluster. Valid values are `CONFIG_MAP`, `API` or `API_AND_CONFIG_MAP` | `string` | `"API_AND_CONFIG_MAP"` | no |
 | <a name="input_access_entry_enabled"></a> [access\_entry\_enabled](#input\_access\_entry\_enabled) | Whether to enable access entry or not for eks cluster. | `bool` | `true` | no |
 | <a name="input_access_entries"></a> [access\_entries](#input\_access\_entries) | Map of access entries to add to the cluster | `any` | `{}` | no |
 | <a name="input_enable_cluster_creator_admin_permissions"></a> [enable\_cluster\_creator\_admin\_permissions](#input\_enable\_cluster\_creator\_admin\_permissions) | Indicates whether or not to add the cluster creator (the identity used by Terraform) as an administrator via access entry | `bool` | `false` | no |
-| <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
-| <a name="input_eks_cluster_iam_role_dns_suffix"></a> [eks\_cluster\_iam\_role\_dns\_suffix](#input\_eks\_cluster\_iam\_role\_dns\_suffix) | Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China) | `string` | `"amazonaws.com"` | no |
-| <a name="input_eks_volume_delete_on_termination"></a> [eks\_volume\_delete\_on\_termination](#input\_eks\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
-| <a name="input_eks_network_interfaces_delete_on_termination"></a> [eks\_network\_interfaces\_delete\_on\_termination](#input\_eks\_network\_interfaces\_delete\_on\_termination) | Set to true if delete the network interfaces when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_vpc_s3_endpoint_enabled"></a> [vpc\_s3\_endpoint\_enabled](#input\_vpc\_s3\_endpoint\_enabled) | Set to true if you want to enable vpc S3 endpoints | `bool` | `false` | no |
 | <a name="input_vpc_ecr_endpoint_enabled"></a> [vpc\_ecr\_endpoint\_enabled](#input\_vpc\_ecr\_endpoint\_enabled) | Set to true if you want to enable vpc ecr endpoints | `bool` | `false` | no |
 

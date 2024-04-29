@@ -63,22 +63,21 @@ resource "null_resource" "update_cni_prifix" {
 }
 
 module "eks" {
-  count                       = var.eks_default_addon_enabled ? 0 : 1
-  source                      = "terraform-aws-modules/eks/aws"
-  version                     = "19.21.0"
-  vpc_id                      = var.vpc_id
-  subnet_ids                  = var.vpc_private_subnet_ids
-  enable_irsa                 = true
-  cluster_iam_role_dns_suffix = var.eks_cluster_iam_role_dns_suffix
-  cluster_name                = format("%s-%s", var.environment, var.name)
-  create_kms_key              = var.kms_key_enabled
-  cluster_version             = var.eks_cluster_version
-  cluster_enabled_log_types   = var.eks_cluster_log_types
+  count                     = var.eks_default_addon_enabled ? 0 : 1
+  source                    = "terraform-aws-modules/eks/aws"
+  version                   = "20.8.0"
+  vpc_id                    = var.vpc_id
+  subnet_ids                = var.vpc_private_subnet_ids
+  enable_irsa               = true
+  cluster_name              = format("%s-%s", var.environment, var.name)
+  create_kms_key            = var.kms_key_enabled
+  cluster_version           = var.eks_cluster_version
+  cluster_enabled_log_types = var.eks_cluster_log_types
   tags = {
     "Name"        = format("%s-%s", var.environment, var.name)
     "Environment" = var.environment
   }
-  access_entries = var.access_entry_enabled ? var.access_entries : null
+  access_entries                           = var.access_entry_enabled ? var.access_entries : null
   enable_cluster_creator_admin_permissions = var.enable_cluster_creator_admin_permissions
   authentication_mode                      = var.authentication_mode
   cluster_security_group_additional_rules  = var.eks_cluster_security_group_additional_rules
@@ -324,8 +323,8 @@ resource "aws_eks_node_group" "default_ng" {
     max_size     = var.eks_ng_max_size
     min_size     = var.eks_ng_min_size
   }
-  labels        = var.k8s_labels
-  capacity_type = var.eks_ng_capacity_type
+  labels         = var.k8s_labels
+  capacity_type  = var.eks_ng_capacity_type
   instance_types = var.eks_ng_instance_types
   launch_template {
     id      = aws_launch_template.eks_template[0].id
