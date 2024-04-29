@@ -25,11 +25,10 @@ This directory contains a complete example that demonstrates the usage of the Te
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | n/a |
 | <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | n/a |
 | <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | git@github.com:rachit89/terraform-aws-vpc.git | n/a |
-| <a name="module_eks"></a> [eks](#module\_eks) | ../../ | n/a |
-| <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | ../..//modules/managed-nodegroup | n/a |
-| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | ../..///modules/fargate-profile | n/a |=======
-
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
+| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | n/a |
+| <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | squareops/eks/aws//modules/managed-nodegroup | n/a |
+| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
 
 ## Resources
 

@@ -245,12 +245,6 @@ variable "managed_ng_pod_capacity" {
   type        = number
 }
 
-variable "eks_cluster_iam_role_dns_suffix" {
-  description = "Base DNS domain name for the current partition (e.g., amazonaws.com in AWS Commercial, amazonaws.com.cn in AWS China)"
-  type        = string
-  default     = "amazonaws.com"
-}
-
 variable "eks_volume_delete_on_termination" {
   description = "Set to true if delete the volumes when eks cluster is terminated."
   type        = bool

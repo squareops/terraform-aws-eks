@@ -49,7 +49,7 @@ locals {
 data "aws_caller_identity" "current" {}
 
 module "kms" {
-  source = "terraform-aws-modules/kms/aws"
+  source                  = "terraform-aws-modules/kms/aws"
   deletion_window_in_days = local.kms_deletion_window_in_days
   description             = "Symetric Key to Enable Encryption at rest using KMS services."
   enable_key_rotation     = local.kms_key_rotation_enabled
@@ -192,7 +192,6 @@ module "eks" {
 
 module "managed_node_group_addons" {
   source                        = "squareops/eks/aws//modules/managed-nodegroup"
-  source                        = "../..//modules/managed-nodegroup"
   depends_on                    = [module.vpc, module.eks]
   managed_ng_name               = "addons"
   managed_ng_min_size           = 2
