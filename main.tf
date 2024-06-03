@@ -147,6 +147,33 @@ EOF
     }
   )
 }
+resource "aws_iam_policy" "create_service_linked_role_policy" {
+  name        = format("%s-%s-create-service-linked-role-policy", var.environment, var.name)
+  description = "Allow IAM to create service linked role for spot instances."
+  policy      = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "iam:CreateServiceLinkedRole",
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "iam:AWSServiceName": "spot.amazonaws.com"
+                }
+            }
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "create_service_linked_role_policy_attachment" {
+  role       = aws_iam_role.node_role.name
+  policy_arn = aws_iam_policy.create_service_linked_role_policy.arn
+}
+
 data "aws_ami" "launch_template_ami" {
   count       = var.default_addon_enabled ? 1 : 0
   owners      = ["602401143452"]
