@@ -149,12 +149,6 @@ variable "ipv6_enabled" {
   default     = false
 }
 
-variable "default_addon_enabled" {
-  description = "Enable default addon(VPC-CNI, AWS-EBS-CSI-DRIVER) with Cluster creation "
-  default     = false
-  type        = bool
-}
-
 variable "managed_ng_network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool

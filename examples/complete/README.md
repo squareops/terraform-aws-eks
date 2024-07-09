@@ -22,12 +22,12 @@ This directory contains a complete example that demonstrates the usage of the Te
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | n/a |
-| <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | n/a |
-| <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
-| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | n/a |
-| <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | squareops/eks/aws//modules/managed-nodegroup | n/a |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | 3.1.0 |
+| <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | 1.0.2 |
+| <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | 1.0.2 |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | 3.3.5 |
+| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | 4.0.9 |
+| <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | squareops/eks/aws//modules/managed-nodegroup | 4.0.9 |
 | <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
 
 ## Resources
@@ -44,9 +44,17 @@ No inputs.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_aws_region"></a> [aws\_region](#output\_aws\_region) | AWS region in which the EKS cluster is created. |
-| <a name="output_eks_cluster_name"></a> [eks\_cluster\_name](#output\_eks\_cluster\_name) | Name of the Kubernetes cluster. |
-| <a name="output_eks_cluster_endpoint"></a> [eks\_cluster\_endpoint](#output\_eks\_cluster\_endpoint) | Endpoint URL for the EKS control plane. |
+| <a name="output_region"></a> [region](#output\_region) | AWS region in which the EKS cluster is created. |
+| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
+| <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | The IPv4 network range assigned to the VPC. |
+| <a name="output_public_subnets"></a> [public\_subnets](#output\_public\_subnets) | List of the public subnets ID's created within the VPC. |
+| <a name="output_private_subnets"></a> [private\_subnets](#output\_private\_subnets) | List of the private subnets ID's created within the VPC. |
+| <a name="output_database_subnets"></a> [database\_subnets](#output\_database\_subnets) | List of the database subnets ID's created within the VPC. |
+| <a name="output_intra_subnets"></a> [intra\_subnets](#output\_intra\_subnets) | List of the intra subnets ID's created within the VPC. |
+| <a name="output_vpn_host_public_ip"></a> [vpn\_host\_public\_ip](#output\_vpn\_host\_public\_ip) | Public IP address of the VPN server instance created within the VPC. |
+| <a name="output_vpn_security_group"></a> [vpn\_security\_group](#output\_vpn\_security\_group) | Security group assigned to the VPN server instance within the VPC. |
+| <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the Kubernetes cluster. |
+| <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint URL for the EKS control plane. |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group IDs that are attached to the control plane of the EKS cluster. |
 | <a name="output_cluster_arn"></a> [cluster\_arn](#output\_cluster\_arn) | ARN of the EKS Cluster. |
 | <a name="output_cluster_oidc_issuer_url"></a> [cluster\_oidc\_issuer\_url](#output\_cluster\_oidc\_issuer\_url) | URL of the OpenID Connect identity provider on the EKS cluster. |

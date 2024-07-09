@@ -28,7 +28,7 @@ variable "name" {
   type        = string
 }
 
-variable "eks_cluster_version" {
+variable "cluster_version" {
   description = "Specifies the Kubernetes version (major.minor) to use for the EKS cluster."
   default     = ""
   type        = string
@@ -40,19 +40,19 @@ variable "irsa_enabled" {
   type        = bool
 }
 
-variable "eks_cluster_endpoint_public_access" {
+variable "cluster_endpoint_public_access" {
   description = "Whether the Amazon EKS public API server endpoint is enabled or not."
   default     = true
   type        = bool
 }
 
-variable "eks_cluster_endpoint_private_access" {
+variable "cluster_endpoint_private_access" {
   description = "Whether the Amazon EKS private API server endpoint is enabled or not."
   default     = true
   type        = bool
 }
 
-variable "eks_cluster_endpoint_public_access_cidrs" {
+variable "cluster_endpoint_public_access_cidrs" {
   description = "CIDR blocks that can access the Amazon EKS public API server endpoint."
   default     = [""]
   type        = list(string)
@@ -64,19 +64,19 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "eks_kms_key_arn" {
+variable "kms_key_arn" {
   description = "ARN of the KMS key used to encrypt EKS resources."
   default     = ""
   type        = string
 }
 
-variable "eks_cluster_log_types" {
+variable "cluster_log_types" {
   description = "A list of desired control plane logs to enable for the EKS cluster. Valid values include: api, audit, authenticator, controllerManager, scheduler."
   default     = []
   type        = list(string)
 }
 
-variable "eks_cluster_log_retention_in_days" {
+variable "cluster_log_retention_in_days" {
   description = "Retention period for EKS cluster logs in days. Default is set to 90 days."
   default     = 90
   type        = number
@@ -94,7 +94,7 @@ variable "kms_key_enabled" {
   default     = false
 }
 
-variable "eks_cluster_security_group_additional_rules" {
+variable "cluster_security_group_additional_rules" {
   description = "List of additional security group rules to add to the cluster security group created."
   type        = any
   default     = {}
@@ -106,31 +106,31 @@ variable "ipv6_enabled" {
   default     = false
 }
 
-variable "eks_default_addon_enabled" {
+variable "default_addon_enabled" {
   description = "Enable deafult addons(vpc-cni, ebs-csi) at the time of cluster creation"
   type        = bool
   default     = false
 }
 
-variable "eks_nodes_keypair_name" {
+variable "nodes_keypair_name" {
   description = "The public key to be used for EKS cluster worker nodes."
   type        = string
   default     = ""
 }
 
-variable "eks_cluster_name" {
+variable "cluster_name" {
   description = "Name of EKS cluster"
   type        = string
   default     = ""
 }
 
-variable "eks_ng_instance_types" {
+variable "ng_instance_types" {
   description = "The instance types to be used for the EKS node group (e.g., t2.medium)."
   type        = list(any)
   default     = ["t3a.medium"]
 }
 
-variable "eks_ng_capacity_type" {
+variable "ng_capacity_type" {
   description = "The capacity type for the EKS node group (ON_DEMAND or SPOT)."
   type        = string
   default     = "ON_DEMAND"
@@ -160,43 +160,43 @@ variable "associate_public_ip_address" {
   default     = false
 }
 
-variable "eks_ng_monitoring_enabled" {
+variable "ng_monitoring_enabled" {
   description = "Specify whether to enable monitoring for nodes."
   type        = bool
   default     = true
 }
 
-variable "eks_ng_min_size" {
+variable "ng_min_size" {
   description = "The minimum number of nodes for the node group."
   type        = string
   default     = "1"
 }
 
-variable "eks_ng_max_size" {
+variable "ng_max_size" {
   description = "The maximum number of nodes that can be added to the node group."
   type        = string
   default     = "3"
 }
 
-variable "eks_ng_desired_size" {
+variable "ng_desired_size" {
   description = "The desired number of nodes for the node group."
   type        = string
   default     = "1"
 }
 
-variable "eks_ebs_volume_size" {
+variable "ebs_volume_size" {
   description = "The type of EBS volume for nodes."
   type        = string
   default     = "50"
 }
 
-variable "eks_ebs_volume_type" {
+variable "ebs_volume_type" {
   description = "Specify the type of EBS volume for nodes."
   type        = string
   default     = "gp3"
 }
 
-variable "eks_ebs_encrypted" {
+variable "ebs_encrypted" {
   description = "Specify whether to encrypt the EBS volume for nodes."
   type        = bool
   default     = true
@@ -245,13 +245,13 @@ variable "managed_ng_pod_capacity" {
   type        = number
 }
 
-variable "eks_volume_delete_on_termination" {
+variable "volume_delete_on_termination" {
   description = "Set to true if delete the volumes when eks cluster is terminated."
   type        = bool
   default     = true
 }
 
-variable "eks_network_interfaces_delete_on_termination" {
+variable "network_interfaces_delete_on_termination" {
   description = "Set to true if delete the network interfaces when eks cluster is terminated."
   type        = bool
   default     = true
