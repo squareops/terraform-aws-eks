@@ -7,11 +7,9 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.28.
+This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.30.
 <br>
-we've introduced a new functionality that enhances the ease of cluster setup. Users can now choose to create a default nodegroup based on the  value of default_addon_enabled.the module now seamlessly integrates default addons, including CoreDNS, Kube-proxy, VPC CNI, and EBS CSI Driver. This ensures that your EKS clusters are equipped with essential components for optimal performance and functionality right from the start.
-<br>
-With this module, users can take advantage of the latest features and improvements offered by EKS 1.28 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
+With this module, users can take advantage of the latest features and improvements offered by EKS 1.30 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
 
 
 ## Usage Example
@@ -22,20 +20,13 @@ module "eks" {
   name                                     = "skaf"
   vpc_id                                   = "vpc-xyz425342176"
   vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
-  eks_ng_min_size                          = 1
-  eks_ng_max_size                          = 5
-  eks_ng_desired_size                      = 1
-  ebs_volume_size                          = 50
-  eks_ng_capacity_type                     = "SPOT"
-  eks_ng_instance_types                    = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                              = "prod"
   eks_kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  eks_cluster_version                      = "1.29"
+  eks_cluster_version                      = "1.30"
   eks_cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   eks_cluster_log_retention_in_days        = 30
   eks_cluster_endpoint_public_access       = true
   eks_cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  eks_default_addon_enabled                = true
   eks_nodes_keypair_name                   = module.key_pair_eks.key_pair_name
   access_entry_enabled                     = false
   access_entries = {
@@ -81,13 +72,12 @@ module "managed_node_group_addons" {
   managed_ng_ebs_volume_size    = 50
   managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   managed_ng_kms_policy_arn     = module.eks.kms_policy_arn
-  eks_cluster_name       = module.eks.eks_cluster_name
-  worker_iam_role_name   = module.eks.worker_iam_role_name
-  worker_iam_role_arn    = module.eks.worker_iam_role_arn
-  default_addon_enabled  = true
-  managed_ng_pod_capacity= 90
+  eks_cluster_name              = module.eks.eks_cluster_name
+  worker_iam_role_name          = module.eks.worker_iam_role_name
+  worker_iam_role_arn           = module.eks.worker_iam_role_arn
+  managed_ng_pod_capacity       = 90
   managed_ng_monitoring_enabled = true
-  eks_nodes_keypair_name = "key-pair-name"
+  eks_nodes_keypair_name        = "key-pair-name"
   k8s_labels = {
     "Addons-Services" = "true"
   }
@@ -97,13 +87,13 @@ module "managed_node_group_addons" {
 }
 
 module "fargate_profle" {
-  source                = "squareops/eks/aws//modules/fargate-profile"
-  depends_on            = [module.eks]
-  fargate_profile_name  = "app"
-  fargate_subnet_ids    = ["subnet-abc123"]
-  environment           = "prod"
-  eks_cluster_name      = module.eks.cluster_name
-  fargate_namespace     = "default"
+  source               = "squareops/eks/aws//modules/fargate-profile"
+  depends_on           = [module.eks]
+  fargate_profile_name = "app"
+  fargate_subnet_ids   = ["subnet-abc123"]
+  environment          = "prod"
+  eks_cluster_name     = module.eks.cluster_name
+  fargate_namespace    = "default"
   k8s_labels = {
     "App-Services" = "fargate"
   }

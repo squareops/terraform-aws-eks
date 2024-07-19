@@ -134,9 +134,8 @@ module "vpc" {
 }
 
 module "eks" {
-  source  = "squareops/eks/aws"
-  version = "4.0.9"
-  # aws_region           = local.region
+  source               = "squareops/eks/aws"
+  version              = "4.0.9"
   access_entry_enabled = true
   access_entries = {
     "example" = {
