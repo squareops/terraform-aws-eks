@@ -1,30 +1,61 @@
 locals {
-  region      = "us-west-2"
-  environment = "test"
-  name        = "eks"
+  region                      = "us-west-1"
+  kms_deletion_window_in_days = 7
+  kms_key_rotation_enabled    = true
+  is_enabled                  = true
+  multi_region                = false
+  environment                 = "stage"
+  name                        = "sqops"
+  auto_assign_public_ip       = true
+  vpc_availability_zones      = ["us-west-1a", "us-west-1b"]
+  vpc_public_subnet_enabled   = true
+  vpc_private_subnet_enabled  = true
+  vpc_database_subnet_enabled = true
+  vpc_intra_subnet_enabled    = true
+  vpc_one_nat_gateway_per_az  = true
+  vpn_server_instance_type    = "t3a.small"
+  vpc_flow_log_enabled        = false
+  kms_user                    = null
+  vpc_cidr                    = "10.10.0.0/16"
+  vpn_server_enabled          = true
+  # default_addon_enabled                          = false # If true, a node group will be created along with enabling vpc-cni, ebs-csi addons.
+  cluster_version               = "1.30"
+  cluster_log_types             = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
+  cluster_log_retention_in_days = 30
+  # ng_capacity_type                               = "SPOT" # Can use "On_DEMAND" also
+  managed_ng_capacity_type             = "SPOT" # Can use "On_DEMAND" also
+  cluster_endpoint_private_access      = false
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+  ebs_volume_size                      = 50
+  fargate_profile_name                 = "app"
+  vpc_s3_endpoint_enabled              = true
+  vpc_ecr_endpoint_enabled             = false
+  # vpc_flow_log_cloudwatch_log_group_skip_destroy = false
+  vpc_public_subnets_counts   = 2
+  vpc_private_subnets_counts  = 2
+  vpc_database_subnets_counts = 2
+  vpc_intra_subnets_counts    = 2
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
   }
-  kms_user                    = null
-  vpc_cidr                    = "10.10.0.0/16"
-  vpn_server_enabled          = false
-  default_addon_enabled       = false
   aws_managed_node_group_arch = "" #Enter your linux arch (Example:- arm64 or amd64)
   current_identity            = data.aws_caller_identity.current.arn
 }
+
 data "aws_caller_identity" "current" {}
 
 module "kms" {
-  source = "terraform-aws-modules/kms/aws"
-
-  deletion_window_in_days = 7
+  source                  = "terraform-aws-modules/kms/aws"
+  version                 = "3.1.0"
+  deletion_window_in_days = local.kms_deletion_window_in_days
   description             = "Symetric Key to Enable Encryption at rest using KMS services."
-  enable_key_rotation     = true
-  is_enabled              = true
+  enable_key_rotation     = local.kms_key_rotation_enabled
+  is_enabled              = local.is_enabled
   key_usage               = "ENCRYPT_DECRYPT"
-  multi_region            = true
+  multi_region            = local.multi_region
 
   # Policy
   enable_default_policy                  = true
@@ -64,6 +95,7 @@ module "kms" {
 
 module "key_pair_vpn" {
   source             = "squareops/keypair/aws"
+  version            = "1.0.2"
   count              = local.vpn_server_enabled ? 1 : 0
   key_name           = format("%s-%s-vpn", local.environment, local.name)
   environment        = local.environment
@@ -72,72 +104,83 @@ module "key_pair_vpn" {
 
 module "key_pair_eks" {
   source             = "squareops/keypair/aws"
+  version            = "1.0.2"
   key_name           = format("%s-%s-eks", local.environment, local.name)
   environment        = local.environment
   ssm_parameter_path = format("%s-%s-eks", local.environment, local.name)
 }
 
-
 module "vpc" {
   source                                          = "squareops/vpc/aws"
-  environment                                     = local.environment
+  version                                         = "3.3.5"
   name                                            = local.name
+  region                                          = local.region
   vpc_cidr                                        = local.vpc_cidr
-  availability_zones                              = ["us-west-2a", "us-west-2b"]
-  public_subnet_enabled                           = true
-  private_subnet_enabled                          = true
-  database_subnet_enabled                         = false
-  intra_subnet_enabled                            = false
-  one_nat_gateway_per_az                          = true
+  environment                                     = local.environment
+  vpn_key_pair_name                               = local.vpn_server_enabled ? module.key_pair_vpn[0].key_pair_name : null
+  availability_zones                              = local.vpc_availability_zones
+  intra_subnet_enabled                            = local.vpc_intra_subnet_enabled
+  public_subnet_enabled                           = local.vpc_public_subnet_enabled
+  auto_assign_public_ip                           = local.auto_assign_public_ip
+  private_subnet_enabled                          = local.vpc_private_subnet_enabled
+  one_nat_gateway_per_az                          = local.vpc_one_nat_gateway_per_az
+  database_subnet_enabled                         = local.vpc_database_subnet_enabled
   vpn_server_enabled                              = local.vpn_server_enabled
   vpn_server_instance_type                        = "t3a.small"
-  vpn_key_pair_name                               = local.vpn_server_enabled ? module.key_pair_vpn[0].key_pair_name : null
-  flow_log_enabled                                = false
-  flow_log_max_aggregation_interval               = 60
+  vpc_s3_endpoint_enabled                         = local.vpc_s3_endpoint_enabled
+  vpc_ecr_endpoint_enabled                        = local.vpc_ecr_endpoint_enabled
+  flow_log_enabled                                = local.vpc_flow_log_enabled
+  flow_log_max_aggregation_interval               = 60 # In seconds
+  flow_log_cloudwatch_log_group_skip_destroy      = false
   flow_log_cloudwatch_log_group_retention_in_days = 90
-  flow_log_cloudwatch_log_group_kms_key_arn       = module.kms.key_arn
+  flow_log_cloudwatch_log_group_kms_key_arn       = module.kms.key_arn #Enter your kms key arn
 }
 
 module "eks" {
-  source                               = "squareops/eks/aws"
-  depends_on                           = [module.vpc]
-  name                                 = local.name
-  vpc_id                               = module.vpc.vpc_id
-  subnet_ids                           = [module.vpc.private_subnets[0]]
-  min_size                             = 1
-  max_size                             = 3
-  desired_size                         = 1
-  ebs_volume_size                      = 50
-  capacity_type                        = "ON_DEMAND"
-  instance_types                       = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  source  = "squareops/eks/aws"
+  version = "4.0.9"
+  # aws_region           = local.region
+  access_entry_enabled = true
+  access_entries = {
+    "example" = {
+      kubernetes_groups = []
+      principal_arn     = "arn:aws:iam::381491984451:user/test-user"
+      policy_associations = {
+        example = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            namespaces = []
+            type       = "cluster"
+          }
+        }
+      }
+    }
+  }
+  enable_cluster_creator_admin_permissions = true
+  authentication_mode                      = "API_AND_CONFIG_MAP"
+  depends_on                               = [module.vpc]
+  name                                     = local.name
+  vpc_id                                   = module.vpc.vpc_id
+  vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
+  # ng_min_size                              = 1
+  # ng_max_size                              = 3
+  # ng_desired_size                          = 2
+  # ebs_volume_size                          = local.ebs_volume_size
+  # ng_capacity_type                         = local.ng_capacity_type
+  # ng_instance_types                        = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   environment                          = local.environment
   kms_key_arn                          = module.kms.key_arn
-  cluster_version                      = "1.27"
-  cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
-  private_subnet_ids                   = module.vpc.private_subnets
-  cluster_log_retention_in_days        = 30
-  cluster_endpoint_public_access       = true
-  cluster_endpoint_private_access      = false
-  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
-  create_aws_auth_configmap            = true
-  managed_ng_pod_capacity              = 90
-  default_addon_enabled                = local.default_addon_enabled
-  eks_nodes_keypair_name               = module.key_pair_eks.key_pair_name
-  aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::222222222222:role/service-role"
-      username = "username"
-      groups   = ["system:masters"]
-    }
-  ]
-  aws_auth_users = [
-    {
-      userarn  = "arn:aws:iam::222222222222:user/aws-user"
-      username = "aws-user"
-      groups   = ["system:masters"]
-    },
-  ]
-  additional_rules = {
+  cluster_version                      = local.cluster_version
+  cluster_log_types                    = local.cluster_log_types
+  vpc_private_subnet_ids               = module.vpc.private_subnets
+  cluster_log_retention_in_days        = local.cluster_log_retention_in_days
+  cluster_endpoint_public_access       = local.cluster_endpoint_public_access
+  cluster_endpoint_public_access_cidrs = local.cluster_endpoint_public_access_cidrs
+  cluster_endpoint_private_access      = local.cluster_endpoint_private_access
+  # managed_ng_pod_capacity                  = 90
+  # default_addon_enabled                    = local.default_addon_enabled
+  nodes_keypair_name = module.key_pair_eks.key_pair_name
+  cluster_security_group_additional_rules = {
     ingress_port_mgmt_tcp = {
       description = "mgmt vpc cidr"
       protocol    = "tcp"
@@ -149,42 +192,45 @@ module "eks" {
   }
 }
 
-module "managed_node_group_production" {
-  source                      = "squareops/eks/aws//modules/managed-nodegroup"
-  depends_on                  = [module.vpc, module.eks]
-  name                        = "Infra"
-  min_size                    = 2
-  max_size                    = 5
-  desired_size                = 2
-  subnet_ids                  = [module.vpc.private_subnets[0]]
-  environment                 = local.environment
-  kms_key_arn                 = module.kms.key_arn
-  capacity_type               = "ON_DEMAND"
-  ebs_volume_size             = 50
-  instance_types              = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
-  kms_policy_arn              = module.eks.kms_policy_arn
-  eks_cluster_name            = module.eks.cluster_name
-  aws_managed_node_group_arch = local.aws_managed_node_group_arch
-  default_addon_enabled       = local.default_addon_enabled
-  worker_iam_role_name        = module.eks.worker_iam_role_name
-  worker_iam_role_arn         = module.eks.worker_iam_role_arn
-  managed_ng_pod_capacity     = 90
-  eks_nodes_keypair_name      = module.key_pair_eks.key_pair_name
+module "managed_node_group_addons" {
+  source                        = "squareops/eks/aws//modules/managed-nodegroup"
+  version                       = "4.0.9"
+  depends_on                    = [module.vpc, module.eks]
+  managed_ng_name               = "Infra"
+  managed_ng_min_size           = 2
+  managed_ng_max_size           = 5
+  managed_ng_desired_size       = 2
+  vpc_subnet_ids                = [module.vpc.private_subnets[0]]
+  environment                   = local.environment
+  managed_ng_kms_key_arn        = module.kms.key_arn
+  managed_ng_capacity_type      = local.managed_ng_capacity_type
+  managed_ng_ebs_volume_size    = local.ebs_volume_size
+  managed_ng_ebs_volume_type    = "gp3"
+  managed_ng_ebs_encrypted      = true
+  managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  managed_ng_kms_policy_arn     = module.eks.kms_policy_arn
+  eks_cluster_name              = module.eks.cluster_name
+  aws_managed_node_group_arch   = local.aws_managed_node_group_arch
+  worker_iam_role_name          = module.eks.worker_iam_role_name
+  worker_iam_role_arn           = module.eks.worker_iam_role_arn
+  eks_nodes_keypair_name        = module.key_pair_eks.key_pair_name
+  managed_ng_pod_capacity       = 90
+  managed_ng_monitoring_enabled = true
   k8s_labels = {
     "Addons-Services" = "true"
   }
   tags = local.additional_aws_tags
 }
 
-module "farget_profle" {
-  source       = "squareops/eks/aws//modules/fargate-profile"
-  depends_on   = [module.vpc, module.eks]
-  profile_name = "app"
-  subnet_ids   = [module.vpc.private_subnets[0]]
-  environment  = local.environment
-  cluster_name = module.eks.cluster_name
-  namespace    = ""
-  labels = {
-    "App-Services" = "fargate"
+module "fargate_profle" {
+  source               = "squareops/eks/aws//modules/fargate-profile"
+  depends_on           = [module.vpc, module.eks]
+  fargate_profile_name = local.fargate_profile_name
+  fargate_subnet_ids   = [module.vpc.vpc_private_subnets[0]]
+  environment          = local.environment
+  eks_cluster_name     = module.eks.eks_cluster_name
+  fargate_namespace    = "fargate"
+  k8s_labels = {
+    "App-Services" = "app"
   }
 }

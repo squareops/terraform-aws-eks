@@ -22,13 +22,13 @@ This directory contains a complete example that demonstrates the usage of the Te
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | n/a |
-| <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | n/a |
-| <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | n/a |
-| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | n/a |
-| <a name="module_managed_node_group_production"></a> [managed\_node\_group\_production](#module\_managed\_node\_group\_production) | squareops/eks/aws//modules/managed-nodegroup | n/a |
-| <a name="module_farget_profle"></a> [farget\_profle](#module\_farget\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
+| <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | 3.1.0 |
+| <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | 1.0.2 |
+| <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | 1.0.2 |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | 3.3.5 |
+| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | 4.0.9 |
+| <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | squareops/eks/aws//modules/managed-nodegroup | 4.0.9 |
+| <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
 
 ## Resources
 
@@ -45,6 +45,14 @@ No inputs.
 | Name | Description |
 |------|-------------|
 | <a name="output_region"></a> [region](#output\_region) | AWS region in which the EKS cluster is created. |
+| <a name="output_vpc_id"></a> [vpc\_id](#output\_vpc\_id) | The ID of the VPC |
+| <a name="output_vpc_cidr_block"></a> [vpc\_cidr\_block](#output\_vpc\_cidr\_block) | The IPv4 network range assigned to the VPC. |
+| <a name="output_public_subnets"></a> [public\_subnets](#output\_public\_subnets) | List of the public subnets ID's created within the VPC. |
+| <a name="output_private_subnets"></a> [private\_subnets](#output\_private\_subnets) | List of the private subnets ID's created within the VPC. |
+| <a name="output_database_subnets"></a> [database\_subnets](#output\_database\_subnets) | List of the database subnets ID's created within the VPC. |
+| <a name="output_intra_subnets"></a> [intra\_subnets](#output\_intra\_subnets) | List of the intra subnets ID's created within the VPC. |
+| <a name="output_vpn_host_public_ip"></a> [vpn\_host\_public\_ip](#output\_vpn\_host\_public\_ip) | Public IP address of the VPN server instance created within the VPC. |
+| <a name="output_vpn_security_group"></a> [vpn\_security\_group](#output\_vpn\_security\_group) | Security group assigned to the VPN server instance within the VPC. |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of the Kubernetes cluster. |
 | <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint URL for the EKS control plane. |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group IDs that are attached to the control plane of the EKS cluster. |
@@ -60,11 +68,4 @@ No inputs.
 | <a name="output_managed_ng_capacity_type"></a> [managed\_ng\_capacity\_type](#output\_managed\_ng\_capacity\_type) | Capacity type of managed node |
 | <a name="output_managed_ng_instance_types"></a> [managed\_ng\_instance\_types](#output\_managed\_ng\_instance\_types) | Instance types of managed node |
 | <a name="output_managed_ng_disk_size"></a> [managed\_ng\_disk\_size](#output\_managed\_ng\_disk\_size) | Disk size of node in managed node group |
-| <a name="output_default_ng_node_group_arn"></a> [default\_ng\_node\_group\_arn](#output\_default\_ng\_node\_group\_arn) | ARN for the nodegroup |
-| <a name="output_default_ng_min_node"></a> [default\_ng\_min\_node](#output\_default\_ng\_min\_node) | n/a |
-| <a name="output_default_ng_max_node"></a> [default\_ng\_max\_node](#output\_default\_ng\_max\_node) | n/a |
-| <a name="output_default_ng_desired_node"></a> [default\_ng\_desired\_node](#output\_default\_ng\_desired\_node) | n/a |
-| <a name="output_default_ng_capacity_type"></a> [default\_ng\_capacity\_type](#output\_default\_ng\_capacity\_type) | n/a |
-| <a name="output_default_ng_instance_types"></a> [default\_ng\_instance\_types](#output\_default\_ng\_instance\_types) | n/a |
-| <a name="output_default_ng_ebs_volume_size"></a> [default\_ng\_ebs\_volume\_size](#output\_default\_ng\_ebs\_volume\_size) | n/a |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
