@@ -157,7 +157,6 @@ module "eks" {
   depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
-  vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
   environment                              = local.environment
   kms_key_arn                              = module.kms.key_arn
   cluster_version                          = local.cluster_version
