@@ -33,10 +33,13 @@ locals {
   vpc_private_subnets_counts           = 2
   vpc_database_subnets_counts          = 2
   vpc_intra_subnets_counts             = 2
+  launch_template_name                 = "launch-template-name"
   additional_aws_tags = {
     Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
+    Product    = "Atmosly"
+    Environment = local.environment
   }
   aws_managed_node_group_arch = "" #Enter your linux arch (Example:- arm64 or amd64)
   current_identity            = data.aws_caller_identity.current.arn
@@ -203,6 +206,7 @@ module "managed_node_group_addons" {
   eks_nodes_keypair_name        = module.key_pair_eks.key_pair_name
   managed_ng_pod_capacity       = 90
   managed_ng_monitoring_enabled = true
+  launch_template_name          = local.launch_template_name
   k8s_labels = {
     "Addons-Services" = "true"
   }
