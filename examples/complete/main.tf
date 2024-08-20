@@ -38,7 +38,7 @@ locals {
     Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
-    Product    = "Atmosly"
+    Product    = ""
     Environment = local.environment
   }
   aws_managed_node_group_arch = "" #Enter your linux arch (Example:- arm64 or amd64)
