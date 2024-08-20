@@ -172,3 +172,9 @@ variable "aws_managed_node_group_arch" {
   type        = string
   default     = "amd64"
 }
+
+variable "launch_template_name" {
+  description = "The name of the launch template."
+  type        = string
+  default    = ""
+}

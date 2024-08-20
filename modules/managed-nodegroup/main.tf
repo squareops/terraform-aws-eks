@@ -1,3 +1,7 @@
+locals{
+  computed_launch_template_name = format("%s-%s-%s", var.environment, var.managed_ng_name, "launch-template")
+}
+
 data "aws_eks_cluster" "eks" {
   name = var.eks_cluster_name
 }
@@ -35,7 +39,7 @@ data "template_file" "launch_template_userdata" {
 }
 
 resource "aws_launch_template" "eks_template" {
-  name                   = format("%s-%s-%s", var.environment, var.managed_ng_name, "launch-template")
+  name                   = length(var.launch_template_name) > 0 ? var.launch_template_name : local.computed_launch_template_name
   key_name               = var.eks_nodes_keypair_name
   image_id               = var.aws_managed_node_group_arch == "arm64" ? data.aws_ami.launch_template_ami_arm64.image_id : data.aws_ami.launch_template_ami_amd64.image_id
   user_data              = base64encode(data.template_file.launch_template_userdata.rendered)
@@ -65,6 +69,7 @@ resource "aws_launch_template" "eks_template" {
     tags = {
       Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-node")
       Environment = var.environment
+      Product    = var.tags.Product
     }
   }
 
@@ -97,5 +102,6 @@ resource "aws_eks_node_group" "managed_ng" {
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "ng")
     Environment = var.environment
+    Product    = var.tags.Product
   }
 }
