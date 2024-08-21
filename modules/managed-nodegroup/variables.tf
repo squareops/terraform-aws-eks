@@ -176,5 +176,10 @@ variable "aws_managed_node_group_arch" {
 variable "launch_template_name" {
   description = "The name of the launch template."
   type        = string
-  default    = ""
+  default     = ""
+
+  validation {
+    condition     = length(var.launch_template_name) <= 60
+    error_message = "The launch_template_name must be 60 characters or fewer. Please provide a shorter name."
+  }
 }
