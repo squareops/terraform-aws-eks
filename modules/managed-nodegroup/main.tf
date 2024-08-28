@@ -69,7 +69,6 @@ resource "aws_launch_template" "eks_template" {
     tags = {
       Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-node")
       Environment = var.environment
-      Product    = var.tags.Product
     }
   }
 
@@ -102,6 +101,5 @@ resource "aws_eks_node_group" "managed_ng" {
   tags = {
     Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "ng")
     Environment = var.environment
-    Product    = var.tags.Product
   }
 }
