@@ -66,10 +66,21 @@ resource "aws_launch_template" "eks_template" {
 
   tag_specifications {
     resource_type = "instance"
-    tags = {
-      Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-node")
-      Environment = var.environment
-    }
+    tags = merge(
+      {
+        Name = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-node")
+      },
+      var.tags
+    )
+  }
+    tag_specifications {
+    resource_type = "volume"
+    tags = merge(
+      {
+        Name = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-volume")
+      },
+      var.tags
+    )
   }
 
   lifecycle {
