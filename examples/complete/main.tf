@@ -180,6 +180,7 @@ module "eks" {
       cidr_blocks = ["10.10.0.0/16"]
     }
   }
+  tags = local.additional_aws_tags
 }
 
 module "managed_node_group_addons" {

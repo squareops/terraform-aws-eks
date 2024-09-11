@@ -109,8 +109,10 @@ resource "aws_eks_node_group" "managed_ng" {
   update_config {
     max_unavailable_percentage = 50
   }
-  tags = {
-    Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "ng")
-    Environment = var.environment
-  }
+  tags = merge(
+      {
+        Name = format("%s-%s-%s", var.environment, var.managed_ng_name, "ng")
+      },
+      var.tags
+    )
 }
