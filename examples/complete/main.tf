@@ -41,7 +41,7 @@ locals {
   }
   aws_managed_node_group_arch = "" #Enter your linux arch (Example:- arm64 or amd64)
   current_identity            = data.aws_caller_identity.current.arn
-  enable_bottlerocket_ami = false
+  enable_bottlerocket_ami     = false
 }
 
 data "aws_caller_identity" "current" {}
@@ -206,11 +206,11 @@ module "managed_node_group_addons" {
   managed_ng_pod_capacity       = 90
   managed_ng_monitoring_enabled = true
   launch_template_name          = local.launch_template_name
-  enable_bottlerocket_ami = local.enable_bottlerocket_ami
+  enable_bottlerocket_ami       = local.enable_bottlerocket_ami
   bottlerocket_node_config = {
     bottlerocket_eks_node_admin_container_enabled = false
-    bottlerocket_eks_enable_control_container = true
-}
+    bottlerocket_eks_enable_control_container     = true
+  }
   k8s_labels = {
     "Addons-Services" = "true"
   }
