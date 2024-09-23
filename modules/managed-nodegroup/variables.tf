@@ -194,7 +194,7 @@ variable "bottlerocket_node_config" {
   type        = map(any) # Specify the type as a map for clarity
   description = "Bottlerocket Node configurations for EKS."
   default = {
-    bottlerocket_eks_node_admin_container_enabled = true ## For SSH Access
+    bottlerocket_eks_node_admin_container_enabled = false ## For SSH Access
     bottlerocket_eks_enable_control_container     = true ## For SSM Accesws
   }
 }
