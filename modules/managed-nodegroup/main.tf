@@ -79,10 +79,21 @@ resource "aws_launch_template" "eks_template" {
 
   tag_specifications {
     resource_type = "instance"
-    tags = {
-      Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-node")
-      Environment = var.environment
-    }
+    tags = merge(
+      {
+        Name = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-node")
+      },
+      var.tags
+    )
+  }
+    tag_specifications {
+    resource_type = "volume"
+    tags = merge(
+      {
+        Name = format("%s-%s-%s", var.environment, var.managed_ng_name, "eks-volume")
+      },
+      var.tags
+    )
   }
 
   lifecycle {
@@ -111,8 +122,10 @@ resource "aws_eks_node_group" "managed_ng" {
   update_config {
     max_unavailable_percentage = 50
   }
-  tags = {
-    Name        = format("%s-%s-%s", var.environment, var.managed_ng_name, "ng")
-    Environment = var.environment
-  }
+  tags = merge(
+      {
+        Name = format("%s-%s-%s", var.environment, var.managed_ng_name, "ng")
+      },
+      var.tags
+    )
 }

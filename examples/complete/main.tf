@@ -38,6 +38,8 @@ locals {
     Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
+    Product    = ""
+    Environment = local.environment
   }
   aws_managed_node_group_arch = "" #Enter your linux arch (Example:- arm64 or amd64)
   current_identity            = data.aws_caller_identity.current.arn
@@ -179,6 +181,7 @@ module "eks" {
       cidr_blocks = ["10.10.0.0/16"]
     }
   }
+  tags = local.additional_aws_tags
 }
 
 module "managed_node_group_addons" {
