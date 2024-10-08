@@ -78,6 +78,12 @@ module "managed_node_group_addons" {
   managed_ng_pod_capacity       = 90
   managed_ng_monitoring_enabled = true
   eks_nodes_keypair_name        = "key-pair-name"
+  launch_template_name          = local.launch_template_name
+  enable_bottlerocket_ami       = local.enable_bottlerocket_ami
+  bottlerocket_node_config = {
+    bottlerocket_eks_node_admin_container_enabled = false
+    bottlerocket_eks_enable_control_container     = true
+  }
   k8s_labels = {
     "Addons-Services" = "true"
   }

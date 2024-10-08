@@ -33,10 +33,10 @@ No modules.
 |------|------|
 | [aws_eks_node_group.managed_ng](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
 | [aws_launch_template.eks_template](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
-| [aws_ami.launch_template_ami_amd64](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_ami.launch_template_ami_arm64](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.launch_template_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_eks_cluster.eks](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
 | [template_file.launch_template_userdata](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [template_file.launch_template_userdata_bottlerocket](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
 
@@ -71,6 +71,9 @@ No modules.
 | <a name="input_managed_ng_volume_delete_on_termination"></a> [managed\_ng\_volume\_delete\_on\_termination](#input\_managed\_ng\_volume\_delete\_on\_termination) | Set to true if delete the volumes when eks cluster is terminated. | `bool` | `true` | no |
 | <a name="input_managed_ng_pod_capacity"></a> [managed\_ng\_pod\_capacity](#input\_managed\_ng\_pod\_capacity) | Maximum number of pods you want to schedule on one node. This value should not exceed 110. | `number` | `70` | no |
 | <a name="input_aws_managed_node_group_arch"></a> [aws\_managed\_node\_group\_arch](#input\_aws\_managed\_node\_group\_arch) | Enter your linux architecture. | `string` | `"amd64"` | no |
+| <a name="input_launch_template_name"></a> [launch\_template\_name](#input\_launch\_template\_name) | The name of the launch template. | `string` | `""` | no |
+| <a name="input_enable_bottlerocket_ami"></a> [enable\_bottlerocket\_ami](#input\_enable\_bottlerocket\_ami) | Set to true to enable the use of Bottlerocket AMIs for instances. | `bool` | `false` | no |
+| <a name="input_bottlerocket_node_config"></a> [bottlerocket\_node\_config](#input\_bottlerocket\_node\_config) | Bottlerocket Node configurations for EKS. | `map(any)` | <pre>{<br>  "bottlerocket_eks_enable_control_container": true,<br>  "bottlerocket_eks_node_admin_container_enabled": true<br>}</pre> | no |
 
 ## Outputs
 

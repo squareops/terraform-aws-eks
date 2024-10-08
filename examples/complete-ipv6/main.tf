@@ -6,6 +6,8 @@ locals {
     Owner      = "Organization_name"
     Expires    = "Never"
     Department = "Engineering"
+    Product    = ""
+    Environment = local.environment
   }
   kms_user              = null
   vpc_cidr              = "10.10.0.0/16"

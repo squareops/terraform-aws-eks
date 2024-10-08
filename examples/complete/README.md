@@ -25,9 +25,9 @@ This directory contains a complete example that demonstrates the usage of the Te
 | <a name="module_kms"></a> [kms](#module\_kms) | terraform-aws-modules/kms/aws | 3.1.0 |
 | <a name="module_key_pair_vpn"></a> [key\_pair\_vpn](#module\_key\_pair\_vpn) | squareops/keypair/aws | 1.0.2 |
 | <a name="module_key_pair_eks"></a> [key\_pair\_eks](#module\_key\_pair\_eks) | squareops/keypair/aws | 1.0.2 |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | 3.3.5 |
-| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | 4.0.9 |
-| <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | squareops/eks/aws//modules/managed-nodegroup | 4.0.9 |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | squareops/vpc/aws | 3.4.1 |
+| <a name="module_eks"></a> [eks](#module\_eks) | squareops/eks/aws | 5.1.0 |
+| <a name="module_managed_node_group_addons"></a> [managed\_node\_group\_addons](#module\_managed\_node\_group\_addons) | squareops/eks/aws//modules/managed-nodegroup | 5.1.0 |
 | <a name="module_fargate_profle"></a> [fargate\_profle](#module\_fargate\_profle) | squareops/eks/aws//modules/fargate-profile | n/a |
 
 ## Resources
