@@ -195,6 +195,6 @@ variable "bottlerocket_node_config" {
   description = "Bottlerocket Node configurations for EKS."
   default = {
     bottlerocket_eks_node_admin_container_enabled = false ## For SSH Access
-    bottlerocket_eks_enable_control_container     = true ## For SSM Accesws
+    bottlerocket_eks_enable_control_container     = true  ## For SSM Accesws
   }
 }

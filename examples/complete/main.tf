@@ -35,13 +35,13 @@ locals {
   vpc_intra_subnets_counts             = 2
   launch_template_name                 = "launch-template-name"
   additional_aws_tags = {
-    Owner      = "Organization_name"
-    Expires    = "Never"
-    Department = "Engineering"
-    Product    = ""
+    Owner       = "Organization_name"
+    Expires     = "Never"
+    Department  = "Engineering"
+    Product     = ""
     Environment = local.environment
   }
-  aws_managed_node_group_arch = "" #Enter your linux arch (Example:- arm64 or amd64)
+  aws_managed_node_group_arch = "amd64" #Enter your linux arch (Example:- arm64 or amd64)
   current_identity            = data.aws_caller_identity.current.arn
   enable_bottlerocket_ami     = false
 }
@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.1.0"
+  version              = "5.1.1"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -186,7 +186,7 @@ module "eks" {
 
 module "managed_node_group_addons" {
   source                        = "squareops/eks/aws//modules/managed-nodegroup"
-  version                       = "5.1.0"
+  version                       = "5.1.1"
   depends_on                    = [module.vpc, module.eks]
   managed_ng_name               = "Infra"
   managed_ng_min_size           = 2
