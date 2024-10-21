@@ -21,7 +21,7 @@ locals {
   cluster_version                      = "1.30"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   cluster_log_retention_in_days        = 30
-  managed_ng_capacity_type             = "SPOT" # Can use "On_DEMAND" also
+  managed_ng_capacity_type             = "SPOT" # Choose the capacity type ("SPOT" or "ON_DEMAND")
   cluster_endpoint_private_access      = false
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
@@ -33,13 +33,17 @@ locals {
   vpc_private_subnets_counts           = 2
   vpc_database_subnets_counts          = 2
   vpc_intra_subnets_counts             = 2
+  launch_template_name                 = "launch-template-name"
   additional_aws_tags = {
-    Owner      = "Organization_name"
-    Expires    = "Never"
-    Department = "Engineering"
+    Owner       = "Organization_name"
+    Expires     = "Never"
+    Department  = "Engineering"
+    Product     = ""
+    Environment = local.environment
   }
-  aws_managed_node_group_arch = "" #Enter your linux arch (Example:- arm64 or amd64)
+  aws_managed_node_group_arch = "amd64" #Enter your linux arch (Example:- arm64 or amd64)
   current_identity            = data.aws_caller_identity.current.arn
+  enable_bottlerocket_ami     = false
 }
 
 data "aws_caller_identity" "current" {}
@@ -109,7 +113,7 @@ module "key_pair_eks" {
 
 module "vpc" {
   source                                          = "squareops/vpc/aws"
-  version                                         = "3.3.5"
+  version                                         = "3.4.1"
   name                                            = local.name
   region                                          = local.region
   vpc_cidr                                        = local.vpc_cidr
@@ -135,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "4.0.9"
+  version              = "5.1.1"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -177,11 +181,12 @@ module "eks" {
       cidr_blocks = ["10.10.0.0/16"]
     }
   }
+  tags = local.additional_aws_tags
 }
 
 module "managed_node_group_addons" {
   source                        = "squareops/eks/aws//modules/managed-nodegroup"
-  version                       = "4.0.9"
+  version                       = "5.1.1"
   depends_on                    = [module.vpc, module.eks]
   managed_ng_name               = "Infra"
   managed_ng_min_size           = 2
@@ -203,6 +208,12 @@ module "managed_node_group_addons" {
   eks_nodes_keypair_name        = module.key_pair_eks.key_pair_name
   managed_ng_pod_capacity       = 90
   managed_ng_monitoring_enabled = true
+  launch_template_name          = local.launch_template_name
+  enable_bottlerocket_ami       = local.enable_bottlerocket_ami
+  bottlerocket_node_config = {
+    bottlerocket_eks_node_admin_container_enabled = false
+    bottlerocket_eks_enable_control_container     = true
+  }
   k8s_labels = {
     "Addons-Services" = "true"
   }

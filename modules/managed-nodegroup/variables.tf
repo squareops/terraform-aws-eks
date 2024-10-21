@@ -172,3 +172,29 @@ variable "aws_managed_node_group_arch" {
   type        = string
   default     = "amd64"
 }
+
+variable "launch_template_name" {
+  description = "The name of the launch template."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = length(var.launch_template_name) <= 60
+    error_message = "The launch_template_name must be 60 characters or fewer. Please provide a shorter name."
+  }
+}
+
+variable "enable_bottlerocket_ami" {
+  description = "Set to true to enable the use of Bottlerocket AMIs for instances."
+  default     = false
+  type        = bool
+}
+
+variable "bottlerocket_node_config" {
+  type        = map(any) # Specify the type as a map for clarity
+  description = "Bottlerocket Node configurations for EKS."
+  default = {
+    bottlerocket_eks_node_admin_container_enabled = false ## For SSH Access
+    bottlerocket_eks_enable_control_container     = true  ## For SSM Accesws
+  }
+}
