@@ -78,6 +78,11 @@ output "worker_iam_role_name" {
   value       = module.eks.worker_iam_role_name
 }
 
+output "kms_key_arn" {
+  description = "ARN of the KMS key that is used by the EKS cluster."
+  value       = module.kms.key_arn
+}
+
 output "kms_policy_arn" {
   description = "ARN of the KMS policy that is used by the EKS cluster."
   value       = module.eks.kms_policy_arn

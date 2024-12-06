@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.1.1"
+  version              = "5.2.0"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -186,7 +186,7 @@ module "eks" {
 
 module "managed_node_group_addons" {
   source                        = "squareops/eks/aws//modules/managed-nodegroup"
-  version                       = "5.1.1"
+  version                       = "5.2.0"
   depends_on                    = [module.vpc, module.eks]
   managed_ng_name               = "Infra"
   managed_ng_min_size           = 2
@@ -199,25 +199,26 @@ module "managed_node_group_addons" {
   managed_ng_ebs_volume_size    = local.ebs_volume_size
   managed_ng_ebs_volume_type    = "gp3"
   managed_ng_ebs_encrypted      = true
-  managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
+  managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"] # Pass instance type according to the ami architecture.
   managed_ng_kms_policy_arn     = module.eks.kms_policy_arn
   eks_cluster_name              = module.eks.cluster_name
-  aws_managed_node_group_arch   = local.aws_managed_node_group_arch
   worker_iam_role_name          = module.eks.worker_iam_role_name
   worker_iam_role_arn           = module.eks.worker_iam_role_arn
   eks_nodes_keypair_name        = module.key_pair_eks.key_pair_name
   managed_ng_pod_capacity       = 90
   managed_ng_monitoring_enabled = true
   launch_template_name          = local.launch_template_name
-  enable_bottlerocket_ami       = local.enable_bottlerocket_ami
+  k8s_labels = {
+    "Addons-Services" = "true"
+  }
+  tags                        = local.additional_aws_tags
+  custom_ami_id               = "ami-0fa61e53a0b32612b"           # Optional, if not passed terraform will automatically select the latest supported ami id
+  aws_managed_node_group_arch = local.aws_managed_node_group_arch # optional if "custom_ami_id" is passed
+  enable_bottlerocket_ami     = local.enable_bottlerocket_ami     # Set it to false if using Amazon Linux AMIs
   bottlerocket_node_config = {
     bottlerocket_eks_node_admin_container_enabled = false
     bottlerocket_eks_enable_control_container     = true
   }
-  k8s_labels = {
-    "Addons-Services" = "true"
-  }
-  tags = local.additional_aws_tags
 }
 
 module "fargate_profle" {
