@@ -54,7 +54,7 @@ data "template_file" "launch_template_userdata_bottlerocket" {
 resource "aws_launch_template" "eks_template" {
   name                   = length(var.launch_template_name) > 0 ? var.launch_template_name : local.launch_template_name
   key_name               = var.eks_nodes_keypair_name
-  image_id               = data.aws_ami.launch_template_ami.image_id
+  image_id               = length(var.custom_ami_id) == 0 ? data.aws_ami.launch_template_ami.image_id : var.custom_ami_id
   user_data              = var.enable_bottlerocket_ami ? base64encode(data.template_file.launch_template_userdata_bottlerocket[0].rendered) : base64encode(data.template_file.launch_template_userdata[0].rendered)
   update_default_version = true
   block_device_mappings {
@@ -105,7 +105,7 @@ resource "aws_eks_node_group" "managed_ng" {
   subnet_ids      = var.vpc_subnet_ids
   cluster_name    = var.eks_cluster_name
   node_role_arn   = var.worker_iam_role_arn
-  node_group_name = format("%s-%s-%s", var.environment, var.managed_ng_name, "ng")
+  node_group_name = var.managed_ng_name
   scaling_config {
     desired_size = var.managed_ng_desired_size
     max_size     = var.managed_ng_max_size

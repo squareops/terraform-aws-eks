@@ -198,3 +198,9 @@ variable "bottlerocket_node_config" {
     bottlerocket_eks_enable_control_container     = true  ## For SSM Accesws
   }
 }
+
+variable "custom_ami_id" {
+  type        = string
+  description = "worker node AMI id to be created"
+  default     = ""
+}
