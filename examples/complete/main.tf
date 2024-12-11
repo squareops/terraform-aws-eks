@@ -212,7 +212,7 @@ module "managed_node_group_addons" {
     "Addons-Services" = "true"
   }
   tags                        = local.additional_aws_tags
-  custom_ami_id               = "ami-0fa61e53a0b32612b"           # Optional, if not passed terraform will automatically select the latest supported ami id
+  custom_ami_id               = ""           # Optional, if not passed terraform will automatically select the latest supported ami id
   aws_managed_node_group_arch = local.aws_managed_node_group_arch # optional if "custom_ami_id" is passed
   enable_bottlerocket_ami     = local.enable_bottlerocket_ami     # Set it to false if using Amazon Linux AMIs
   bottlerocket_node_config = {
