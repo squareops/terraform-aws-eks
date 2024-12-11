@@ -74,6 +74,7 @@ No modules.
 | <a name="input_launch_template_name"></a> [launch\_template\_name](#input\_launch\_template\_name) | The name of the launch template. | `string` | `""` | no |
 | <a name="input_enable_bottlerocket_ami"></a> [enable\_bottlerocket\_ami](#input\_enable\_bottlerocket\_ami) | Set to true to enable the use of Bottlerocket AMIs for instances. | `bool` | `false` | no |
 | <a name="input_bottlerocket_node_config"></a> [bottlerocket\_node\_config](#input\_bottlerocket\_node\_config) | Bottlerocket Node configurations for EKS. | `map(any)` | <pre>{<br>  "bottlerocket_eks_enable_control_container": true,<br>  "bottlerocket_eks_node_admin_container_enabled": false<br>}</pre> | no |
+| <a name="input_custom_ami_id"></a> [custom\_ami\_id](#input\_custom\_ami\_id) | worker node AMI id to be created | `string` | `""` | no |
 
 ## Outputs
 
