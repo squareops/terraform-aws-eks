@@ -204,3 +204,8 @@ variable "custom_ami_id" {
   description = "worker node AMI id to be created"
   default     = ""
 }
+
+variable "region" {
+  description = "The AWS region where the resources will be created"
+  type        = string
+}

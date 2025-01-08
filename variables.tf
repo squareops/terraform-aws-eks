@@ -156,3 +156,8 @@ variable "enable_cluster_creator_admin_permissions" {
   type        = bool
   default     = false
 }
+
+variable "region" {
+  description = "The AWS region where the resources will be created"
+  type        = string
+}

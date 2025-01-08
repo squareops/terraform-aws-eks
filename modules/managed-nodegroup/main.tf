@@ -1,6 +1,6 @@
 locals {
   launch_template_name = format("%s-%s-%s", var.eks_cluster_name, var.managed_ng_name, "lt")
-  ami_owner            = var.enable_bottlerocket_ami ? "amazon" : "602401143452"
+  ami_owner            = var.enable_bottlerocket_ami ? "amazon" : (var.region == "ap-south-2" ? "900889452093" : "602401143452")
   ami_base_name        = var.enable_bottlerocket_ami ? "bottlerocket-aws-k8s" : (var.aws_managed_node_group_arch == "arm64" ? "amazon-eks-arm64-node" : "amazon-eks-node")
   ami_arch             = var.enable_bottlerocket_ami ? (var.aws_managed_node_group_arch == "arm64" ? "aarch64*" : "x86_64*") : "v*"
 }
@@ -9,12 +9,12 @@ data "aws_eks_cluster" "eks" {
   name = var.eks_cluster_name
 }
 
-data "aws_ami" "launch_template_ami" {
-  owners      = [local.ami_owner]
-  most_recent = true
-  filter {
-    name   = "name"
-    values = [format("%s-%s-%s", local.ami_base_name, data.aws_eks_cluster.eks.version, local.ami_arch)]
+ data "aws_ami" "launch_template_ami" {
+   owners      = [local.ami_owner]
+   most_recent = true
+   filter {
+     name   = "name"
+     values = [format("%s-%s-%s", local.ami_base_name, data.aws_eks_cluster.eks.version, local.ami_arch)]
   }
 }
 
