@@ -31,6 +31,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [aws_eks_addon.node_monitoring_addon](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_addon) | resource |
 | [aws_eks_node_group.managed_ng](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eks_node_group) | resource |
 | [aws_launch_template.eks_template](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
 | [aws_ami.launch_template_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
@@ -75,6 +76,7 @@ No modules.
 | <a name="input_enable_bottlerocket_ami"></a> [enable\_bottlerocket\_ami](#input\_enable\_bottlerocket\_ami) | Set to true to enable the use of Bottlerocket AMIs for instances. | `bool` | `false` | no |
 | <a name="input_bottlerocket_node_config"></a> [bottlerocket\_node\_config](#input\_bottlerocket\_node\_config) | Bottlerocket Node configurations for EKS. | `map(any)` | <pre>{<br>  "bottlerocket_eks_enable_control_container": true,<br>  "bottlerocket_eks_node_admin_container_enabled": false<br>}</pre> | no |
 | <a name="input_custom_ami_id"></a> [custom\_ami\_id](#input\_custom\_ami\_id) | worker node AMI id to be created | `string` | `""` | no |
+| <a name="input_managed_ng_node_autorepair"></a> [managed\_ng\_node\_autorepair](#input\_managed\_ng\_node\_autorepair) | Choose whether to enable managed nodegroup auto repair feature | <pre>object({<br>    enabled                            = bool<br>    enable_node_monitoring_agent_addon = bool<br>  })</pre> | <pre>{<br>  "enable_node_monitoring_agent_addon": false,<br>  "enabled": false<br>}</pre> | no |
 
 ## Outputs
 
