@@ -114,6 +114,9 @@ resource "aws_eks_node_group" "managed_ng" {
   capacity_type        = var.managed_ng_capacity_type
   instance_types       = var.managed_ng_instance_types
   force_update_version = true
+  node_repair_config {
+    enabled = var.managed_ng_node_autorepair.enabled
+  }
   launch_template {
     id      = aws_launch_template.eks_template.id
     version = aws_launch_template.eks_template.latest_version
@@ -127,4 +130,38 @@ resource "aws_eks_node_group" "managed_ng" {
     },
     var.tags
   )
+}
+
+resource "aws_eks_addon" "node_monitoring_addon" {
+  count                       = var.managed_ng_node_autorepair.enabled == true && var.managed_ng_node_autorepair.enable_node_monitoring_agent_addon == true ? 1 : 0
+  cluster_name                = var.eks_cluster_name
+  addon_name                  = "eks-node-monitoring-agent"
+  addon_version               = "v1.0.1-eksbuild.2"
+  resolve_conflicts_on_update = "PRESERVE"
+  configuration_values = jsonencode({
+    dcgmAgent = {
+      resources = {
+        limits = {
+          cpu    = "50m"
+          memory = "100Mi"
+        }
+        requests = {
+          cpu    = "10m"
+          memory = "30Mi"
+        }
+      }
+    }
+    monitoringAgent = {
+      resources = {
+        limits = {
+          cpu    = "50m"
+          memory = "100Mi"
+        }
+        requests = {
+          cpu    = "10m"
+          memory = "30Mi"
+        }
+      }
+    }
+  })
 }
