@@ -72,6 +72,10 @@ module "managed_node_group_addons" {
   managed_ng_ebs_volume_size    = 50
   managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"]
   managed_ng_kms_policy_arn     = module.eks.kms_policy_arn
+  managed_ng_node_autorepair = {
+    enabled = false
+    enable_node_monitoring_agent_addon = true
+  }
   eks_cluster_name              = module.eks.eks_cluster_name
   worker_iam_role_name          = module.eks.worker_iam_role_name
   worker_iam_role_arn           = module.eks.worker_iam_role_arn

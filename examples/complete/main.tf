@@ -1,5 +1,5 @@
 locals {
-  region                               = "us-west-1"
+  region                               = "us-east-2"
   kms_deletion_window_in_days          = 7
   kms_key_rotation_enabled             = true
   is_enabled                           = true
@@ -7,27 +7,27 @@ locals {
   environment                          = "stage"
   name                                 = "sqops"
   auto_assign_public_ip                = true
-  vpc_availability_zones               = ["us-west-1a", "us-west-1b"]
+  vpc_availability_zones               = ["us-east-2a", "us-east-2b"]
   vpc_public_subnet_enabled            = true
   vpc_private_subnet_enabled           = true
   vpc_database_subnet_enabled          = true
   vpc_intra_subnet_enabled             = true
-  vpc_one_nat_gateway_per_az           = true
+  vpc_one_nat_gateway_per_az           = false
   vpn_server_instance_type             = "t3a.small"
   vpc_flow_log_enabled                 = false
   kms_user                             = null
   vpc_cidr                             = "10.10.0.0/16"
-  vpn_server_enabled                   = true
-  cluster_version                      = "1.30"
+  vpn_server_enabled                   = false
+  cluster_version                      = "1.31"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   cluster_log_retention_in_days        = 30
   managed_ng_capacity_type             = "SPOT" # Choose the capacity type ("SPOT" or "ON_DEMAND")
-  cluster_endpoint_private_access      = false
+  cluster_endpoint_private_access      = true
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
   ebs_volume_size                      = 50
   fargate_profile_name                 = "app"
-  vpc_s3_endpoint_enabled              = true
+  vpc_s3_endpoint_enabled              = false
   vpc_ecr_endpoint_enabled             = false
   vpc_public_subnets_counts            = 2
   vpc_private_subnets_counts           = 2
@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.2.1"
+  version              = "5.3.0"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -185,22 +185,26 @@ module "eks" {
 }
 
 module "managed_node_group_addons" {
-  source                        = "squareops/eks/aws//modules/managed-nodegroup"
-  version                       = "5.2.1"
-  depends_on                    = [module.vpc, module.eks]
-  managed_ng_name               = "Infra"
-  managed_ng_min_size           = 2
-  managed_ng_max_size           = 5
-  managed_ng_desired_size       = 2
-  vpc_subnet_ids                = [module.vpc.private_subnets[0]]
-  environment                   = local.environment
-  managed_ng_kms_key_arn        = module.kms.key_arn
-  managed_ng_capacity_type      = local.managed_ng_capacity_type
-  managed_ng_ebs_volume_size    = local.ebs_volume_size
-  managed_ng_ebs_volume_type    = "gp3"
-  managed_ng_ebs_encrypted      = true
-  managed_ng_instance_types     = ["t3a.large", "t2.large", "t2.xlarge", "t3.large", "m5.large"] # Pass instance type according to the ami architecture.
-  managed_ng_kms_policy_arn     = module.eks.kms_policy_arn
+  source                     = "squareops/eks/aws//modules/managed-nodegroup"
+  version                    = "5.3.0"
+  depends_on                 = [module.vpc, module.eks]
+  managed_ng_name            = "Infra"
+  managed_ng_min_size        = 2
+  managed_ng_max_size        = 5
+  managed_ng_desired_size    = 2
+  vpc_subnet_ids             = [module.vpc.private_subnets[0]]
+  environment                = local.environment
+  managed_ng_kms_key_arn     = module.kms.key_arn
+  managed_ng_capacity_type   = local.managed_ng_capacity_type
+  managed_ng_ebs_volume_size = local.ebs_volume_size
+  managed_ng_ebs_volume_type = "gp3"
+  managed_ng_ebs_encrypted   = true
+  managed_ng_instance_types  = ["t3a.large", "t3.large", "t3.medium"] # Pass instance type according to the ami architecture.
+  managed_ng_kms_policy_arn  = module.eks.kms_policy_arn
+  managed_ng_node_autorepair = {
+    enabled                            = false
+    enable_node_monitoring_agent_addon = true
+  }
   eks_cluster_name              = module.eks.cluster_name
   worker_iam_role_name          = module.eks.worker_iam_role_name
   worker_iam_role_arn           = module.eks.worker_iam_role_arn
@@ -212,7 +216,7 @@ module "managed_node_group_addons" {
     "Addons-Services" = "true"
   }
   tags                        = local.additional_aws_tags
-  custom_ami_id               = ""           # Optional, if not passed terraform will automatically select the latest supported ami id
+  custom_ami_id               = ""                                # Optional, if not passed terraform will automatically select the latest supported ami id
   aws_managed_node_group_arch = local.aws_managed_node_group_arch # optional if "custom_ami_id" is passed
   enable_bottlerocket_ami     = local.enable_bottlerocket_ami     # Set it to false if using Amazon Linux AMIs
   bottlerocket_node_config = {

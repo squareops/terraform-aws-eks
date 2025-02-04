@@ -204,3 +204,15 @@ variable "custom_ami_id" {
   description = "worker node AMI id to be created"
   default     = ""
 }
+
+variable "managed_ng_node_autorepair" {
+  type = object({
+    enabled                            = bool
+    enable_node_monitoring_agent_addon = bool
+  })
+  description = "Choose whether to enable managed nodegroup auto repair feature"
+  default = {
+    enabled                            = false
+    enable_node_monitoring_agent_addon = false
+  }
+}
