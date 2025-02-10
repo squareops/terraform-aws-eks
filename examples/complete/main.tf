@@ -47,7 +47,7 @@ locals {
 }
 
 data "aws_caller_identity" "current" {}
-
+data "aws_partition" "current" {}
 module "kms" {
   source                  = "terraform-aws-modules/kms/aws"
   version                 = "3.1.0"
@@ -182,6 +182,33 @@ module "eks" {
     }
   }
   tags = local.additional_aws_tags
+}
+
+module "aws_vpc_cni" {
+  depends_on = [ module.eks , module.vpc, module.kms ]
+  source      = "squareops/eks/aws//modules/vpc-cni"
+  count       = 1
+  enable_ipv6 = false
+  addon_config = merge(
+    {
+      kubernetes_version      = local.cluster_version
+      additional_iam_policies = [module.kms.key_arn]
+      version                 = "v1.19.2-eksbuild.1"
+    }
+  )
+  addon_context  = {
+    aws_caller_identity_account_id = data.aws_caller_identity.current.account_id
+    aws_caller_identity_arn        = data.aws_caller_identity.current.arn
+    aws_eks_cluster_endpoint       = module.eks.cluster_endpoint
+    aws_partition_id               = data.aws_partition.current.partition
+    aws_region_name                = local.region
+    eks_cluster_id                 = module.eks.cluster_name
+    eks_oidc_issuer_url            = module.eks.cluster_oidc_issuer_url
+    eks_oidc_provider_arn          = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${module.eks.cluster_oidc_issuer_url}"
+    tags                           = local.additional_aws_tags
+    irsa_iam_role_path             = "/"
+    irsa_iam_permissions_boundary  = ""
+  }
 }
 
 module "managed_node_group_addons" {
