@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.3.0"
+  version              = "5.4.0"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -185,9 +185,9 @@ module "eks" {
 }
 
 module "aws_vpc_cni" {
-  depends_on = [ module.eks , module.vpc, module.kms ]
+  depends_on  = [module.eks, module.vpc, module.kms]
   source      = "squareops/eks/aws//modules/vpc-cni"
-  count       = 1
+  version     = "5.4.0"
   enable_ipv6 = false
   addon_config = merge(
     {
@@ -196,7 +196,7 @@ module "aws_vpc_cni" {
       version                 = "v1.19.2-eksbuild.1"
     }
   )
-  addon_context  = {
+  addon_context = {
     aws_caller_identity_account_id = data.aws_caller_identity.current.account_id
     aws_caller_identity_arn        = data.aws_caller_identity.current.arn
     aws_eks_cluster_endpoint       = module.eks.cluster_endpoint
@@ -210,7 +210,7 @@ module "aws_vpc_cni" {
 
 module "managed_node_group_addons" {
   source                     = "squareops/eks/aws//modules/managed-nodegroup"
-  version                    = "5.3.0"
+  version                    = "5.4.0"
   depends_on                 = [module.vpc, module.eks]
   managed_ng_name            = "Infra"
   managed_ng_min_size        = 2
