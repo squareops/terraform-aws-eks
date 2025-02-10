@@ -63,7 +63,7 @@ resource "aws_iam_role" "irsa" {
 }
 
 resource "aws_iam_role_policy_attachment" "irsa" {
-  count =  var.irsa_iam_policies != [] ? length(var.irsa_iam_policies) : 0
+  count =  var.irsa_iam_policies != [] ? 1 : 0
 
   policy_arn = var.irsa_iam_policies[count.index]
   role       = aws_iam_role.irsa[0].name
