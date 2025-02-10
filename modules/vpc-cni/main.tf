@@ -37,7 +37,7 @@ module "irsa_addon" {
   irsa_iam_role_path                = var.addon_context.irsa_iam_role_path
   irsa_iam_permissions_boundary     = var.addon_context.irsa_iam_permissions_boundary
   eks_cluster_id                    = var.addon_context.eks_cluster_id
-  eks_oidc_provider_arn             = var.addon_context.eks_oidc_provider_arn
+  eks_oidc_provider_arn             = "arn:${var.addon_context.aws_partition_id}:iam::${var.addon_context.aws_caller_identity_account_id}:oidc-provider/${var.addon_context.eks_oidc_issuer_url}"
   irsa_iam_policies = concat(
     ["arn:${var.addon_context.aws_partition_id}:iam::aws:policy/AmazonEKS_CNI_Policy"],
     local.cni_ipv6_policy,

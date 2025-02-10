@@ -204,10 +204,7 @@ module "aws_vpc_cni" {
     aws_region_name                = local.region
     eks_cluster_id                 = module.eks.cluster_name
     eks_oidc_issuer_url            = module.eks.cluster_oidc_issuer_url
-    eks_oidc_provider_arn          = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/${module.eks.cluster_oidc_issuer_url}"
     tags                           = local.additional_aws_tags
-    irsa_iam_role_path             = "/"
-    irsa_iam_permissions_boundary  = ""
   }
 }
 
