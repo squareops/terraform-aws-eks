@@ -251,7 +251,7 @@ module "managed_node_group_addons" {
 
 module "fargate_profle" {
   source               = "squareops/eks/aws//modules/fargate-profile"
-  depends_on           = [module.vpc, module.eks]
+  depends_on           = [module.vpc, module.eks, module.aws_vpc_cni]
   fargate_profile_name = local.fargate_profile_name
   fargate_subnet_ids   = [module.vpc.vpc_private_subnets[0]]
   environment          = local.environment
