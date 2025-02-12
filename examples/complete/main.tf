@@ -211,7 +211,7 @@ module "aws_vpc_cni" {
 module "managed_node_group_addons" {
   source                     = "squareops/eks/aws//modules/managed-nodegroup"
   version                    = "5.4.0"
-  depends_on                 = [module.vpc, module.eks]
+  depends_on                 = [module.vpc, module.eks,module.aws_vpc_cni]
   managed_ng_name            = "Infra"
   managed_ng_min_size        = 2
   managed_ng_max_size        = 5
