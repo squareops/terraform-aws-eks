@@ -47,7 +47,7 @@ locals {
 }
 
 data "aws_caller_identity" "current" {}
-
+data "aws_partition" "current" {}
 module "kms" {
   source                  = "terraform-aws-modules/kms/aws"
   version                 = "3.1.0"
@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.3.0"
+  version              = "5.4.0"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -184,10 +184,34 @@ module "eks" {
   tags = local.additional_aws_tags
 }
 
+module "aws_vpc_cni" {
+  depends_on  = [module.eks, module.vpc, module.kms]
+  source      = "squareops/eks/aws//modules/vpc-cni"
+  version     = "5.4.0"
+  enable_ipv6 = false
+  addon_config = merge(
+    {
+      kubernetes_version      = local.cluster_version
+      additional_iam_policies = [module.kms.key_arn]
+      version                 = "v1.19.2-eksbuild.1"
+    }
+  )
+  addon_context = {
+    aws_caller_identity_account_id = data.aws_caller_identity.current.account_id
+    aws_caller_identity_arn        = data.aws_caller_identity.current.arn
+    aws_eks_cluster_endpoint       = module.eks.cluster_endpoint
+    aws_partition_id               = data.aws_partition.current.partition
+    aws_region_name                = local.region
+    eks_cluster_id                 = module.eks.cluster_name
+    eks_oidc_issuer_url            = module.eks.cluster_oidc_issuer_url
+    tags                           = local.additional_aws_tags
+  }
+}
+
 module "managed_node_group_addons" {
   source                     = "squareops/eks/aws//modules/managed-nodegroup"
-  version                    = "5.3.0"
-  depends_on                 = [module.vpc, module.eks]
+  version                    = "5.4.0"
+  depends_on                 = [module.vpc, module.eks,module.aws_vpc_cni]
   managed_ng_name            = "Infra"
   managed_ng_min_size        = 2
   managed_ng_max_size        = 5
@@ -227,7 +251,7 @@ module "managed_node_group_addons" {
 
 module "fargate_profle" {
   source               = "squareops/eks/aws//modules/fargate-profile"
-  depends_on           = [module.vpc, module.eks]
+  depends_on           = [module.vpc, module.eks, module.aws_vpc_cni]
   fargate_profile_name = local.fargate_profile_name
   fargate_subnet_ids   = [module.vpc.vpc_private_subnets[0]]
   environment          = local.environment

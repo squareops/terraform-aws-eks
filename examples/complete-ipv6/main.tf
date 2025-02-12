@@ -3,10 +3,10 @@ locals {
   environment = "prod"
   name        = "eks"
   additional_aws_tags = {
-    Owner      = "Organization_name"
-    Expires    = "Never"
-    Department = "Engineering"
-    Product    = ""
+    Owner       = "Organization_name"
+    Expires     = "Never"
+    Department  = "Engineering"
+    Product     = ""
     Environment = local.environment
   }
   kms_user              = null

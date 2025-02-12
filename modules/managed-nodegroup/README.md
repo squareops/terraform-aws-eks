@@ -46,7 +46,7 @@ No modules.
 | <a name="input_eks_cluster_name"></a> [eks\_cluster\_name](#input\_eks\_cluster\_name) | Name of EKS cluster | `string` | `""` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment for the nodes or node groups. | `string` | `null` | no |
 | <a name="input_managed_ng_name"></a> [managed\_ng\_name](#input\_managed\_ng\_name) | Specify the name of the EKS managed Nodegroup | `string` | `""` | no |
-| <a name="input_managed_ng_instance_types"></a> [managed\_ng\_instance\_types](#input\_managed\_ng\_instance\_types) | The instance types to be used for the EKS node group (e.g., t2.medium). | `list(any)` | <pre>[<br>  "t3a.medium"<br>]</pre> | no |
+| <a name="input_managed_ng_instance_types"></a> [managed\_ng\_instance\_types](#input\_managed\_ng\_instance\_types) | The instance types to be used for the EKS node group (e.g., t2.medium). | `list(any)` | <pre>[<br/>  "t3a.medium"<br/>]</pre> | no |
 | <a name="input_managed_ng_capacity_type"></a> [managed\_ng\_capacity\_type](#input\_managed\_ng\_capacity\_type) | The capacity type for the EKS node group (ON\_DEMAND or SPOT). | `string` | `"ON_DEMAND"` | no |
 | <a name="input_image_high_threshold_percent"></a> [image\_high\_threshold\_percent](#input\_image\_high\_threshold\_percent) | The percentage of disk usage at which garbage collection should be triggered. | `number` | `60` | no |
 | <a name="input_image_low_threshold_percent"></a> [image\_low\_threshold\_percent](#input\_image\_low\_threshold\_percent) | The percentage of disk usage at which garbage collection took place. | `number` | `40` | no |
@@ -62,7 +62,7 @@ No modules.
 | <a name="input_managed_ng_ebs_volume_size"></a> [managed\_ng\_ebs\_volume\_size](#input\_managed\_ng\_ebs\_volume\_size) | The type of EBS volume for nodes. | `string` | `"50"` | no |
 | <a name="input_managed_ng_ebs_volume_type"></a> [managed\_ng\_ebs\_volume\_type](#input\_managed\_ng\_ebs\_volume\_type) | Specify the type of EBS volume for nodes. | `string` | `"gp3"` | no |
 | <a name="input_managed_ng_ebs_encrypted"></a> [managed\_ng\_ebs\_encrypted](#input\_managed\_ng\_ebs\_encrypted) | Specify whether to encrypt the EBS volume for nodes. | `bool` | `true` | no |
-| <a name="input_vpc_subnet_ids"></a> [vpc\_subnet\_ids](#input\_vpc\_subnet\_ids) | The IDs of the subnets in the VPC that can be used by EKS. | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
+| <a name="input_vpc_subnet_ids"></a> [vpc\_subnet\_ids](#input\_vpc\_subnet\_ids) | The IDs of the subnets in the VPC that can be used by EKS. | `list(string)` | <pre>[<br/>  ""<br/>]</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to be applied to the node group. | `any` | `{}` | no |
 | <a name="input_k8s_labels"></a> [k8s\_labels](#input\_k8s\_labels) | Labels to be applied to the Kubernetes node groups. | `map(any)` | `{}` | no |
 | <a name="input_worker_iam_role_arn"></a> [worker\_iam\_role\_arn](#input\_worker\_iam\_role\_arn) | The ARN of the worker role for EKS. | `string` | `""` | no |
@@ -74,9 +74,9 @@ No modules.
 | <a name="input_aws_managed_node_group_arch"></a> [aws\_managed\_node\_group\_arch](#input\_aws\_managed\_node\_group\_arch) | Enter your linux architecture. | `string` | `"amd64"` | no |
 | <a name="input_launch_template_name"></a> [launch\_template\_name](#input\_launch\_template\_name) | The name of the launch template. | `string` | `""` | no |
 | <a name="input_enable_bottlerocket_ami"></a> [enable\_bottlerocket\_ami](#input\_enable\_bottlerocket\_ami) | Set to true to enable the use of Bottlerocket AMIs for instances. | `bool` | `false` | no |
-| <a name="input_bottlerocket_node_config"></a> [bottlerocket\_node\_config](#input\_bottlerocket\_node\_config) | Bottlerocket Node configurations for EKS. | `map(any)` | <pre>{<br>  "bottlerocket_eks_enable_control_container": true,<br>  "bottlerocket_eks_node_admin_container_enabled": false<br>}</pre> | no |
+| <a name="input_bottlerocket_node_config"></a> [bottlerocket\_node\_config](#input\_bottlerocket\_node\_config) | Bottlerocket Node configurations for EKS. | `map(any)` | <pre>{<br/>  "bottlerocket_eks_enable_control_container": true,<br/>  "bottlerocket_eks_node_admin_container_enabled": false<br/>}</pre> | no |
 | <a name="input_custom_ami_id"></a> [custom\_ami\_id](#input\_custom\_ami\_id) | worker node AMI id to be created | `string` | `""` | no |
-| <a name="input_managed_ng_node_autorepair"></a> [managed\_ng\_node\_autorepair](#input\_managed\_ng\_node\_autorepair) | Choose whether to enable managed nodegroup auto repair feature | <pre>object({<br>    enabled                            = bool<br>    enable_node_monitoring_agent_addon = bool<br>  })</pre> | <pre>{<br>  "enable_node_monitoring_agent_addon": false,<br>  "enabled": false<br>}</pre> | no |
+| <a name="input_managed_ng_node_autorepair"></a> [managed\_ng\_node\_autorepair](#input\_managed\_ng\_node\_autorepair) | Choose whether to enable managed nodegroup auto repair feature | <pre>object({<br/>    enabled                            = bool<br/>    enable_node_monitoring_agent_addon = bool<br/>  })</pre> | <pre>{<br/>  "enable_node_monitoring_agent_addon": false,<br/>  "enabled": false<br/>}</pre> | no |
 
 ## Outputs
 
