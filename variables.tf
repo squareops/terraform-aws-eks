@@ -137,6 +137,12 @@ variable "authentication_mode" {
   default     = "API_AND_CONFIG_MAP"
 }
 
+variable "vpc_cni_version" {
+  description = "Specify VPC CNI addons version"
+  default     = "v1.19.3-eksbuild.1"
+  type        = string
+}
+
 # Access Entry
 
 variable "access_entry_enabled" {
