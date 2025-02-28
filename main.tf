@@ -27,6 +27,36 @@ module "eks" {
     resources        = ["secrets"]
   }
   cluster_ip_family = var.ipv6_enabled ? "ipv6" : null
+  cluster_addons = {
+    vpc-cni = {
+      before_compute = true
+      addon_version  = var.vpc_cni_version
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+        }
+        enableNetworkPolicy = "true"
+      })
+      service_account_role_arn = module.vpc_cni_irsa_role.iam_role_arn
+    }
+  }
+}
+
+module "vpc_cni_irsa_role" {
+  source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+  version               = "5.52.2"
+  role_name             = format("%s-%s-%s", var.environment, var.name, "aws-node-irsa")
+  attach_vpc_cni_policy = true
+  vpc_cni_enable_ipv4   = var.ipv6_enabled ? false : true
+  vpc_cni_enable_ipv6   = var.ipv6_enabled ? true : false
+
+  oidc_providers = {
+    oidc = {
+      provider_arn               = module.eks[0].oidc_provider_arn
+      namespace_service_accounts = ["kube-system:aws-node"]
+    }
+  }
 }
 
 resource "aws_iam_policy" "kubernetes_pvc_kms_policy" {
@@ -181,4 +211,14 @@ resource "aws_iam_role_policy_attachment" "cni_policy" {
 resource "aws_iam_role_policy_attachment" "worker_ecr_policy" {
   role       = aws_iam_role.node_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_role_policy_attachment" "vpc_cni_addons_policy" {
+  role       = module.vpc_cni_irsa_role.iam_role_name
+  policy_arn = var.ipv6_enabled == false ? "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : aws_iam_policy.cni_ipv6_policy[0].arn
+}
+
+resource "aws_iam_role_policy_attachment" "kms_vpc_cni_policy_attachment" {
+  role       = module.vpc_cni_irsa_role.iam_role_name
+  policy_arn = aws_iam_policy.kubernetes_pvc_kms_policy.arn
 }
