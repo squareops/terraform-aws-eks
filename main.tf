@@ -27,7 +27,7 @@ module "eks" {
     resources        = ["secrets"]
   }
   cluster_ip_family = var.ipv6_enabled ? "ipv6" : null
-  cluster_addons = {
+  cluster_addons = var.enable_vpc_cni_addon ? {
     vpc-cni = {
       before_compute = true
       addon_version  = var.vpc_cni_version
@@ -40,7 +40,7 @@ module "eks" {
       })
       service_account_role_arn = module.vpc_cni_irsa_role.iam_role_arn
     }
-  }
+  } : {}
 }
 
 module "vpc_cni_irsa_role" {

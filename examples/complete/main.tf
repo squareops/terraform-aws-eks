@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.4.0"
+  version              = "5.4.1"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -186,22 +186,23 @@ module "eks" {
 }
 
 module "managed_node_group_addons" {
-  source                     = "squareops/eks/aws//modules/managed-nodegroup"
-  version                    = "5.4.0"
-  depends_on                 = [module.vpc, module.eks]
-  managed_ng_name            = "Infra"
-  managed_ng_min_size        = 2
-  managed_ng_max_size        = 5
-  managed_ng_desired_size    = 2
-  vpc_subnet_ids             = [module.vpc.private_subnets[0]]
-  environment                = local.environment
-  managed_ng_kms_key_arn     = module.kms.key_arn
-  managed_ng_capacity_type   = local.managed_ng_capacity_type
-  managed_ng_ebs_volume_size = local.ebs_volume_size
-  managed_ng_ebs_volume_type = "gp3"
-  managed_ng_ebs_encrypted   = true
-  managed_ng_instance_types  = ["t3a.large", "t3.large", "t3.medium"] # Pass instance type according to the ami architecture.
-  managed_ng_kms_policy_arn  = module.eks.kms_policy_arn
+  source                      = "squareops/eks/aws//modules/managed-nodegroup"
+  version                     = "5.4.1"
+  depends_on                  = [module.vpc, module.eks]
+  managed_ng_name             = "Infra"
+  managed_ng_min_size         = 2
+  managed_ng_max_size         = 5
+  managed_ng_desired_size     = 2
+  vpc_subnet_ids              = [module.vpc.private_subnets[0]]
+  environment                 = local.environment
+  managed_ng_kms_key_arn      = module.kms.key_arn
+  managed_ng_capacity_type    = local.managed_ng_capacity_type
+  managed_ng_ebs_volume_size  = local.ebs_volume_size
+  managed_ng_ebs_volume_type  = "gp3"
+  managed_ng_ebs_encrypted    = true
+  managed_ng_instance_types   = ["t3a.large", "t3.large", "t3.medium"] # Pass instance type according to the ami architecture.
+  managed_ng_kms_policy_arn   = module.eks.kms_policy_arn
+  associate_public_ip_address = false
   managed_ng_node_autorepair = {
     enabled                            = false
     enable_node_monitoring_agent_addon = true
