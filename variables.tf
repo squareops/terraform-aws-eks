@@ -137,6 +137,12 @@ variable "authentication_mode" {
   default     = "API_AND_CONFIG_MAP"
 }
 
+variable "enable_vpc_cni_addon" {
+  description = "Choose whether to enable or disable vpc-cni"
+  type        = bool
+  default     = true
+}
+
 variable "vpc_cni_version" {
   description = "Specify VPC CNI addons version"
   default     = "v1.19.3-eksbuild.1"
