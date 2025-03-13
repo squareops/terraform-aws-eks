@@ -38,12 +38,13 @@ module "eks" {
         }
         enableNetworkPolicy = "true"
       })
-      service_account_role_arn = module.vpc_cni_irsa_role.iam_role_arn
+      service_account_role_arn = module.vpc_cni_irsa_role[0].iam_role_arn
     }
   } : {}
 }
 
 module "vpc_cni_irsa_role" {
+  count                 = var.enable_vpc_cni_addon ? 1 : 0
   source                = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
   version               = "5.52.2"
   role_name             = format("%s-%s-%s", var.environment, var.name, "aws-node-irsa")
@@ -214,11 +215,13 @@ resource "aws_iam_role_policy_attachment" "worker_ecr_policy" {
 }
 
 resource "aws_iam_role_policy_attachment" "vpc_cni_addons_policy" {
-  role       = module.vpc_cni_irsa_role.iam_role_name
+  count      = var.enable_vpc_cni_addon ? 1 : 0
+  role       = module.vpc_cni_irsa_role[0].iam_role_name
   policy_arn = var.ipv6_enabled == false ? "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy" : aws_iam_policy.cni_ipv6_policy[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "kms_vpc_cni_policy_attachment" {
-  role       = module.vpc_cni_irsa_role.iam_role_name
+  count      = var.enable_vpc_cni_addon ? 1 : 0
+  role       = module.vpc_cni_irsa_role[0].iam_role_name
   policy_arn = aws_iam_policy.kubernetes_pvc_kms_policy.arn
 }

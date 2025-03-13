@@ -18,7 +18,7 @@ locals {
   kms_user                             = null
   vpc_cidr                             = "10.10.0.0/16"
   vpn_server_enabled                   = false
-  cluster_version                      = "1.31"
+  cluster_version                      = "1.32"
   cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   cluster_log_retention_in_days        = 30
   managed_ng_capacity_type             = "SPOT" # Choose the capacity type ("SPOT" or "ON_DEMAND")
@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.4.1"
+  version              = "5.4.2"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -181,13 +181,14 @@ module "eks" {
       cidr_blocks = ["10.10.0.0/16"]
     }
   }
-  vpc_cni_version = "v1.19.3-eksbuild.1"
-  tags            = local.additional_aws_tags
+  enable_vpc_cni_addon = true
+  vpc_cni_version      = "v1.19.3-eksbuild.1"
+  tags                 = local.additional_aws_tags
 }
 
 module "managed_node_group_addons" {
   source                      = "squareops/eks/aws//modules/managed-nodegroup"
-  version                     = "5.4.1"
+  version                     = "5.4.2"
   depends_on                  = [module.vpc, module.eks]
   managed_ng_name             = "Infra"
   managed_ng_min_size         = 2
