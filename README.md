@@ -7,9 +7,9 @@
 
 ### [SquareOps Technologies](https://squareops.com/) Your DevOps Partner for Accelerating cloud journey.
 <br>
-This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.30.
+This module simplifies the deployment of EKS clusters with dual stack mode for Cluster IP family like IPv6 and IPv4, allowing users to quickly create and manage a production-grade Kubernetes cluster on AWS. The module is highly configurable, allowing users to customize various aspects of the EKS cluster, such as the Kubernetes version, worker node instance type, number of worker nodes, and now with added support for EKS version 1.32.
 <br>
-With this module, users can take advantage of the latest features and improvements offered by EKS 1.30 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
+With this module, users can take advantage of the latest features and improvements offered by EKS 1.32 while maintaining the ease and convenience of automated deployment. The module provides a streamlined solution for setting up EKS clusters, reducing the manual effort required for setup and configuration.
 
 
 ## Usage Example
@@ -22,7 +22,7 @@ module "eks" {
   vpc_subnet_ids                           = [module.vpc.private_subnets[0]]
   environment                              = "prod"
   eks_kms_key_arn                          = "arn:aws:kms:us-east-2:222222222222:key/kms_key_arn"
-  eks_cluster_version                      = "1.30"
+  eks_cluster_version                      = "1.32"
   eks_cluster_log_types                    = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
   eks_cluster_log_retention_in_days        = 30
   eks_cluster_endpoint_public_access       = true
@@ -56,7 +56,8 @@ module "eks" {
       cidr_blocks = ["10.10.0.0/16"]
     }
   }
-  vpc_cni_version = "v1.19.3-eksbuild.1"
+  enable_vpc_cni_addon = true
+  vpc_cni_version      = "v1.19.3-eksbuild.1"
 }
 
 module "managed_node_group_addons" {
