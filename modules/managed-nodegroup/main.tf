@@ -122,7 +122,8 @@ resource "aws_eks_node_group" "managed_ng" {
     version = aws_launch_template.eks_template.latest_version
   }
   update_config {
-    max_unavailable_percentage = 50
+    max_unavailable            = var.update_config.use_percentage ? null : var.update_config.max_unavailable_value
+    max_unavailable_percentage = var.update_config.use_percentage ? var.update_config.max_unavailable_value : null
   }
   tags = merge(
     {
