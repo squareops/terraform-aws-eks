@@ -216,3 +216,20 @@ variable "managed_ng_node_autorepair" {
     enable_node_monitoring_agent_addon = false
   }
 }
+
+variable "update_config" {
+  description = <<EOT
+  Configuration for the update config of the EKS managed node group.
+  - `max_unavailable_value`: Defines how many nodes can be updated at a time.
+      - If `use_percentage` is `true`, this value represents the **percentage** of nodes that can be unavailable during updates.
+      - If `use_percentage` is `false`, this value represents the **absolute number** of nodes that can be unavailable during updates.
+    EOT
+  type = object({
+    max_unavailable_value = number
+    use_percentage        = bool
+  })
+  default = {
+    max_unavailable_value = 50
+    use_percentage        = true
+  }
+}

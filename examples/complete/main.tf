@@ -188,7 +188,7 @@ module "eks" {
 
 module "managed_node_group_addons" {
   source                      = "squareops/eks/aws//modules/managed-nodegroup"
-  version                     = "5.4.2"
+  version                     = "5.4.3"
   depends_on                  = [module.vpc, module.eks]
   managed_ng_name             = "Infra"
   managed_ng_min_size         = 2
@@ -197,6 +197,7 @@ module "managed_node_group_addons" {
   vpc_subnet_ids              = [module.vpc.private_subnets[0]]
   environment                 = local.environment
   managed_ng_kms_key_arn      = module.kms.key_arn
+  update_config               = var.update_config // Defines how many nodes can be unavailable during the update process
   managed_ng_capacity_type    = local.managed_ng_capacity_type
   managed_ng_ebs_volume_size  = local.ebs_volume_size
   managed_ng_ebs_volume_type  = "gp3"
