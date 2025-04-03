@@ -158,7 +158,6 @@ module "eks" {
   }
   enable_cluster_creator_admin_permissions = true
   authentication_mode                      = "API_AND_CONFIG_MAP"
-  depends_on                               = [module.vpc]
   name                                     = local.name
   vpc_id                                   = module.vpc.vpc_id
   environment                              = local.environment
@@ -189,7 +188,6 @@ module "eks" {
 module "managed_node_group_addons" {
   source                      = "squareops/eks/aws//modules/managed-nodegroup"
   version                     = "5.4.2"
-  depends_on                  = [module.vpc, module.eks]
   managed_ng_name             = "Infra"
   managed_ng_min_size         = 2
   managed_ng_max_size         = 5
