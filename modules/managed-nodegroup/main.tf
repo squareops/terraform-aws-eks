@@ -165,3 +165,26 @@ resource "aws_eks_addon" "node_monitoring_addon" {
     }
   })
 }
+
+resource "aws_eks_addon" "coredns" {
+  count = var.enable_coredns_addon ? 1:0
+  depends_on = [ aws_eks_node_group.managed_ng ]
+  cluster_name                = var.eks_cluster_name
+  addon_name                  = "coredns"
+  addon_version               = "v1.11.4-eksbuild.2"
+  resolve_conflicts_on_create = "OVERWRITE"
+  configuration_values = jsonencode({
+    replicaCount = 4
+    resources = {
+      limits = {
+        cpu    = "100m"
+        memory = "150Mi"
+      }
+      requests = {
+        cpu    = "100m"
+        memory = "150Mi"
+      }
+    }
+  })
+
+}

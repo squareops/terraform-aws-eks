@@ -203,6 +203,7 @@ module "managed_node_group_addons" {
   managed_ng_instance_types   = ["t3a.large", "t3.large", "t3.medium"] # Pass instance type according to the ami architecture.
   managed_ng_kms_policy_arn   = module.eks.kms_policy_arn
   associate_public_ip_address = false
+  enable_coredns_addon        = true
   managed_ng_node_autorepair = {
     enabled                            = false
     enable_node_monitoring_agent_addon = true

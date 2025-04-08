@@ -216,3 +216,9 @@ variable "managed_ng_node_autorepair" {
     enable_node_monitoring_agent_addon = false
   }
 }
+
+variable "enable_coredns_addon" {
+  type        = bool
+  description = "Enable CoreDNS addon"
+  default     = true
+}
