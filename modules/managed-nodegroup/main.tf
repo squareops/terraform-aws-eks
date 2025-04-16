@@ -174,7 +174,7 @@ resource "aws_eks_addon" "coredns" {
   addon_version               = "v1.11.4-eksbuild.2"
   resolve_conflicts_on_create = "OVERWRITE"
   configuration_values = jsonencode({
-    replicaCount = 4
+    replicaCount = 2
     resources = {
       limits = {
         cpu    = "100m"
