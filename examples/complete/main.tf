@@ -139,7 +139,7 @@ module "vpc" {
 
 module "eks" {
   source               = "squareops/eks/aws"
-  version              = "5.4.3"
+  version              = "5.4.4"
   access_entry_enabled = true
   access_entries = {
     "example" = {
@@ -187,7 +187,7 @@ module "eks" {
 
 module "managed_node_group_addons" {
   source                      = "squareops/eks/aws//modules/managed-nodegroup"
-  version                     = "5.4.3"
+  version                     = "5.4.4"
   depends_on                  = [module.eks]
   managed_ng_name             = "Infra"
   managed_ng_min_size         = 2
